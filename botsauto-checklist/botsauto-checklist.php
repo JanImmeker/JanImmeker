@@ -92,7 +92,8 @@ class BOTSAUTO_Checklist {
         echo '</ul>';
         $c = $completed ? 'checked' : '';
         echo '<p><label><input type="checkbox" name="completed" value="1" '.$c.'> Checklist afgerond</label></p>';
-        submit_button( $post_id ? 'Opslaan' : 'Verstuur' );
+        $label = $post_id ? 'Opslaan' : 'Checklist verzenden';
+        echo '<p><input type="submit" class="button button-primary" value="'.esc_attr($label).'"></p>';
         echo '</form>';
         return ob_get_clean();
     }
