@@ -6,4 +6,4 @@ Plaats de map `botsauto-checklist` in de map `wp-content/plugins` van je WordPre
 
 Gebruik de shortcode `[botsauto_checklist]` om de checklist op een pagina weer te geven. In de beheeromgeving verschijnt een menu item "BOTSAUTO Checklist" waar de checklist kan worden aangepast en ingezonden formulieren worden opgeslagen als custom post type.
 
-De plugin genereert een PDF van de ingevulde checklist via de meegeleverde FPDF-bibliotheek. De noodzakelijke lettertypebestanden zijn opgenomen in `botsauto-checklist/lib/font`.
+De plugin genereert een PDF van de ingevulde checklist via de meegeleverde FPDF-bibliotheek. Alleen het fontbestand `helvetica.php` is nodig en meegeleverd in `botsauto-checklist/lib/font`.

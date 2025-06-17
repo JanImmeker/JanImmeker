@@ -148,6 +148,9 @@ class BOTSAUTO_Checklist {
     }
 
     private function generate_pdf( $name, $answers ) {
+        if ( ! defined( 'FPDF_FONTPATH' ) ) {
+            define( 'FPDF_FONTPATH', plugin_dir_path( __FILE__ ) . 'lib/font/' );
+        }
         require_once plugin_dir_path(__FILE__).'lib/fpdf.php';
         $pdf = new FPDF();
         $pdf->AddPage();
