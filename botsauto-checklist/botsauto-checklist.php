@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -120,7 +120,12 @@ class BOTSAUTO_Checklist {
         update_post_meta( $post_id, 'answers', $answers );
         update_post_meta( $post_id, 'completed', $completed );
         $token = get_post_meta( $post_id, 'token', true );
-        $edit_url = add_query_arg( 'botsauto_edit', $token, site_url( $_SERVER['REQUEST_URI'] ) );
+        $referer = wp_get_referer();
+        if ( ! $referer ) {
+            $referer = home_url( '/' );
+        }
+        $referer = remove_query_arg( 'botsauto_edit', $referer );
+        $edit_url = add_query_arg( 'botsauto_edit', $token, $referer );
         if ( ! empty( $_POST['post_id'] ) ) {
             wp_redirect( $edit_url );
             exit;
