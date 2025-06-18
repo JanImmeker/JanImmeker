@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.2.0
+ * Version: 1.2.1
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -16,6 +16,18 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class BOTSAUTO_Checklist {
     private $option_name = 'botsauto_checklist_items';
     private $post_type = 'botsauto_submission';
+
+    public static function install() {
+        $self = new self;
+        if ( false === get_option( $self->option_name, false ) ) {
+            add_option( $self->option_name, $self->default_checklist() );
+        }
+    }
+
+    public static function uninstall() {
+        $self = new self;
+        delete_option( $self->option_name );
+    }
 
     public function __construct() {
         add_action( 'init', array( $this, 'register_post_type' ) );
@@ -327,6 +339,9 @@ CHECKLIST;
         return $file;
     }
 }
+
+register_activation_hook( __FILE__, array( 'BOTSAUTO_Checklist', 'install' ) );
+register_uninstall_hook( __FILE__, array( 'BOTSAUTO_Checklist', 'uninstall' ) );
 
 new BOTSAUTO_Checklist();
 
