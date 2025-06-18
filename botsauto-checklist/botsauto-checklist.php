@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.1.0
+ * Version: 1.1.1
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -38,6 +38,16 @@ class BOTSAUTO_Checklist {
         $headers[] = 'Content-Type: text/html; charset=UTF-8';
         $headers[] = 'From: ' . $this->mail_from_name( '' ) . ' <' . $this->mail_from( '' ) . '>';
         return wp_mail( $to, $subject, $body, $headers, $attachments );
+    }
+
+    private function pdf_string( $text ) {
+        if ( function_exists( 'iconv' ) ) {
+            $converted = @iconv( 'UTF-8', 'ISO-8859-1//TRANSLIT', $text );
+            if ( $converted !== false ) {
+                return $converted;
+            }
+        }
+        return utf8_decode( $text );
     }
 
     public function register_post_type() {
@@ -225,12 +235,13 @@ class BOTSAUTO_Checklist {
         $pdf = new FPDF();
         $pdf->AddPage();
         $pdf->SetFont('Arial','',12);
-        $pdf->Cell(0,10,'BOTSAUTO Checklist',0,1);
-        $pdf->Cell(0,10,'Naam: '.$name,0,1);
+        $pdf->Cell(0,10,$this->pdf_string('BOTSAUTO Checklist'),0,1);
+        $pdf->Cell(0,10,$this->pdf_string('Naam: '.$name),0,1);
         $i = 0;
         foreach ( $snapshot as $hash => $question ) {
             $status = isset( $answers[ $hash ] ) ? 'Ja' : 'Nee';
-            $pdf->Cell(0,8,($i+1).'. '.$question.' - '.$status,0,1);
+            $line = ($i + 1) . '. ' . $question . ' - ' . $status;
+            $pdf->Cell(0,8,$this->pdf_string($line),0,1);
             $i++;
         }
         $uploads = wp_upload_dir();
