@@ -9,3 +9,5 @@ Gebruik de shortcode `[botsauto_checklist]` om de checklist op een pagina weer t
 De plugin genereert een PDF van de ingevulde checklist via de meegeleverde FPDF-bibliotheek. Alleen het fontbestand `helvetica.php` is nodig en meegeleverd in `botsauto-checklist/lib/font`.
 
 Na het versturen ontvangt de gebruiker een e‑mail met de PDF in de bijlage en een unieke link om de checklist later te bewerken. De plugin stuurt de bezoeker na het opslaan automatisch terug naar dezelfde pagina met deze link in de URL.
+
+Voor het versturen van e‑mail gebruikt de plugin de standaard `wp_mail` functie, zodat eventuele SMTP-configuratie die in WordPress is ingesteld automatisch wordt toegepast.

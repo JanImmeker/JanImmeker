@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -23,6 +23,18 @@ class BOTSAUTO_Checklist {
         add_shortcode( 'botsauto_checklist', array( $this, 'render_form' ) );
         add_action( 'admin_post_nopriv_botsauto_save', array( $this, 'handle_submit' ) );
         add_action( 'admin_post_botsauto_save', array( $this, 'handle_submit' ) );
+    }
+
+    public function mail_content_type() {
+        return 'text/html';
+    }
+
+    private function send_email( $to, $subject, $body, $attachments = array() ) {
+        add_filter( 'wp_mail_content_type', array( $this, 'mail_content_type' ) );
+        $headers = array( 'From: ' . get_bloginfo( 'name' ) . ' <' . get_option( 'admin_email' ) . '>' );
+        $sent = wp_mail( $to, $subject, $body, $headers, $attachments );
+        remove_filter( 'wp_mail_content_type', array( $this, 'mail_content_type' ) );
+        return $sent;
     }
 
     public function register_post_type() {
@@ -131,10 +143,8 @@ class BOTSAUTO_Checklist {
             exit;
         }
         $pdf = $this->generate_pdf( $name, $answers );
-        $headers = array('Content-Type: text/html; charset=UTF-8');
-        $attachments = array( $pdf );
         $body = 'Bedankt voor het invullen van de checklist. Bewaar deze link om later verder te gaan: '.$edit_url;
-        wp_mail( $email, 'Checklist bevestiging', $body, $headers, $attachments );
+        $this->send_email( $email, 'Checklist bevestiging', $body, array( $pdf ) );
         unlink( $pdf );
         wp_redirect( $edit_url );
         exit;
