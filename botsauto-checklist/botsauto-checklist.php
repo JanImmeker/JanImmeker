@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.0.4
+ * Version: 1.1.0
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -76,6 +76,14 @@ class BOTSAUTO_Checklist {
         return $lines;
     }
 
+    private function associate_items( $items ) {
+        $assoc = array();
+        foreach ( $items as $line ) {
+            $assoc[ md5( $line ) ] = $line;
+        }
+        return $assoc;
+    }
+
     public function render_form( $atts ) {
         $token = isset( $_GET['botsauto_edit'] ) ? sanitize_text_field( $_GET['botsauto_edit'] ) : '';
         $post_id = $this->get_post_id_by_token( $token );
@@ -90,21 +98,50 @@ class BOTSAUTO_Checklist {
             $name = get_post_meta( $post_id, 'name', true );
         }
 
-        $items = $this->checklist_items();
+        $current_items = $this->associate_items( $this->checklist_items() );
+        $snapshot      = $post_id ? get_post_meta( $post_id, 'items_snapshot', true ) : array();
+        if ( ! is_array( $snapshot ) || empty( $snapshot ) ) {
+            $snapshot = $current_items;
+        }
+        $items_to_use = $snapshot;
+        $show_update  = $current_items !== $snapshot;
+
+        if ( isset( $_POST['update_items'] ) && $_POST['update_items'] ) {
+            $items_to_use = $current_items;
+            $show_update  = false;
+        }
+
+        // Convert old numeric answers to associative if needed
+        if ( $values && array_values( $values ) === $values ) {
+            $tmp = array();
+            $i   = 0;
+            foreach ( $snapshot as $hash => $text ) {
+                if ( isset( $values[ $i ] ) ) {
+                    $tmp[ $hash ] = true;
+                }
+                $i++;
+            }
+            $values = $tmp;
+        }
+
         ob_start();
         echo '<form method="post" action="' . esc_url( admin_url('admin-post.php') ) . '">';
         echo '<input type="hidden" name="action" value="botsauto_save">';
         if ( $post_id ) {
             echo '<input type="hidden" name="post_id" value="' . intval($post_id) . '" />';
+            echo '<input type="hidden" name="items_snapshot" value="' . esc_attr( wp_json_encode( $snapshot ) ) . '" />';
         }
         echo '<p><label>Naam: <input type="text" name="name" value="' . esc_attr($name) . '" required></label></p>';
         echo '<p><label>Email: <input type="email" name="email" value="' . esc_attr($email) . '" required></label></p>';
         echo '<ul style="list-style:none">';
-        foreach ( $items as $index => $item ) {
-            $checked = isset( $values[$index] ) ? 'checked' : '';
-            echo '<li><label><input type="checkbox" name="answers['.$index.']" '.$checked.'> '.esc_html($item).'</label></li>';
+        foreach ( $items_to_use as $hash => $item ) {
+            $checked = isset( $values[$hash] ) ? 'checked' : '';
+            echo '<li><label><input type="checkbox" name="answers['.$hash.']" '.$checked.'> '.esc_html($item).'</label></li>';
         }
         echo '</ul>';
+        if ( $show_update ) {
+            echo '<p><label><input type="checkbox" name="update_items" value="1"> De checklist is gewijzigd, nieuwe versie gebruiken</label></p>';
+        }
         $c = $completed ? 'checked' : '';
         echo '<p><label><input type="checkbox" name="completed" value="1" '.$c.'> Checklist afgerond</label></p>';
         $label = $post_id ? 'Opslaan' : 'Checklist verzenden';
@@ -115,10 +152,24 @@ class BOTSAUTO_Checklist {
 
     public function handle_submit() {
         $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
-        $name = sanitize_text_field( $_POST['name'] );
-        $email = sanitize_email( $_POST['email'] );
-        $answers = isset($_POST['answers']) ? array_map('sanitize_text_field', $_POST['answers']) : array();
+        $name    = sanitize_text_field( $_POST['name'] );
+        $email   = sanitize_email( $_POST['email'] );
         $completed = isset($_POST['completed']) ? '1' : '';
+
+        $current_items  = $this->associate_items( $this->checklist_items() );
+        $snapshot_field = isset( $_POST['items_snapshot'] ) ? json_decode( stripslashes( $_POST['items_snapshot'] ), true ) : array();
+        if ( ! is_array( $snapshot_field ) || empty( $snapshot_field ) ) {
+            $snapshot_field = $current_items;
+        }
+        $use_current = isset( $_POST['update_items'] ) && $_POST['update_items'];
+        $snapshot    = $use_current ? $current_items : $snapshot_field;
+
+        $answers = array();
+        if ( isset( $_POST['answers'] ) && is_array( $_POST['answers'] ) ) {
+            foreach ( $_POST['answers'] as $hash => $val ) {
+                $answers[ sanitize_key( $hash ) ] = true;
+            }
+        }
         if ( $post_id ) {
             wp_update_post( array( 'ID' => $post_id, 'post_title' => $name ) );
         } else {
@@ -133,6 +184,7 @@ class BOTSAUTO_Checklist {
         update_post_meta( $post_id, 'name', $name );
         update_post_meta( $post_id, 'email', $email );
         update_post_meta( $post_id, 'answers', $answers );
+        update_post_meta( $post_id, 'items_snapshot', $snapshot );
         update_post_meta( $post_id, 'completed', $completed );
         $token = get_post_meta( $post_id, 'token', true );
         $referer = wp_get_referer();
@@ -145,7 +197,7 @@ class BOTSAUTO_Checklist {
             wp_redirect( $edit_url );
             exit;
         }
-        $pdf = $this->generate_pdf( $name, $answers );
+        $pdf = $this->generate_pdf( $name, $answers, $snapshot );
         $body = 'Bedankt voor het invullen van de checklist. Bewaar deze link om later verder te gaan: '.$edit_url;
         $this->send_email( $email, 'Checklist bevestiging', $body, array( $pdf ) );
         unlink( $pdf );
@@ -165,7 +217,7 @@ class BOTSAUTO_Checklist {
         return 0;
     }
 
-    private function generate_pdf( $name, $answers ) {
+    private function generate_pdf( $name, $answers, $snapshot ) {
         if ( ! defined( 'FPDF_FONTPATH' ) ) {
             define( 'FPDF_FONTPATH', plugin_dir_path( __FILE__ ) . 'lib/font/' );
         }
@@ -175,9 +227,11 @@ class BOTSAUTO_Checklist {
         $pdf->SetFont('Arial','',12);
         $pdf->Cell(0,10,'BOTSAUTO Checklist',0,1);
         $pdf->Cell(0,10,'Naam: '.$name,0,1);
-        foreach ( $this->checklist_items() as $i => $question ) {
-            $status = isset($answers[$i]) ? 'Ja' : 'Nee';
+        $i = 0;
+        foreach ( $snapshot as $hash => $question ) {
+            $status = isset( $answers[ $hash ] ) ? 'Ja' : 'Nee';
             $pdf->Cell(0,8,($i+1).'. '.$question.' - '.$status,0,1);
+            $i++;
         }
         $uploads = wp_upload_dir();
         $file = trailingslashit( $uploads['path'] ) . 'botsauto-' . uniqid() . '.pdf';
