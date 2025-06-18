@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -25,10 +25,6 @@ class BOTSAUTO_Checklist {
         add_action( 'admin_post_botsauto_save', array( $this, 'handle_submit' ) );
     }
 
-    public function mail_content_type() {
-        return 'text/html';
-    }
-
     public function mail_from( $orig ) {
         return get_option( 'admin_email' );
     }
@@ -38,14 +34,10 @@ class BOTSAUTO_Checklist {
     }
 
     private function send_email( $to, $subject, $body, $attachments = array() ) {
-        add_filter( 'wp_mail_content_type', array( $this, 'mail_content_type' ) );
-        add_filter( 'wp_mail_from', array( $this, 'mail_from' ) );
-        add_filter( 'wp_mail_from_name', array( $this, 'mail_from_name' ) );
-        $sent = wp_mail( $to, $subject, $body, array(), $attachments );
-        remove_filter( 'wp_mail_from', array( $this, 'mail_from' ) );
-        remove_filter( 'wp_mail_from_name', array( $this, 'mail_from_name' ) );
-        remove_filter( 'wp_mail_content_type', array( $this, 'mail_content_type' ) );
-        return $sent;
+        $headers   = array();
+        $headers[] = 'Content-Type: text/html; charset=UTF-8';
+        $headers[] = 'From: ' . $this->mail_from_name( '' ) . ' <' . $this->mail_from( '' ) . '>';
+        return wp_mail( $to, $subject, $body, $headers, $attachments );
     }
 
     public function register_post_type() {
