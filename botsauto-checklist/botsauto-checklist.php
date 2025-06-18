@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.3.0
+ * Version: 1.4.0
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -32,6 +32,7 @@ class BOTSAUTO_Checklist {
     public function __construct() {
         add_action( 'init', array( $this, 'register_post_type' ) );
         add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+        add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
         add_shortcode( 'botsauto_checklist', array( $this, 'render_form' ) );
         add_action( 'admin_post_nopriv_botsauto_save', array( $this, 'handle_submit' ) );
         add_action( 'admin_post_botsauto_save', array( $this, 'handle_submit' ) );
@@ -50,6 +51,13 @@ class BOTSAUTO_Checklist {
         $headers[] = 'Content-Type: text/html; charset=UTF-8';
         $headers[] = 'From: ' . $this->mail_from_name( '' ) . ' <' . $this->mail_from( '' ) . '>';
         return wp_mail( $to, $subject, $body, $headers, $attachments );
+    }
+
+    public function enqueue_admin_assets( $hook ) {
+        if ( $hook !== 'toplevel_page_botsauto-checklist' ) {
+            return;
+        }
+        wp_enqueue_script( 'botsauto-admin', plugin_dir_url( __FILE__ ) . 'js/admin.js', array( 'jquery' ), '1.0', true );
     }
 
     private function pdf_string( $text ) {
@@ -80,12 +88,47 @@ class BOTSAUTO_Checklist {
             update_option( $this->option_name, wp_unslash( $_POST['checklist_content'] ) );
             echo '<div class="updated"><p>Checklist opgeslagen.</p></div>';
         }
+        $items   = $this->checklist_items();
         $content = get_option( $this->option_name, $this->default_checklist() );
         echo '<div class="wrap"><h1>Checklist beheer</h1>';
-        echo '<form method="post">';
-        echo '<textarea name="checklist_content" style="width:100%;height:300px;">' . esc_textarea( $content ) . '</textarea>';
+        echo '<form method="post" id="botsauto-form">';
+        echo '<textarea id="botsauto_content" name="checklist_content" style="display:none;">' . esc_textarea( $content ) . '</textarea>';
+        echo '<div id="botsauto-editor">';
+        $current_phase = null;
+        foreach ( $items as $item ) {
+            if ( $item['phase'] !== $current_phase ) {
+                if ( $current_phase !== null ) {
+                    echo '<p><button type="button" class="button botsauto-add-item">Item toevoegen</button></p></div></details>';
+                }
+                echo '<div class="botsauto-phase"><details open><summary></summary>';
+                echo '<p>Fase: <input type="text" class="phase-field" value="' . esc_attr( $item['phase'] ) . '"></p>';
+                echo '<p>Toelichting: <input type="text" class="desc-field" value="' . esc_attr( $item['desc'] ) . '"></p>';
+                echo '<div class="botsauto-items">';
+                $current_phase = $item['phase'];
+            }
+            echo '<div class="botsauto-item">';
+            echo '<p>Vraag: <input type="text" class="question-field" value="' . esc_attr( $item['question'] ) . '"></p>';
+            echo '<p>Checklist item: <input type="text" class="item-field" value="' . esc_attr( $item['item'] ) . '"></p>';
+            echo '<p><button type="button" class="button botsauto-remove-item">Verwijder</button></p>';
+            echo '</div>';
+        }
+        if ( $current_phase !== null ) {
+            echo '<p><button type="button" class="button botsauto-add-item">Item toevoegen</button></p></div></details></div>';
+        }
+        echo '</div>'; // editor
+        echo '<p><button type="button" class="button" id="botsauto-add-phase">Fase toevoegen</button></p>';
         submit_button();
-        echo '</form></div>';
+        echo '</form>';
+
+        // templates
+        echo '<script type="text/template" id="botsauto-phase-template">';
+        echo '<div class="botsauto-phase"><details open><summary></summary><p>Fase: <input type="text" class="phase-field"></p><p>Toelichting: <input type="text" class="desc-field"></p><div class="botsauto-items"></div><p><button type="button" class="button botsauto-add-item">Item toevoegen</button></p></details></div>';
+        echo '</script>';
+        echo '<script type="text/template" id="botsauto-item-template">';
+        echo '<div class="botsauto-item"><p>Vraag: <input type="text" class="question-field"></p><p>Checklist item: <input type="text" class="item-field"></p><p><button type="button" class="button botsauto-remove-item">Verwijder</button></p></div>';
+        echo '</script>';
+
+        echo '</div>';
     }
 
     private function default_checklist() {

@@ -15,6 +15,8 @@ Voorbereiden|Korte uitleg fase|KEM toegepast?|Is de potentiële opdrachtgever ge
 ```
 
 Deze structuur wordt zowel in de admin als op de frontend getoond.
+In het beheerscherm verschijnen de checklistregels gegroepeerd per fase in inklapbare secties.
+Met knoppen kan de beheerder eenvoudig fases en items toevoegen of verwijderen.
 
 Na het versturen ontvangt de gebruiker een e‑mail met de PDF in de bijlage en een unieke link om de checklist later te bewerken. De plugin stuurt de bezoeker na het opslaan automatisch terug naar dezelfde pagina met deze link in de URL. Speciale tekens worden voor de PDF geconverteerd naar Latin‑1 zodat woorden zoals "geïdentificeerd" correct worden weergegeven.
 
