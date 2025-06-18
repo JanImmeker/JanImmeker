@@ -93,7 +93,14 @@ class BOTSAUTO_Checklist {
         echo '<div class="wrap"><h1>Checklist beheer</h1>';
         echo '<form method="post" id="botsauto-form">';
         echo '<textarea id="botsauto_content" name="checklist_content" style="display:none;">' . esc_textarea( $content ) . '</textarea>';
-        echo '<style>#botsauto-editor p{display:flex;align-items:center;gap:6px;margin:4px 0;}#botsauto-editor label{flex:1;}#botsauto-editor input{width:100%;max-width:400px;}</style>';
+        echo '<style>
+        #botsauto-editor p{display:flex;align-items:center;gap:6px;margin:4px 0;}
+        #botsauto-editor label{flex:1;display:flex;align-items:center;min-width:0;}
+        #botsauto-editor label span{display:inline-block;width:140px;}
+        #botsauto-editor input{width:100%;max-width:400px;}
+        #botsauto-editor .question-line{margin-left:2em;}
+        #botsauto-editor .item-line{margin-left:4em;}
+        </style>';
         echo '<div id="botsauto-editor">';
         $current_phase = null;
         $current_question = null;
@@ -106,8 +113,8 @@ class BOTSAUTO_Checklist {
                     echo '</div><p><button type="button" class="button botsauto-add-question">Vraag toevoegen</button></p></details></div>';
                 }
                 echo '<div class="botsauto-phase"><details open><summary></summary>';
-                echo '<p class="phase-line"><label>Fase: <input type="text" class="phase-field" value="' . esc_attr( $item['phase'] ) . '"></label> <button type="button" class="button botsauto-remove-phase">Verwijder</button></p>';
-                echo '<p><label>Toelichting: <input type="text" class="desc-field" value="' . esc_attr( $item['desc'] ) . '"></label></p>';
+                echo '<p class="phase-line"><label><span>Fase:</span> <input type="text" class="phase-field" value="' . esc_attr( $item['phase'] ) . '"></label> <button type="button" class="button botsauto-remove-phase">Verwijder</button></p>';
+                echo '<p class="desc-line"><label><span>Toelichting:</span> <input type="text" class="desc-field" value="' . esc_attr( $item['desc'] ) . '"></label></p>';
                 echo '<div class="botsauto-questions">';
                 $current_phase = $item['phase'];
                 $current_question = null;
@@ -117,11 +124,11 @@ class BOTSAUTO_Checklist {
                     echo '<p><button type="button" class="button botsauto-add-item">Item toevoegen</button></p></div>';
                 }
                 echo '<div class="botsauto-question">';
-                echo '<p class="question-line"><label>Vraag: <input type="text" class="question-field" value="' . esc_attr( $item['question'] ) . '"></label> <button type="button" class="button botsauto-remove-question">Verwijder</button></p>';
+                echo '<p class="question-line"><label><span>Vraag:</span> <input type="text" class="question-field" value="' . esc_attr( $item['question'] ) . '"></label> <button type="button" class="button botsauto-remove-question">Verwijder</button></p>';
                 echo '<div class="botsauto-items">';
                 $current_question = $item['question'];
             }
-            echo '<div class="botsauto-item"><p class="item-line"><label>Checklist item: <input type="text" class="item-field" value="' . esc_attr( $item['item'] ) . '"></label> <button type="button" class="button botsauto-remove-item">Verwijder</button></p></div>';
+            echo '<div class="botsauto-item"><p class="item-line"><label><span>Checklist item:</span> <input type="text" class="item-field" value="' . esc_attr( $item['item'] ) . '"></label> <button type="button" class="button botsauto-remove-item">Verwijder</button></p></div>';
         }
         if ( $current_phase !== null ) {
             if ( $current_question !== null ) {
@@ -136,13 +143,13 @@ class BOTSAUTO_Checklist {
 
         // templates
         echo '<script type="text/template" id="botsauto-phase-template">';
-        echo '<div class="botsauto-phase"><details open><summary></summary><p class="phase-line"><label>Fase: <input type="text" class="phase-field"></label> <button type="button" class="button botsauto-remove-phase">Verwijder</button></p><p><label>Toelichting: <input type="text" class="desc-field"></label></p><div class="botsauto-questions"></div><p><button type="button" class="button botsauto-add-question">Vraag toevoegen</button></p></details></div>';
+        echo '<div class="botsauto-phase"><details open><summary></summary><p class="phase-line"><label><span>Fase:</span> <input type="text" class="phase-field"></label> <button type="button" class="button botsauto-remove-phase">Verwijder</button></p><p class="desc-line"><label><span>Toelichting:</span> <input type="text" class="desc-field"></label></p><div class="botsauto-questions"></div><p><button type="button" class="button botsauto-add-question">Vraag toevoegen</button></p></details></div>';
         echo '</script>';
         echo '<script type="text/template" id="botsauto-question-template">';
-        echo '<div class="botsauto-question"><p class="question-line"><label>Vraag: <input type="text" class="question-field"></label> <button type="button" class="button botsauto-remove-question">Verwijder</button></p><div class="botsauto-items"></div><p><button type="button" class="button botsauto-add-item">Item toevoegen</button></p></div>';
+        echo '<div class="botsauto-question"><p class="question-line"><label><span>Vraag:</span> <input type="text" class="question-field"></label> <button type="button" class="button botsauto-remove-question">Verwijder</button></p><div class="botsauto-items"></div><p><button type="button" class="button botsauto-add-item">Item toevoegen</button></p></div>';
         echo '</script>';
         echo '<script type="text/template" id="botsauto-item-template">';
-        echo '<div class="botsauto-item"><p class="item-line"><label>Checklist item: <input type="text" class="item-field"></label> <button type="button" class="button botsauto-remove-item">Verwijder</button></p></div>';
+        echo '<div class="botsauto-item"><p class="item-line"><label><span>Checklist item:</span> <input type="text" class="item-field"></label> <button type="button" class="button botsauto-remove-item">Verwijder</button></p></div>';
         echo '</script>';
 
         echo '</div>';
