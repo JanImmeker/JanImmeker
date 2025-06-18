@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.1.1
+ * Version: 1.2.0
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -77,19 +77,72 @@ class BOTSAUTO_Checklist {
     }
 
     private function default_checklist() {
-        return "Voorbereiden: Kwalificatie & voorbereiding\nKwalificatie Expres Methode toegepast?\nStakeholder Matrix ingevuld?\nAchtergrondinformatie verzameld?\nHypotheses opgesteld?\nStrategie voor contact bepaald?\nBOTSAUTO Navigatie ingezet?\nUitnodiging tot strategische samenwerking verzonden?\nVerdiepen: Diepgaande analyse van de kernvraag\nEssentievragen gesteld?\nChecklist Socratisch Gesprek toegepast?\nBlinde vlekken geïdentificeerd?\nImpact op organisatie duidelijk?\nObstakels en risico’s geanalyseerd?\nInzicht in interne besluitvorming en budget?\nVerwezenlijken: Oplossing & commitment\n3 W’s volledig in kaart gebracht?\nKernvraag geformuleerd?\nVisie op de kernvraag gedeeld?\nStelling, Steun & Succes uitgewerkt?\nVVV-1 ingevuld?\nVVV-2 afgedwongen?\nKAM ingezet?\nGespreksverslag BOTSAUTO debrief gebruikt?\nActieplan opgesteld?\nVerzilveren: Borging & nazorg\nOpdrachtbevestiging of Vennootakte opgesteld?\nImplementatievoorwaarden vastgelegd?\nMonitoring- en evaluatieplan opgesteld?\nKPI’s gedefinieerd?\n4 R’s correct toegepast?\nKIM ingezet?\nExtra controle & optimalisatie\nInterne debriefing gehouden?\nKlantgegevens vastgelegd in CRM?\nFeedbackmoment met de klant gepland?\nAlle interne stakeholders op de hoogte?\nGrondige evaluatie van het proces gedaan?\nAlgemene verankeringen en documentatie\nAccount Plan Canvas ingevuld?\nPijlers en BOTSAUTO navigatie toegepast?";
+        return <<<CHECKLIST
+Voorbereiden: Kwalificatie & voorbereiding (KEM – Kwalificatie Expres Methode)|Kwalificatie, achtergrondinformatie en strategische voorbereiding.|Kwalificatie Expres Methode toegepast?|Is de potentiële opdrachtgever gekwalificeerd op basis van de KEM (Kwalificatie Expres Methode)?
+Voorbereiden: Kwalificatie & voorbereiding (KEM – Kwalificatie Expres Methode)||Stakeholder Matrix ingevuld?|Zijn de juiste stakeholders en besluitvormers volledig geïdentificeerd en in kaart gebracht?
+Voorbereiden: Kwalificatie & voorbereiding (KEM – Kwalificatie Expres Methode)||Achtergrondinformatie verzameld?|Zijn de belangrijkste gegevens en relevante achtergrondinformatie over de potentiële opdrachtgever verzameld?
+Voorbereiden: Kwalificatie & voorbereiding (KEM – Kwalificatie Expres Methode)||Hypotheses opgesteld?|Zijn er hypotheses over mogelijke behoeften en uitdagingen van de potentiële opdrachtgever geformuleerd?
+Voorbereiden: Kwalificatie & voorbereiding (KEM – Kwalificatie Expres Methode)||Strategie voor contact bepaald?|Is de strategie bepaald om contact te leggen met de juiste stakeholders en effectief in gesprek te komen?
+Voorbereiden: Kwalificatie & voorbereiding (KEM – Kwalificatie Expres Methode)|||Heeft de salesprofessional de communicatiestijl en persona van de opdrachtgever in kaart gebracht?
+Voorbereiden: Kwalificatie & voorbereiding (KEM – Kwalificatie Expres Methode)|||Is er een ‘start met vertrouwen’-benadering toegepast, waarbij wordt getest of de opdrachtgever ruimte biedt voor een verdiepende dialoog?
+Voorbereiden: Kwalificatie & voorbereiding (KEM – Kwalificatie Expres Methode)||BOTSAUTO Navigatie ingezet?|Zijn de relevante Pijlers toegepast om richting te geven aan de salesstrategie?
+Voorbereiden: Kwalificatie & voorbereiding (KEM – Kwalificatie Expres Methode)||Uitnodiging tot strategische samenwerking verzonden?|Heb je de ‘Samenwerking template’ gebruikt?
+Verdiepen: Diepgaande analyse van de kernvraag (KAM – Kernvraag Analyse Methode)|Focus: De échte kernvraag en impact ontrafelen met de 2 O’s (Oplossing en Originaliteit & Opbrengst).|Essentievragen gesteld?|Zijn de juiste essentievragen gesteld om de werkelijke kern van de klantbehoefte bloot te leggen?
+Verdiepen: Diepgaande analyse van de kernvraag (KAM – Kernvraag Analyse Methode)||Checklist Socratisch Gesprek toegepast?|Is het gesprek gevoerd volgens de socratische gespreksmethodiek?
+Verdiepen: Diepgaande analyse van de kernvraag (KAM – Kernvraag Analyse Methode)||Blinde vlekken geïdentificeerd?|Zijn eventuele blinde vlekken of verborgen behoeften samen met de opdrachtgever naar boven gehaald?
+Verdiepen: Diepgaande analyse van de kernvraag (KAM – Kernvraag Analyse Methode)||Impact op organisatie duidelijk?|Is er helderheid over de impact van het probleem op de opdrachtgever en diens organisatie?
+Verdiepen: Diepgaande analyse van de kernvraag (KAM – Kernvraag Analyse Methode)||Obstakels en risico’s geanalyseerd?|Zijn mogelijke obstakels en risico’s in het besluitvormingsproces geanalyseerd?
+Verdiepen: Diepgaande analyse van de kernvraag (KAM – Kernvraag Analyse Methode)||Inzicht in interne besluitvorming en budget?|Is er inzicht in de interne besluitvorming en het budget?
+Verwezenlijken: Oplossing & commitment (KAM – Kernvraag Analyse Methode)||3 W’s volledig in kaart gebracht?|Zijn de 3 W’s (Ware Aard, Weerslag, Waarde) van de klantuitdaging volledig in kaart gebracht?
+Verwezenlijken: Oplossing & commitment (KAM – Kernvraag Analyse Methode)||Kernvraag geformuleerd?|Is de vraag van de klant volledig geanalyseerd en geformuleerd?
+Verwezenlijken: Oplossing & commitment (KAM – Kernvraag Analyse Methode)||Visie op de kernvraag gedeeld?|Is de visie op de kernvraag van de opdrachtgever duidelijk gedeeld?
+Verwezenlijken: Oplossing & commitment (KAM – Kernvraag Analyse Methode)||Stelling, Steun & Succes uitgewerkt?|Is de waardepropositie geformuleerd met de SSS-methode (Stelling, Steun, Succes)?
+Verwezenlijken: Oplossing & commitment (KAM – Kernvraag Analyse Methode)||VVV-1 ingevuld?|Is vastgesteld of er Verdere Verkenning Vereist is (VVV-1)?
+Verwezenlijken: Oplossing & commitment (KAM – Kernvraag Analyse Methode)||VVV-2 afgedwongen?|Zijn de Voorwaarden voor Vervolg (VVV-2) duidelijk gedefinieerd, inclusief benodigde interne goedkeuringen?
+Verwezenlijken: Oplossing & commitment (KAM – Kernvraag Analyse Methode)|||Heeft de opdrachtgever expliciet commitment uitgesproken voor de volgende stap?
+Verwezenlijken: Oplossing & commitment (KAM – Kernvraag Analyse Methode)|||Zijn er naast interne goedkeuringen ook organisatorische consequenties besproken (zoals resources of implementatietijd)?
+Verwezenlijken: Oplossing & commitment (KAM – Kernvraag Analyse Methode)||KAM ingezet?|Heb je voor alle bovenstaande punten (in de fase Verdiepen) de Kernvraag Analyse Methode ingezet?
+Verwezenlijken: Oplossing & commitment (KAM – Kernvraag Analyse Methode)||Gespreksverslag BOTSAUTO debrief gebruikt?|Heb je het gespreksverslag volgens de BOTSAUTO-methode gemaakt, met focus op de klantbehoeften en uitdagingen. er een concreet actieplan met taken, deadlines en mijlpalen om het traject vlekkeloos te laten verlopen?
+Verwezenlijken: Oplossing & commitment (KAM – Kernvraag Analyse Methode)||Actieplan opgesteld?|Is er een concreet actieplan met taken, deadlines en mijlpalen opgesteld om het traject vlekkeloos te laten verlopen? (wellicht heb je dat al in het gespreksverslag opgenomen)
+Verzilveren: Borging & nazorg (KIM – Klant Informatie Methode)|Nakomen: De formele afronding, implementatie en borging van de samenwerking.|Opdrachtbevestiging of Vennootakte opgesteld?|Is de samenwerking bevestigd met een duidelijke opdrachtbevestiging of contract?
+Verzilveren: Borging & nazorg (KIM – Klant Informatie Methode)||Implementatievoorwaarden vastgelegd?|Zijn de implementatievoorwaarden en eerste vervolgstappen concreet vastgelegd?
+Verzilveren: Borging & nazorg (KIM – Klant Informatie Methode)||Monitoring- en evaluatieplan opgesteld?|Is er een monitoring- en evaluatieplan opgesteld om de voortgang te borgen?
+Verzilveren: Borging & nazorg (KIM – Klant Informatie Methode)||KPI’s gedefinieerd?|Zijn er heldere KPI’s geformuleerd om het succes van de implementatie te meten?
+Verzilveren: Borging & nazorg (KIM – Klant Informatie Methode)|||Zijn er KPI’s vastgesteld niet alleen voor implementatie, maar ook voor toekomstige optimalisaties?
+Verzilveren: Borging & nazorg (KIM – Klant Informatie Methode)||4 R’s correct toegepast?|Zijn de 4 R’s (Resultaat, Rust, Regie, Respect) correct toegepast en bewaakt?
+Verzilveren: Borging & nazorg (KIM – Klant Informatie Methode)||KIM ingezet?|Heb je voor alle bovenstaande punten (in de fase Verzilveren) de Klant Inzicht Methode ingezet?
+Extra controle & optimalisatie: Interne & externe borging|Terugkijken, leren en continu verbeteren – intern én extern.|Interne debriefing gehouden?|Is er een interne debriefing gehouden om leerpunten en verbeteringen te identificeren? En heb je daar ook de Commerciële debrief template gebruikt?
+Extra controle & optimalisatie: Interne & externe borging|||Is de klant uitgenodigd voor een verdiepingssessie of referentiecase-evaluatie om de relatie verder uit te bouwen?
+Extra controle & optimalisatie: Interne & externe borging||Klantgegevens vastgelegd in CRM?|Zijn alle klantgegevens en actiepunten correct vastgelegd in CRM en andere systemen?
+Extra controle & optimalisatie: Interne & externe borging||Feedbackmoment met de klant gepland?|Is er een feedbackmoment met de klant gepland om de samenwerking te evalueren en optimaliseren?
+Extra controle & optimalisatie: Interne & externe borging||Alle interne stakeholders op de hoogte?|Zijn alle interne stakeholders op de hoogte van de status en de vervolgstappen?
+Extra controle & optimalisatie: Interne & externe borging||Grondige evaluatie van het proces gedaan?|Is er een grondige evaluatie van het totale proces uitgevoerd om toekomstige trajecten te verbeteren?
+Algemene verankeringen en documentatie: Structuur & borging|Versterking van strategische keuzes en borging van de samenwerking.|Account Plan Canvas (standaard of 2.0) ingevuld?|Is het Account Plan Canvas volledig ingevuld?
+Algemene verankeringen en documentatie: Structuur & borging||Pijlers en BOTSAUTO navigatie toegepast?|Zijn alle relevante Pijlers uitgewerkt middels de BOTSAUTO Navigatie?
+CHECKLIST;
     }
 
     private function checklist_items() {
         $content = get_option( $this->option_name, $this->default_checklist() );
-        $lines = array_filter( array_map( 'trim', explode( "\n", $content ) ) );
-        return $lines;
+        $lines   = array_filter( array_map( 'trim', explode( "\n", $content ) ) );
+        $items   = array();
+        foreach ( $lines as $line ) {
+            $parts = array_map( 'trim', explode( '|', $line, 4 ) );
+            $items[] = array(
+                'phase'    => $parts[0] ?? '',
+                'desc'     => $parts[1] ?? '',
+                'question' => $parts[2] ?? '',
+                'item'     => $parts[3] ?? '',
+            );
+        }
+        return $items;
     }
 
     private function associate_items( $items ) {
         $assoc = array();
-        foreach ( $items as $line ) {
-            $assoc[ md5( $line ) ] = $line;
+        foreach ( $items as $item ) {
+            $key          = md5( wp_json_encode( $item ) );
+            $assoc[ $key ] = $item;
         }
         return $assoc;
     }
@@ -114,7 +167,7 @@ class BOTSAUTO_Checklist {
             $snapshot = $current_items;
         }
         $items_to_use = $snapshot;
-        $show_update  = $current_items !== $snapshot;
+        $show_update  = wp_json_encode( $current_items ) !== wp_json_encode( $snapshot );
 
         if ( isset( $_POST['update_items'] ) && $_POST['update_items'] ) {
             $items_to_use = $current_items;
@@ -125,7 +178,7 @@ class BOTSAUTO_Checklist {
         if ( $values && array_values( $values ) === $values ) {
             $tmp = array();
             $i   = 0;
-            foreach ( $snapshot as $hash => $text ) {
+            foreach ( $snapshot as $hash => $item ) {
                 if ( isset( $values[ $i ] ) ) {
                     $tmp[ $hash ] = true;
                 }
@@ -143,12 +196,36 @@ class BOTSAUTO_Checklist {
         }
         echo '<p><label>Naam: <input type="text" name="name" value="' . esc_attr($name) . '" required></label></p>';
         echo '<p><label>Email: <input type="email" name="email" value="' . esc_attr($email) . '" required></label></p>';
-        echo '<ul style="list-style:none">';
-        foreach ( $items_to_use as $hash => $item ) {
-            $checked = isset( $values[$hash] ) ? 'checked' : '';
-            echo '<li><label><input type="checkbox" name="answers['.$hash.']" '.$checked.'> '.esc_html($item).'</label></li>';
+        echo '<div class="botsauto-checklist">';
+        $last_phase = null;
+        $open_ul    = false;
+        foreach ( $items_to_use as $hash => $data ) {
+            if ( $data['phase'] !== $last_phase ) {
+                if ( $open_ul ) {
+                    echo '</ul>';
+                }
+                if ( $data['phase'] ) {
+                    echo '<h3>'.esc_html( $data['phase'] ).'</h3>';
+                }
+                if ( $data['desc'] ) {
+                    echo '<p>'.esc_html( $data['desc'] ).'</p>';
+                }
+                echo '<ul style="list-style:none">';
+                $open_ul    = true;
+                $last_phase = $data['phase'];
+            }
+            $checked = isset( $values[ $hash ] ) ? 'checked' : '';
+            echo '<li>';
+            if ( $data['question'] ) {
+                echo '<strong>'.esc_html( $data['question'] ).'</strong><br>';
+            }
+            echo '<label><input type="checkbox" name="answers['.$hash.']" '.$checked.'> '.esc_html( $data['item'] ).'</label>';
+            echo '</li>';
         }
-        echo '</ul>';
+        if ( $open_ul ) {
+            echo '</ul>';
+        }
+        echo '</div>';
         if ( $show_update ) {
             echo '<p><label><input type="checkbox" name="update_items" value="1"> De checklist is gewijzigd, nieuwe versie gebruiken</label></p>';
         }
@@ -238,9 +315,9 @@ class BOTSAUTO_Checklist {
         $pdf->Cell(0,10,$this->pdf_string('BOTSAUTO Checklist'),0,1);
         $pdf->Cell(0,10,$this->pdf_string('Naam: '.$name),0,1);
         $i = 0;
-        foreach ( $snapshot as $hash => $question ) {
+        foreach ( $snapshot as $hash => $item ) {
             $status = isset( $answers[ $hash ] ) ? 'Ja' : 'Nee';
-            $line = ($i + 1) . '. ' . $question . ' - ' . $status;
+            $line   = ($i + 1) . '. ' . $item['item'] . ' - ' . $status;
             $pdf->Cell(0,8,$this->pdf_string($line),0,1);
             $i++;
         }
