@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.5.0
+ * Version: 1.5.1
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
