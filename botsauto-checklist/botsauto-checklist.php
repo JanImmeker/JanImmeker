@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.2.1
+ * Version: 1.3.0
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -214,10 +214,10 @@ CHECKLIST;
         foreach ( $items_to_use as $hash => $data ) {
             if ( $data['phase'] !== $last_phase ) {
                 if ( $open_ul ) {
-                    echo '</ul>';
+                    echo '</ul></details>';
                 }
                 if ( $data['phase'] ) {
-                    echo '<h3>'.esc_html( $data['phase'] ).'</h3>';
+                    echo '<details class="botsauto-phase"><summary>'.esc_html( $data['phase'] ).'</summary>';
                 }
                 if ( $data['desc'] ) {
                     echo '<p>'.esc_html( $data['desc'] ).'</p>';
@@ -235,7 +235,7 @@ CHECKLIST;
             echo '</li>';
         }
         if ( $open_ul ) {
-            echo '</ul>';
+            echo '</ul></details>';
         }
         echo '</div>';
         if ( $show_update ) {
