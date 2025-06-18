@@ -10,4 +10,4 @@ De plugin genereert een PDF van de ingevulde checklist via de meegeleverde FPDF-
 
 Na het versturen ontvangt de gebruiker een e‑mail met de PDF in de bijlage en een unieke link om de checklist later te bewerken. De plugin stuurt de bezoeker na het opslaan automatisch terug naar dezelfde pagina met deze link in de URL.
 
-Voor het versturen van e‑mail gebruikt de plugin de standaard `wp_mail` functie, zodat eventuele SMTP-configuratie die in WordPress is ingesteld automatisch wordt toegepast.
+Voor het versturen van e‑mail gebruikt de plugin de standaard `wp_mail` functie. De plugin stelt tijdelijk de afzender in op het beheerdersadres van de site zodat mailplugins (zoals SMTP-plugins) correct kunnen werken.

@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.0.2
+ * Version: 1.0.3
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -29,10 +29,21 @@ class BOTSAUTO_Checklist {
         return 'text/html';
     }
 
+    public function mail_from( $orig ) {
+        return get_option( 'admin_email' );
+    }
+
+    public function mail_from_name( $orig ) {
+        return get_bloginfo( 'name' );
+    }
+
     private function send_email( $to, $subject, $body, $attachments = array() ) {
         add_filter( 'wp_mail_content_type', array( $this, 'mail_content_type' ) );
-        $headers = array( 'From: ' . get_bloginfo( 'name' ) . ' <' . get_option( 'admin_email' ) . '>' );
-        $sent = wp_mail( $to, $subject, $body, $headers, $attachments );
+        add_filter( 'wp_mail_from', array( $this, 'mail_from' ) );
+        add_filter( 'wp_mail_from_name', array( $this, 'mail_from_name' ) );
+        $sent = wp_mail( $to, $subject, $body, array(), $attachments );
+        remove_filter( 'wp_mail_from', array( $this, 'mail_from' ) );
+        remove_filter( 'wp_mail_from_name', array( $this, 'mail_from_name' ) );
         remove_filter( 'wp_mail_content_type', array( $this, 'mail_content_type' ) );
         return $sent;
     }
@@ -176,9 +187,10 @@ class BOTSAUTO_Checklist {
             $status = isset($answers[$i]) ? 'Ja' : 'Nee';
             $pdf->Cell(0,8,($i+1).'. '.$question.' - '.$status,0,1);
         }
-        $tmp = wp_tempnam('botsauto');
-        $pdf->Output($tmp,'F');
-        return $tmp;
+        $uploads = wp_upload_dir();
+        $file = trailingslashit( $uploads['path'] ) . 'botsauto-' . uniqid() . '.pdf';
+        $pdf->Output( $file, 'F' );
+        return $file;
     }
 }
 
