@@ -21,7 +21,18 @@ jQuery(function($){
 
   $(document).on('click','.botsauto-remove-item', function(e){
     e.preventDefault();
+    var phase = $(this).closest('.botsauto-phase');
     $(this).closest('.botsauto-item').remove();
+    if(!phase.find('.botsauto-item').length){
+      phase.remove();
+    }
+    updateSummaries();
+  });
+
+  $(document).on('click','.botsauto-remove-phase', function(e){
+    e.preventDefault();
+    $(this).closest('.botsauto-phase').remove();
+    updateSummaries();
   });
 
   $(document).on('input','.phase-field', updateSummaries);

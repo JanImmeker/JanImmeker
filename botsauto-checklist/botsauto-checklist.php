@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.4.0
+ * Version: 1.4.1
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -98,7 +98,7 @@ class BOTSAUTO_Checklist {
         foreach ( $items as $item ) {
             if ( $item['phase'] !== $current_phase ) {
                 if ( $current_phase !== null ) {
-                    echo '<p><button type="button" class="button botsauto-add-item">Item toevoegen</button></p></div></details>';
+                    echo '<p><button type="button" class="button botsauto-add-item">Item toevoegen</button> <button type="button" class="button botsauto-remove-phase">Fase verwijderen</button></p></div></details></div>';
                 }
                 echo '<div class="botsauto-phase"><details open><summary></summary>';
                 echo '<p>Fase: <input type="text" class="phase-field" value="' . esc_attr( $item['phase'] ) . '"></p>';
@@ -113,7 +113,7 @@ class BOTSAUTO_Checklist {
             echo '</div>';
         }
         if ( $current_phase !== null ) {
-            echo '<p><button type="button" class="button botsauto-add-item">Item toevoegen</button></p></div></details></div>';
+            echo '<p><button type="button" class="button botsauto-add-item">Item toevoegen</button> <button type="button" class="button botsauto-remove-phase">Fase verwijderen</button></p></div></details></div>';
         }
         echo '</div>'; // editor
         echo '<p><button type="button" class="button" id="botsauto-add-phase">Fase toevoegen</button></p>';
@@ -122,7 +122,7 @@ class BOTSAUTO_Checklist {
 
         // templates
         echo '<script type="text/template" id="botsauto-phase-template">';
-        echo '<div class="botsauto-phase"><details open><summary></summary><p>Fase: <input type="text" class="phase-field"></p><p>Toelichting: <input type="text" class="desc-field"></p><div class="botsauto-items"></div><p><button type="button" class="button botsauto-add-item">Item toevoegen</button></p></details></div>';
+        echo '<div class="botsauto-phase"><details open><summary></summary><p>Fase: <input type="text" class="phase-field"></p><p>Toelichting: <input type="text" class="desc-field"></p><div class="botsauto-items"></div><p><button type="button" class="button botsauto-add-item">Item toevoegen</button> <button type="button" class="button botsauto-remove-phase">Fase verwijderen</button></p></details></div>';
         echo '</script>';
         echo '<script type="text/template" id="botsauto-item-template">';
         echo '<div class="botsauto-item"><p>Vraag: <input type="text" class="question-field"></p><p>Checklist item: <input type="text" class="item-field"></p><p><button type="button" class="button botsauto-remove-item">Verwijder</button></p></div>';
