@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.6.0
+ * Version: 1.6.1
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -94,16 +94,27 @@ class BOTSAUTO_Checklist {
 
     public function register_post_types() {
         register_post_type( $this->post_type, array(
-            'public' => false,
-            'label'  => 'BOTSAUTO Submissions',
-            'supports' => array('title'),
-            'show_ui' => true,
+            'public'       => false,
+            'label'        => 'BOTSAUTO inzendingen',
+            'labels'       => array(
+                'name'          => 'BOTSAUTO inzendingen',
+                'singular_name' => 'BOTSAUTO Inzending',
+            ),
+            'supports'     => array('title'),
+            'show_ui'      => true,
+            'capabilities' => array('create_posts' => 'do_not_allow'),
+            'map_meta_cap' => true,
         ));
         register_post_type( $this->list_post_type, array(
-            'public' => false,
-            'label'  => 'BOTSAUTO Checklists',
-            'supports' => array('title'),
-            'show_ui' => true,
+            'public'       => false,
+            'label'        => 'BOTSAUTO Checklists',
+            'labels'       => array(
+                'name'               => 'BOTSAUTO Checklists',
+                'singular_name'      => 'BOTSAUTO Checklist',
+                'add_new_item'       => 'Checklist toevoegen',
+            ),
+            'supports'     => array('title'),
+            'show_ui'      => true,
         ));
     }
 
@@ -115,7 +126,9 @@ class BOTSAUTO_Checklist {
 
     public function meta_box_lines( $post ) {
         $content = get_post_meta( $post->ID, 'botsauto_lines', true );
-        if ( ! $content ) $content = $this->default_checklist();
+        if ( ! is_string( $content ) ) {
+            $content = '';
+        }
         echo '<textarea id="botsauto_content" name="botsauto_content" style="display:none">'.esc_textarea( $content ).'</textarea>';
         echo '<div id="botsauto-editor"></div>';
         echo '<p><button type="button" class="button" id="botsauto-add-phase">Fase toevoegen</button></p>';
@@ -129,13 +142,12 @@ class BOTSAUTO_Checklist {
     public function meta_box_shortcode( $post ) {
         echo '<p>[botsauto_checklist id="'.$post->ID.'"]</p>';
         $lists = get_posts( array( 'post_type' => $this->list_post_type, 'exclude' => array( $post->ID ), 'numberposts' => -1 ) );
-        if ( $lists ) {
-            echo '<p><select id="botsauto-import-select"><option value="">Checklist importeren...</option>';
-            foreach ( $lists as $l ) {
-                echo '<option value="'.$l->ID.'">'.esc_html( $l->post_title ).'</option>';
-            }
-            echo '</select> <button class="button" id="botsauto-import-btn">Import</button></p>';
+        echo '<p><select id="botsauto-import-select"><option value="">Checklist importeren...</option>';
+        echo '<option value="default">BOTSAUTO standaard</option>';
+        foreach ( $lists as $l ) {
+            echo '<option value="'.$l->ID.'">'.esc_html( $l->post_title ).'</option>';
         }
+        echo '</select> <button class="button" id="botsauto-import-btn">Import</button></p>';
     }
 
     public function meta_box_submission( $post ) {
@@ -181,8 +193,12 @@ class BOTSAUTO_Checklist {
 
     public function ajax_import() {
         if ( ! current_user_can( 'edit_posts' ) ) wp_die();
-        $id = intval( $_GET['id'] );
-        $content = get_post_meta( $id, 'botsauto_lines', true );
+        $id = $_GET['id'];
+        if ( $id === 'default' ) {
+            $content = $this->default_checklist();
+        } else {
+            $content = get_post_meta( intval( $id ), 'botsauto_lines', true );
+        }
         wp_send_json_success( $content );
     }
 

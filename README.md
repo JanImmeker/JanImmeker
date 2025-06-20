@@ -24,7 +24,7 @@ Deze structuur wordt zowel in de admin als op de frontend getoond.
 In het beheerscherm verschijnen de checklistregels gegroepeerd per fase in inklapbare secties.
 Met knoppen kan de beheerder eenvoudig fases, vragen en checklistitems toevoegen of verwijderen. De verwijderknoppen staan direct naast de invoervelden zodat alles netjes is uitgelijnd. Een fase kan direct worden verwijderd en verdwijnt automatisch wanneer alle onderliggende vragen worden weggehaald. Bij een vraag kunnen meerdere checklistitems worden toegevoegd.
 
-Ingezonden formulieren worden opgeslagen als custom post type **BOTSAUTO Submission**. In de lijst met submissions staat in een extra kolom van welke checklist de inzending afkomstig is. Bij het openen van een submission wordt de ingevulde checklist overzichtelijk weergegeven.
+Ingezonden formulieren worden opgeslagen als custom post type **BOTSAUTO inzendingen**. In de lijst met inzendingen staat in een extra kolom van welke checklist de inzending afkomstig is. Bij het openen van een inzending wordt de ingevulde checklist overzichtelijk weergegeven.
 
 Na het versturen ontvangt de gebruiker een e‑mail met de PDF in de bijlage en een unieke link om de checklist later te bewerken. De plugin stuurt de bezoeker na het opslaan automatisch terug naar dezelfde pagina met deze link in de URL. Speciale tekens worden voor de PDF geconverteerd naar Latin‑1 zodat woorden zoals "geïdentificeerd" correct worden weergegeven.
 
@@ -32,5 +32,5 @@ Wanneer de beheerder de checklist wijzigt terwijl een gebruiker al een ingevulde
 
 Voor het versturen van e‑mail gebruikt de plugin de standaard `wp_mail` functie. De afzender wordt expliciet gezet op het beheerdersadres van de site zodat SMTP-plugins de mail correct afleveren.
 
-Wanneer je de plugin verwijdert via het WordPress pluginoverzicht worden alle opgeslagen checklistregels eveneens verwijderd. Bij een nieuwe installatie wordt zo altijd de standaard checklist van de plugin geladen.
+Wanneer je de plugin verwijdert via het WordPress pluginoverzicht worden alle opgeslagen checklistregels eveneens verwijderd. Bij een nieuwe installatie wordt zo altijd de standaard checklist van de plugin geladen. Via het importmenu in het bewerkscherm kan deze originele checklist altijd opnieuw worden geïmporteerd onder de optie **BOTSAUTO standaard**.
 De standaardinstallatie bevat de complete BOTSAUTO Sales Checklist met alle fases, vragen en checklistitems, zodat je direct aan de slag kunt.

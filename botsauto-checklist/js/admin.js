@@ -10,7 +10,7 @@ jQuery(function($){
     var content = $('#botsauto_content').val() || '';
     var lines = content.split(/\n/);
     $('#botsauto-editor').empty();
-    var phase, questions;
+    var phase = null, questions = null;
     lines.forEach(function(line){
       if(!line) return;
       var parts = line.split('|');
@@ -22,17 +22,17 @@ jQuery(function($){
         questions = ph.find('.botsauto-questions');
         phase = parts[0];
       }
+      var q;
       if(parts[2]!=='' || !questions.children().length){
         questions.append($('#botsauto-question-template').html());
-        var q = questions.children().last();
+        q = questions.children().last();
         q.find('.question-field').val(parts[2]);
-        q.find('.botsauto-items').append($('#botsauto-item-template').html());
-        q = q.find('.botsauto-items');
       } else {
-        var q = questions.children().last().find('.botsauto-items');
+        q = questions.children().last();
       }
-      q.append($('#botsauto-item-template').html());
-      q.children().last().find('.item-field').val(parts[3]);
+      var items = q.find('.botsauto-items');
+      items.append($('#botsauto-item-template').html());
+      items.children().last().find('.item-field').val(parts[3]);
     });
     
     updateSummaries();
@@ -84,7 +84,7 @@ jQuery(function($){
 
   $(document).on('input','.phase-field',updateSummaries);
 
-  $('#botsauto-form').on('submit',function(){
+  $('form#post').on('submit',function(){
     var lines = [];
     $('#botsauto-editor .botsauto-phase').each(function(){
       var phase = $(this).find('.phase-field').first().val();
