@@ -602,25 +602,25 @@ CHECKLIST;
         echo '</form></div>';
         echo '<script>var botsautoOrig='.wp_json_encode($orig).';</script>';
         echo '<script>document.addEventListener("click",function(e){var b=e.target.closest(".botsauto-note-btn");if(b){e.preventDefault();var n=b.nextElementSibling;n.style.display=n.style.display==="none"?"block":"none";}});</script>';
-        echo '<script>
-document.addEventListener("DOMContentLoaded",function(){
-  if(typeof tinymce!=="undefined"){
-    tinymce.init({selector:"#'.$wrapper.' .botsauto-rich",menubar:false,toolbar:"bold italic underline link",branding:false});
+        echo "<script>
+document.addEventListener('DOMContentLoaded',function(){
+  if(typeof tinymce!=='undefined'){
+    tinymce.init({selector:'#{$wrapper} .botsauto-rich',menubar:false,toolbar:'bold italic underline link',branding:false});
   }
-  var form=document.querySelector("#'.$wrapper.' form");
+  var form=document.querySelector('#{$wrapper} form');
   if(!form)return;
-  form.addEventListener("submit",function(e){
-    if(typeof tinymce!="undefined") tinymce.triggerSave();
-    var changed=false;var orig=botsautoOrig||{answers:{},notes:{},completed:""};
-    var compNew=form.querySelector("input[name=completed]").checked?"1":"";
+  form.addEventListener('submit',function(e){
+    if(typeof tinymce!='undefined') tinymce.triggerSave();
+    var changed=false;var orig=botsautoOrig||{answers:{},notes:{},completed:''};
+    var compNew=form.querySelector(\"input[name=completed]\").checked?'1':'';
     if(orig.completed!==compNew) changed=true;
-    form.querySelectorAll("input[name^='answers']").forEach(function(inp){var h=inp.name.match(/answers\[(.+)\]/)[1];var v=inp.checked?"1":"";if((orig.answers&&orig.answers[h]?"1":"0")!=v) changed=true;});
-    form.querySelectorAll("textarea[name^='notes']").forEach(function(tx){var h=tx.name.match(/notes\[(.+)\]/)[1];if((orig.notes&&orig.notes[h]||"")!=tx.value) changed=true;});
-    var sendField=form.querySelector("input[name=send_pdf]");
-    if(orig.completed!="1"&&compNew==="1"){sendField.value="1";return;}
-    if(changed){if(confirm("Wil je de bijgewerkte PDF per e-mail ontvangen?")){sendField.value="1";}}
+    form.querySelectorAll(\"input[name^='answers']\").forEach(function(inp){var h=inp.name.match(/answers\\[(.+)\\]/)[1];var v=inp.checked?'1':'';if((orig.answers&&orig.answers[h]?'1':'0')!=v) changed=true;});
+    form.querySelectorAll(\"textarea[name^='notes']\").forEach(function(tx){var h=tx.name.match(/notes\\[(.+)\\]/)[1];if((orig.notes&&orig.notes[h]||'')!=tx.value) changed=true;});
+    var sendField=form.querySelector('input[name=send_pdf]');
+    if(orig.completed!='1'&&compNew==='1'){sendField.value='1';return;}
+    if(changed){if(confirm('Wil je de bijgewerkte PDF per e-mail ontvangen?')){sendField.value='1';}}
   });
-});</script>';
+});</script>";
         return ob_get_clean();
     }
 
