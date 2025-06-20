@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.12.1
+ * Version: 1.12.2
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -524,7 +524,7 @@ CHECKLIST;
              '#'.$wrapper.' .botsauto-phase>summary::-webkit-details-marker{display:none;}' .
              '#'.$wrapper.' .botsauto-phase>summary::before{content:"\25B6";position:absolute;left:0;}' .
              '#'.$wrapper.' .botsauto-phase[open]>summary::before{content:"\25BC";}' .
-             '#'.$wrapper.' .botsauto-question-text{color:'.$adv['question']['text-color'].'!important;font-size:'.$adv['question']['font-size'].';font-style:'.$adv['question']['font-style'].';margin:0 0 .2em;}' .
+             '#'.$wrapper.' .botsauto-question-text{color:'.$adv['question']['text-color'].'!important;font-size:'.$adv['question']['font-size'].';font-style:'.$adv['question']['font-style'].';margin:0 0 .2em;flex-basis:100%;}' .
              '#'.$wrapper.' .botsauto-header label{color:'.$style['primary'].'!important;}' .
              '#'.$wrapper.' .botsauto-checklist li{display:flex;flex-wrap:wrap;align-items:flex-start;margin-bottom:.5em;}' .
              '#'.$wrapper.' .botsauto-checklist label{color:'.$adv['item']['text-color'].'!important;font-size:'.$adv['item']['font-size'].';margin-left:.25em;flex:1;}' .

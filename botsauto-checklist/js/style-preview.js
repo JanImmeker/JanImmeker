@@ -33,7 +33,7 @@ jQuery(function($){
       css += w+' .botsauto-phase[open]>summary::before{content:"\25BC";}';
     }
     if(adv.question){
-      css += w+' .botsauto-question-text{color:'+adv.question['text-color']+';font-size:'+adv.question['font-size']+';font-style:'+adv.question['font-style']+';margin:0 0 .2em;}';
+      css += w+' .botsauto-question-text{color:'+adv.question['text-color']+';font-size:'+adv.question['font-size']+';font-style:'+adv.question['font-style']+';margin:0 0 .2em;flex-basis:100%;}';
     }
     css += w+' .botsauto-header label{color:'+style.primary+';}';
     if(adv.item){
