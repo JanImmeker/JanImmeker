@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.12.0
+ * Version: 1.12.1
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -524,7 +524,7 @@ CHECKLIST;
              '#'.$wrapper.' .botsauto-phase>summary::-webkit-details-marker{display:none;}' .
              '#'.$wrapper.' .botsauto-phase>summary::before{content:"\25B6";position:absolute;left:0;}' .
              '#'.$wrapper.' .botsauto-phase[open]>summary::before{content:"\25BC";}' .
-             '#'.$wrapper.' .botsauto-question{color:'.$adv['question']['text-color'].'!important;font-size:'.$adv['question']['font-size'].';font-style:'.$adv['question']['font-style'].';}' .
+             '#'.$wrapper.' .botsauto-question-text{color:'.$adv['question']['text-color'].'!important;font-size:'.$adv['question']['font-size'].';font-style:'.$adv['question']['font-style'].';margin:0 0 .2em;}' .
              '#'.$wrapper.' .botsauto-header label{color:'.$style['primary'].'!important;}' .
              '#'.$wrapper.' .botsauto-checklist li{display:flex;flex-wrap:wrap;align-items:flex-start;margin-bottom:.5em;}' .
              '#'.$wrapper.' .botsauto-checklist label{color:'.$adv['item']['text-color'].'!important;font-size:'.$adv['item']['font-size'].';margin-left:.25em;flex:1;}' .
@@ -578,7 +578,7 @@ CHECKLIST;
             $checked = isset( $values[ $hash ] ) ? 'checked' : '';
             echo '<li>';
             if ( $data['question'] ) {
-                echo '<strong>'.esc_html( $data['question'] ).'</strong><br>';
+                echo '<p class="botsauto-question-text">'.esc_html( $data['question'] ).'</p>';
             }
             $cid  = 'cb_'.esc_attr( $hash );
             $note  = isset( $notes[$hash] ) ? esc_textarea( $notes[$hash] ) : '';
@@ -609,6 +609,7 @@ document.addEventListener('DOMContentLoaded',function(){
   }
   var form=document.querySelector('#{$wrapper} form');
   if(!form)return;
+  var isNew=!form.querySelector("input[name=post_id]");
   form.addEventListener('submit',function(e){
     if(typeof tinymce!='undefined') tinymce.triggerSave();
     var changed=false;var orig=botsautoOrig||{answers:{},notes:{},completed:''};
@@ -617,7 +618,8 @@ document.addEventListener('DOMContentLoaded',function(){
     form.querySelectorAll(\"input[name^='answers']\").forEach(function(inp){var h=inp.name.match(/answers\\[(.+)\\]/)[1];var v=inp.checked?'1':'';if((orig.answers&&orig.answers[h]?'1':'0')!=v) changed=true;});
     form.querySelectorAll(\"textarea[name^='notes']\").forEach(function(tx){var h=tx.name.match(/notes\\[(.+)\\]/)[1];if((orig.notes&&orig.notes[h]||'')!=tx.value) changed=true;});
     var sendField=form.querySelector('input[name=send_pdf]');
-    if(orig.completed!='1'&&compNew==='1'){sendField.value='1';return;}
+    if(isNew){sendField.value="1";return;}
+    if(compNew==='1'){sendField.value="1";return;}
     if(changed){if(confirm('Wil je de bijgewerkte PDF per e-mail ontvangen?')){sendField.value='1';}}
   });
 });</script>";
@@ -682,9 +684,8 @@ document.addEventListener('DOMContentLoaded',function(){
             wp_redirect( $edit_url );
             exit;
         }
-        $send_pdf = isset( $_POST['send_pdf'] ) && $_POST['send_pdf'];
-        $old_completed = get_post_meta( $post_id, 'completed', true );
-        if ( $old_completed !== '1' && $completed === '1' ) {
+        $send_pdf = $post_id ? ( isset( $_POST['send_pdf'] ) && $_POST['send_pdf'] ) : true;
+        if ( $completed === '1' ) {
             $send_pdf = true;
         }
         if ( $send_pdf ) {
@@ -926,7 +927,7 @@ document.addEventListener('DOMContentLoaded',function(){
         echo '<button type="button" class="button" id="botsauto-toggle-mobile">'.esc_html__( 'Toon als mobiele gebruiker', 'botsauto-checklist' ).'</button>';
         echo '<style id="botsauto-preview-style"></style>';
         echo '<style>#botsauto-preview-container{border:1px solid #ddd;padding:10px;margin-top:1em;}#botsauto-preview-container.mobile{max-width:375px;}</style>';
-        echo '<div id="botsauto-preview-container"><div id="botsauto-preview">\n<form><div class="botsauto-header"><div class="botsauto-fields"><p><label>'.esc_html__( 'Titel', 'botsauto-checklist' ).': <input type="text" value="Demo"></label></p><p><label>'.esc_html__( 'Naam', 'botsauto-checklist' ).': <input type="text" value="Demo"></label></p><p><label>'.esc_html__( 'E-mail', 'botsauto-checklist' ).': <input type="email" value="demo@example.com"></label></p></div></div><div class="botsauto-checklist"><details class="botsauto-phase" open><summary>Fase</summary><ul style="list-style:none"><li><strong>Vraag?</strong><br><input type="checkbox" id="preview_cb" class="botsauto-checkbox"> <label for="preview_cb">Item</label></li></ul></details></div><p><input type="submit" class="button button-primary" value="Submit"></p></form></div></div>';
+        echo '<div id="botsauto-preview-container"><div id="botsauto-preview">\n<form><div class="botsauto-header"><div class="botsauto-fields"><p><label>'.esc_html__( 'Titel', 'botsauto-checklist' ).': <input type="text" value="Demo"></label></p><p><label>'.esc_html__( 'Naam', 'botsauto-checklist' ).': <input type="text" value="Demo"></label></p><p><label>'.esc_html__( 'E-mail', 'botsauto-checklist' ).': <input type="email" value="demo@example.com"></label></p></div></div><div class="botsauto-checklist"><details class="botsauto-phase" open><summary>Fase</summary><ul style="list-style:none"><li><p class="botsauto-question-text">Vraag?</p><input type="checkbox" id="preview_cb" class="botsauto-checkbox"> <label for="preview_cb">Item</label></li></ul></details></div><p><input type="submit" class="button button-primary" value="Submit"></p></form></div></div>';
         echo '<h2>'.esc_html__( 'Import / Export', 'botsauto-checklist' ).'</h2><p><a href="'.admin_url('admin-post.php?action=botsauto_export_style').'" class="button">'.esc_html__( 'Exporteren', 'botsauto-checklist' ).'</a></p>';
         echo '<form method="post" enctype="multipart/form-data"><input type="file" name="adv_import" accept="application/json" />';
         wp_nonce_field('botsauto_adv_import');
@@ -968,6 +969,7 @@ document.addEventListener('DOMContentLoaded',function(){
 
     public function output_frontend_style() {
         $o = $this->get_style_options();
+        $adv = $this->get_adv_style_options();
         $font_link = '';
         if ( strpos( $o['font'], 'Oswald' ) !== false ) {
             $font_link = '<link href="https://fonts.googleapis.com/css2?family=Oswald&display=swap" rel="stylesheet">';
@@ -987,7 +989,7 @@ document.addEventListener('DOMContentLoaded',function(){
             . '.botsauto-phase[open]>summary::before{content:"\25BC";}'
             . '.botsauto-checkbox{accent-color:' . esc_attr($o['primary']) . ';display:inline-block!important;width:auto!important;height:auto!important;appearance:auto!important;visibility:visible!important;}'
             . '.botsauto-checklist .button-primary{background:' . esc_attr($o['primary']) . ';border-color:' . esc_attr($o['primary']) . ';}'
-            . '.botsauto-completed{margin-top:1.5em;}'
+            . '.botsauto-completed{margin-top:2em;}'
             . '</style>';
     }
 

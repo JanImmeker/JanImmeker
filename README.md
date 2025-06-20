@@ -28,6 +28,7 @@ Met knoppen kan de beheerder eenvoudig fases, vragen en checklistitems toevoegen
 Ingezonden formulieren worden opgeslagen als custom post type **BOTSAUTO inzendingen**. De gebruiker geeft een titel, naam en e‑mailadres op. In de lijst met inzendingen staan de kolommen Titel, Naam, Email, Afgerond, Datum, Checklist en URL. De URL is de unieke link waarmee de gebruiker later verder kan gaan. In het bewerkscherm van een inzending worden deze gegevens samen met de ingevulde checklist getoond.
 
 Na het versturen ontvangt de gebruiker een e‑mail met de PDF in de bijlage en een unieke link om de checklist later te bewerken. De plugin stuurt de bezoeker na het opslaan automatisch terug naar dezelfde pagina met deze link in de URL. Speciale tekens worden voor de PDF geconverteerd naar Latin‑1 zodat woorden zoals "geïdentificeerd" correct worden weergegeven.
+Wanneer een gebruiker de checklist voor het eerst verzendt, wordt de PDF altijd automatisch gemaild.
 
 De inzending wordt verwerkt via `admin-post.php`. Controleer bij problemen of dit pad niet door een beveiligingsplugin wordt geblokkeerd.
 
