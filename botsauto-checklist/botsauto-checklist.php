@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.12.2
+ * Version: 1.12.3
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -45,6 +45,8 @@ class BOTSAUTO_Checklist {
                 'background' => '#d1eaf8',
                 'font'       => 'Arial, sans-serif',
                 'image'      => '',
+                'image_align'=> 'right',
+                'image_width'=> '150',
                 'note_icon'  => 'fa-clipboard',
             ) );
         }
@@ -128,7 +130,7 @@ class BOTSAUTO_Checklist {
                     'ajaxurl' => admin_url( 'admin-ajax.php' ),
                 ) );
             }
-        } elseif ( $hook === 'settings_page_botsauto-style' ) {
+        } elseif ( strpos( $hook, 'botsauto-style' ) !== false ) {
             wp_enqueue_script( 'botsauto-style-preview', plugin_dir_url( __FILE__ ) . 'js/style-preview.js', array( 'jquery' ), '1.0', true );
         }
     }
@@ -514,6 +516,7 @@ CHECKLIST;
         $style = $this->get_style_options();
         $adv   = $this->get_adv_style_options();
         $adv   = $this->get_adv_style_options();
+        $adv   = $this->get_adv_style_options();
         $custom = get_option( $this->custom_css_option, '' );
         $wrapper = 'botsauto-' . wp_generate_password(6, false, false);
         echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />';
@@ -536,7 +539,7 @@ CHECKLIST;
         echo '<p><label>'.esc_html__( 'E-mail', 'botsauto-checklist' ).': <input type="email" name="email" value="' . esc_attr($email) . '" required></label></p>';
         echo '</div>';
         if ( ! empty( $style['image'] ) ) {
-            echo '<div class="botsauto-logo"><img src="' . esc_url( $style['image'] ) . '" style="max-width:150px;height:auto;" /></div>';
+            echo '<div class="botsauto-logo"><img src="' . esc_url( $style['image'] ) . '" /></div>';
         }
         echo '</div>';
         echo '<div class="botsauto-checklist">';
@@ -712,6 +715,7 @@ document.addEventListener('DOMContentLoaded',function(){
         $pdf = new FPDF();
         $pdf->AddPage();
         $y = 20;
+        $style = $this->get_style_options();
         if ( $image ) {
             $uploads = wp_upload_dir();
             $path = $image;
@@ -719,11 +723,18 @@ document.addEventListener('DOMContentLoaded',function(){
                 $path = str_replace( $uploads['baseurl'], $uploads['basedir'], $image );
             }
             if ( @file_exists( $path ) ) {
-                $pdf->Image( $path, 150, 10, 40 );
-                $y = 50;
+                $width = intval( $style['image_width'] );
+                $wmm = $width * 0.26;
+                $x = 10;
+                if ( $style['image_align'] === 'center' ) {
+                    $x = (210 - $wmm) / 2;
+                } elseif ( $style['image_align'] === 'right' ) {
+                    $x = 210 - 10 - $wmm;
+                }
+                $pdf->Image( $path, $x, 10, $wmm );
+                $y = 10 + $wmm + 10;
             }
         }
-        $style = $this->get_style_options();
         $font_map = array(
             'Arial, sans-serif'         => 'Arial',
             'Helvetica, sans-serif'     => 'Helvetica',
@@ -784,6 +795,8 @@ document.addEventListener('DOMContentLoaded',function(){
             'background' => '#d1eaf8',
             'font'       => 'Arial, sans-serif',
             'image'      => '',
+            'image_align'=> 'right',
+            'image_width'=> '150',
             'note_icon'  => 'fa-clipboard',
         );
         $opt = get_option( $this->style_option, array() );
@@ -808,6 +821,8 @@ document.addEventListener('DOMContentLoaded',function(){
         $css .= "$selector .botsauto-phase[open]>summary::before{content:'\\25BC';}";
         $css .= "$selector .botsauto-question-text{color:{$adv['question']['text-color']}!important;font-size:{$adv['question']['font-size']};font-style:{$adv['question']['font-style']};margin:0 0 .2em;flex-basis:100%;}";
         $css .= "$selector .botsauto-header label{color:{$style['primary']}!important;}";
+        $css .= "$selector .botsauto-logo{text-align:{$style['image_align']};margin-bottom:1em;}";
+        $css .= "$selector .botsauto-logo img{max-width:{$style['image_width']}px;height:auto;}";
         $css .= "$selector .botsauto-checklist li{display:flex;flex-wrap:wrap;align-items:flex-start;margin-bottom:.5em;}";
         $css .= "$selector .botsauto-checklist label{color:{$adv['item']['text-color']}!important;font-size:{$adv['item']['font-size']};margin-left:.25em;flex:1;}";
         $css .= "$selector input:checked+label{color:{$adv['checked']['text-color']}!important;text-decoration:{$adv['checked']['text-decoration']};}";
@@ -883,6 +898,12 @@ document.addEventListener('DOMContentLoaded',function(){
         }
         echo '</select></td></tr>';
         echo '<tr><th scope="row">'.esc_html__( 'Afbeelding', 'botsauto-checklist' ).'</th><td><input type="text" id="botsauto-image" name="'.$this->style_option.'[image]" value="'.esc_attr($opts['image']).'" /> <button type="button" class="button" id="botsauto-image-btn">'.esc_html__( 'Selecteer afbeelding', 'botsauto-checklist' ).'</button></td></tr>';
+        echo '<tr><th scope="row">'.esc_html__( 'Uitlijning afbeelding', 'botsauto-checklist' ).'</th><td><select name="'.$this->style_option.'[image_align]">'.
+             '<option value="left" '.selected($opts['image_align'],'left',false).'>Links</option>'.
+             '<option value="center" '.selected($opts['image_align'],'center',false).'>Centraal</option>'.
+             '<option value="right" '.selected($opts['image_align'],'right',false).'>Rechts</option>'.
+             '</select></td></tr>';
+        echo '<tr><th scope="row">'.esc_html__( 'Breedte afbeelding (px)', 'botsauto-checklist' ).'</th><td><input type="number" name="'.$this->style_option.'[image_width]" value="'.esc_attr($opts['image_width']).'" /></td></tr>';
         echo '<tr><th scope="row">'.esc_html__( 'Notitie-icoon', 'botsauto-checklist' ).'</th><td><input type="text" name="'.$this->style_option.'[note_icon]" value="'.esc_attr($opts['note_icon']).'" /> <i class="fa '.esc_attr($opts['note_icon']).'"></i></td></tr>';
         echo '</table>';
         echo '<h2>Elementen</h2><table class="form-table">';
@@ -990,6 +1011,8 @@ document.addEventListener('DOMContentLoaded',function(){
             . '.botsauto-header .botsauto-fields{flex:1;margin-right:1em;max-width:500px;}'
             . '.botsauto-header .botsauto-fields p{margin:0;}'
             . '.botsauto-header label{color:' . esc_attr($o['primary']) . ';display:block;margin-bottom:.5em;}'
+            . '.botsauto-logo{text-align:' . esc_attr($o['image_align']) . ';margin-bottom:1em;}'
+            . '.botsauto-logo img{max-width:' . intval($o['image_width']) . 'px;height:auto;}'
             . '.botsauto-header input[type=text],.botsauto-header input[type=email]{width:' . esc_attr($adv['field']['width']) . ';box-sizing:border-box;border-radius:' . esc_attr($adv['field']['border-radius']) . ';border-style:' . esc_attr($adv['field']['border-style']) . ';border-width:' . esc_attr($adv['field']['border-width']) . ';border-color:' . esc_attr($adv['field']['border-color']) . ';background:' . esc_attr($adv['field']['background-color']) . ';color:' . esc_attr($adv['field']['text-color']) . ';}'
             . '.botsauto-checklist label{color:' . esc_attr($o['primary']) . ';display:inline-block;vertical-align:middle;}'
             . '.botsauto-checklist strong{color:' . esc_attr($o['primary']) . ';}'

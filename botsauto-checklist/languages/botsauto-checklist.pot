@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: botsauto-checklist 1.11.0\n"
+"Project-Id-Version: botsauto-checklist 1.12.3\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: \n"
 
@@ -24,6 +24,12 @@ msgid "Afbeelding"
 msgstr ""
 #: botsauto-checklist.php
 msgid "Selecteer afbeelding"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Uitlijning afbeelding"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Breedte afbeelding (px)"
 msgstr ""
 #: botsauto-checklist.php
 msgid "Voorbeeld"

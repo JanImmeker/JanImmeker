@@ -14,7 +14,10 @@ jQuery(function($){
       primary: $('input[name="botsauto_style[primary]"]').val(),
       text: $('input[name="botsauto_style[text]"]').val(),
       background: $('input[name="botsauto_style[background]"]').val(),
-      font: $('select[name="botsauto_style[font]"]').val()
+      font: $('select[name="botsauto_style[font]"]').val(),
+      image: $('#botsauto-image').val(),
+      image_align: $('select[name="botsauto_style[image_align]"]').val(),
+      image_width: $('input[name="botsauto_style[image_width]"]').val()
     };
   }
   function updatePreview(){
@@ -36,6 +39,12 @@ jQuery(function($){
       css += w+' .botsauto-question-text{color:'+adv.question['text-color']+';font-size:'+adv.question['font-size']+';font-style:'+adv.question['font-style']+';margin:0 0 .2em;flex-basis:100%;}';
     }
     css += w+' .botsauto-header label{color:'+style.primary+';}';
+    if(style.image){
+      css += w+' .botsauto-logo{text-align:'+style.image_align+';margin-bottom:1em;}';
+      css += w+' .botsauto-logo img{max-width:'+style.image_width+'px;height:auto;}';
+    } else {
+      css += w+' .botsauto-logo{display:none;}';
+    }
     if(adv.item){
       css += w+' .botsauto-checklist label{color:'+adv.item['text-color']+';font-size:'+adv.item['font-size']+';display:inline-block;vertical-align:middle;}';
     }
@@ -56,7 +65,7 @@ jQuery(function($){
     }
    $('#botsauto-preview-style').text(css);
  }
-  $('.color-field, select[name^="botsauto_style"], input[name^="botsauto_adv_style"]').on('input change', updatePreview);
+  $('.color-field, select[name^="botsauto_style"], input[name^="botsauto_adv_style"], #botsauto-image, input[name="botsauto_style[image_width]"], select[name="botsauto_style[image_align]"]').on('input change', updatePreview);
   $('#botsauto-toggle-mobile').on('click',function(){
     $('#botsauto-preview-container').toggleClass('mobile');
   });
