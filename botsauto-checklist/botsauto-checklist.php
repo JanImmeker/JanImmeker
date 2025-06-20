@@ -163,7 +163,7 @@ class BOTSAUTO_Checklist {
         echo '<script type="text/template" id="botsauto-question-template"><div class="botsauto-question"><p class="question-line"><label><span>Vraag:</span> <input type="text" class="question-field"></label> <button type="button" class="button botsauto-remove-question">Verwijder</button></p><div class="botsauto-items"></div><p><button type="button" class="button botsauto-add-item">Item toevoegen</button></p></div></script>';
         echo '<script type="text/template" id="botsauto-item-template"><div class="botsauto-item"><p class="item-line"><label><span>Checklist item:</span> <input type="text" class="item-field"></label> <button type="button" class="button botsauto-remove-item">Verwijder</button></p></div></script>';
         $s = $this->get_style_options();
-        echo '<style>#botsauto-editor p{display:flex;align-items:center;gap:6px;margin:4px 0;}#botsauto-editor label{flex:1;display:flex;align-items:center;min-width:0;color:' . esc_attr($s['primary']) . ';}#botsauto-editor label span{display:inline-block;width:140px;}#botsauto-editor input{flex:1;width:100%;max-width:none;}#botsauto-editor .question-line{margin-left:2em;}#botsauto-editor .item-line{margin-left:4em;}#botsauto-editor{background:' . esc_attr($s['background']) . ';color:' . esc_attr($s['text']) . ';font-family:' . esc_attr($s['font']) . ';}#botsauto-editor input[type=checkbox]{accent-color:' . esc_attr($s['primary']) . ';}#botsauto-editor .button{background:' . esc_attr($s['primary']) . ';border-color:' . esc_attr($s['primary']) . ';color:#fff;}</style>';
+        echo '<style>#botsauto-editor p{display:flex;align-items:center;gap:6px;margin:4px 0;}#botsauto-editor label{flex:1;display:flex;align-items:center;min-width:0;color:' . esc_attr($s['primary']) . ';}#botsauto-editor label span{display:inline-block;width:140px;}#botsauto-editor input{flex:1;width:100%;max-width:none;}#botsauto-editor .question-line{margin-left:2em;}#botsauto-editor .item-line{margin-left:4em;}#botsauto-editor{background:' . esc_attr($s['background']) . ';color:' . esc_attr($s['text']) . ';font-family:' . esc_attr($s['font']) . ';}#botsauto-editor input[type=checkbox]{accent-color:' . esc_attr($s['primary']) . ';display:inline-block!important;width:auto!important;height:auto!important;}#botsauto-editor .button{background:' . esc_attr($s['primary']) . ';border-color:' . esc_attr($s['primary']) . ';color:#fff;}</style>';
     }
 
     public function meta_box_shortcode( $post ) {
@@ -694,8 +694,7 @@ CHECKLIST;
             . '.botsauto-checklist label{color:' . esc_attr($o['primary']) . ';}'
             . '.botsauto-checklist strong{color:' . esc_attr($o['primary']) . ';}'
             . '.botsauto-phase>summary{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($o['primary']) . ';}'
-            . '.botsauto-phase>summary::-webkit-details-marker{display:none;}'
-            . '.botsauto-checklist input[type=checkbox]{accent-color:' . esc_attr($o['primary']) . ';}'
+            . '.botsauto-checklist input[type=checkbox]{accent-color:' . esc_attr($o['primary']) . ';display:inline-block!important;width:auto!important;height:auto!important;}'
             . '.botsauto-checklist .button-primary{background:' . esc_attr($o['primary']) . ';border-color:' . esc_attr($o['primary']) . ';}'
             . '.botsauto-completed{margin-top:1.5em;}'
             . '</style>';
