@@ -337,38 +337,38 @@ CHECKLIST;
     private function default_adv_style() {
         return array(
             'container' => array(
-                'font-size'        => '16px',
-                'padding'          => '10px',
+                'font-size'        => '18px',
+                'padding'          => '20px',
             ),
             'phase' => array(
                 'text-color'       => '#d14292',
-                'background-color' => 'transparent',
-                'font-size'        => '16px',
+                'background-color' => '',
+                'font-size'        => '22px',
                 'font-weight'      => 'bold',
             ),
             'question' => array(
-                'text-color' => '#00306a',
+                'text-color' => '#4d4d4d',
                 'font-style' => 'italic',
-                'font-size'  => '14px',
+                'font-size'  => '18px',
             ),
             'item' => array(
                 'text-color' => '#00306a',
-                'font-size'  => '14px',
+                'font-size'  => '16px',
             ),
             'button' => array(
                 'text-color'       => '#ffffff',
                 'background-color' => '#d14292',
-                'padding'          => '6px 12px',
-                'border-radius'    => '4px',
+                'padding'          => '9px 15px',
+                'border-radius'    => '8px',
             ),
             'field' => array(
                 'background-color' => '#ffffff',
                 'text-color'       => '#00306a',
-                'border-color'     => '#cccccc',
+                'border-color'     => '#4d4d4d',
             ),
             'checkbox' => array(
                 'color' => '#d14292',
-                'size'  => '16px',
+                'size'  => '20px',
             ),
         );
     }
@@ -470,7 +470,8 @@ CHECKLIST;
              '#'.$wrapper.' .botsauto-phase>summary::before{content:"\25B6";position:absolute;left:0;}' .
              '#'.$wrapper.' .botsauto-phase[open]>summary::before{content:"\25BC";}' .
              '#'.$wrapper.' .botsauto-question{color:'.$adv['question']['text-color'].'!important;font-size:'.$adv['question']['font-size'].';font-style:'.$adv['question']['font-style'].';}' .
-             '#'.$wrapper.' label{color:'.$style['primary'].'!important;}' .
+             '#'.$wrapper.' .botsauto-header label{color:'.$style['primary'].'!important;}' .
+             '#'.$wrapper.' .botsauto-checklist label{color:'.$adv['item']['text-color'].'!important;font-size:'.$adv['item']['font-size'].';}' .
              '#'.$wrapper.' .botsauto-checkbox{accent-color:'.$adv['checkbox']['color'].'!important;width:'.$adv['checkbox']['size'].'!important;height:'.$adv['checkbox']['size'].'!important;appearance:auto!important;}' .
              '#'.$wrapper.' .button-primary{background:'.$adv['button']['background-color'].'!important;color:'.$adv['button']['text-color'].'!important;padding:'.$adv['button']['padding'].';border-radius:'.$adv['button']['border-radius'].';}' .
              '#'.$wrapper.' input[type=text],#'.$wrapper.' input[type=email]{background:'.$adv['field']['background-color'].'!important;color:'.$adv['field']['text-color'].'!important;border-color:'.$adv['field']['border-color'].'!important;}' ;
