@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.9.2
+ * Version: 1.9.3
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -61,6 +61,8 @@ class BOTSAUTO_Checklist {
         add_action( 'save_post', array( $this, 'save_post' ) );
         add_filter( 'manage_' . $this->post_type . '_posts_columns', array( $this, 'submission_columns' ) );
         add_action( 'manage_' . $this->post_type . '_posts_custom_column', array( $this, 'submission_column_content' ), 10, 2 );
+        add_filter( 'manage_' . $this->list_post_type . '_posts_columns', array( $this, 'checklist_columns' ) );
+        add_action( 'manage_' . $this->list_post_type . '_posts_custom_column', array( $this, 'checklist_column_content' ), 10, 2 );
         add_shortcode( 'botsauto_checklist', array( $this, 'render_form' ) );
         add_action( 'admin_post_nopriv_botsauto_save', array( $this, 'handle_submit' ) );
         add_action( 'admin_post_botsauto_save', array( $this, 'handle_submit' ) );
@@ -131,6 +133,7 @@ class BOTSAUTO_Checklist {
                 'name'               => 'BOTSAUTO Checklists',
                 'singular_name'      => 'BOTSAUTO Checklist',
                 'add_new_item'       => 'Checklist toevoegen',
+                'edit_item'          => 'Checklist bewerken',
             ),
             'supports'     => array('title'),
             'show_ui'      => true,
@@ -156,7 +159,7 @@ class BOTSAUTO_Checklist {
         echo '<script type="text/template" id="botsauto-question-template"><div class="botsauto-question"><p class="question-line"><label><span>Vraag:</span> <input type="text" class="question-field"></label> <button type="button" class="button botsauto-remove-question">Verwijder</button></p><div class="botsauto-items"></div><p><button type="button" class="button botsauto-add-item">Item toevoegen</button></p></div></script>';
         echo '<script type="text/template" id="botsauto-item-template"><div class="botsauto-item"><p class="item-line"><label><span>Checklist item:</span> <input type="text" class="item-field"></label> <button type="button" class="button botsauto-remove-item">Verwijder</button></p></div></script>';
         $s = $this->get_style_options();
-        echo '<style>#botsauto-editor p{display:flex;align-items:center;gap:6px;margin:4px 0;}#botsauto-editor label{flex:1;display:flex;align-items:center;min-width:0;color:' . esc_attr($s['primary']) . ';}#botsauto-editor label span{display:inline-block;width:140px;}#botsauto-editor input{width:100%;max-width:400px;}#botsauto-editor .question-line{margin-left:2em;}#botsauto-editor .item-line{margin-left:4em;}#botsauto-editor{background:' . esc_attr($s['background']) . ';color:' . esc_attr($s['text']) . ';font-family:' . esc_attr($s['font']) . ';}#botsauto-editor input[type=checkbox]{accent-color:' . esc_attr($s['primary']) . ';}#botsauto-editor .button{background:' . esc_attr($s['primary']) . ';border-color:' . esc_attr($s['primary']) . ';color:#fff;}</style>';
+        echo '<style>#botsauto-editor p{display:flex;align-items:center;gap:6px;margin:4px 0;}#botsauto-editor label{flex:1;display:flex;align-items:center;min-width:0;color:' . esc_attr($s['primary']) . ';}#botsauto-editor label span{display:inline-block;width:140px;}#botsauto-editor input{flex:1;width:100%;max-width:none;}#botsauto-editor .question-line{margin-left:2em;}#botsauto-editor .item-line{margin-left:4em;}#botsauto-editor{background:' . esc_attr($s['background']) . ';color:' . esc_attr($s['text']) . ';font-family:' . esc_attr($s['font']) . ';}#botsauto-editor input[type=checkbox]{accent-color:' . esc_attr($s['primary']) . ';}#botsauto-editor .button{background:' . esc_attr($s['primary']) . ';border-color:' . esc_attr($s['primary']) . ';color:#fff;}</style>';
     }
 
     public function meta_box_shortcode( $post ) {
@@ -238,6 +241,24 @@ class BOTSAUTO_Checklist {
                     echo '<a href="' . esc_url( $url ) . '">link</a>';
                 }
                 break;
+        }
+    }
+
+    public function checklist_columns( $cols ) {
+        $new = array();
+        foreach ( $cols as $key => $val ) {
+            $new[ $key ] = $val;
+            if ( $key === 'title' ) {
+                $new['shortcode'] = 'Shortcode';
+            }
+        }
+        return $new;
+    }
+
+    public function checklist_column_content( $column, $post_id ) {
+        if ( $column === 'shortcode' ) {
+            $sc = '[botsauto_checklist id="' . $post_id . '"]';
+            echo '<span class="botsauto-shortcode" data-shortcode="' . esc_attr( $sc ) . '" style="cursor:pointer;">' . esc_html( $sc ) . '</span>';
         }
     }
 

@@ -112,5 +112,15 @@ jQuery(function($){
     });
   });
 
+  $(document).on('click','.botsauto-shortcode',function(e){
+    e.preventDefault();
+    var val = $(this).data('shortcode');
+    var tmp = $('<input>');
+    $('body').append(tmp);
+    tmp.val(val).select();
+    document.execCommand('copy');
+    tmp.remove();
+  });
+
   buildEditor();
 });
