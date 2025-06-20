@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.5.1
+ * Version: 1.6.0
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -14,28 +14,45 @@
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class BOTSAUTO_Checklist {
-    private $option_name = 'botsauto_checklist_items';
-    private $post_type = 'botsauto_submission';
+    private $post_type      = 'botsauto_submission';
+    private $list_post_type = 'botsauto_list';
 
     public static function install() {
-        $self = new self;
-        if ( false === get_option( $self->option_name, false ) ) {
-            add_option( $self->option_name, $self->default_checklist() );
+        $self = new self();
+        // create default checklist post if none exist
+        $exists = get_posts( array(
+            'post_type'   => $self->list_post_type,
+            'numberposts' => 1,
+        ) );
+        if ( ! $exists ) {
+            wp_insert_post( array(
+                'post_type'   => $self->list_post_type,
+                'post_title'  => 'BOTSAUTO Checklist',
+                'post_status' => 'publish',
+                'meta_input'  => array( 'botsauto_lines' => $self->default_checklist() ),
+            ) );
         }
     }
 
     public static function uninstall() {
-        $self = new self;
-        delete_option( $self->option_name );
+        $self = new self();
+        $lists = get_posts( array( 'post_type' => $self->list_post_type, 'numberposts' => -1 ) );
+        foreach ( $lists as $list ) {
+            wp_delete_post( $list->ID, true );
+        }
     }
 
     public function __construct() {
-        add_action( 'init', array( $this, 'register_post_type' ) );
-        add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+        add_action( 'init', array( $this, 'register_post_types' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
+        add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
+        add_action( 'save_post', array( $this, 'save_post' ) );
+        add_filter( 'manage_' . $this->post_type . '_posts_columns', array( $this, 'submission_columns' ) );
+        add_action( 'manage_' . $this->post_type . '_posts_custom_column', array( $this, 'submission_column_content' ), 10, 2 );
         add_shortcode( 'botsauto_checklist', array( $this, 'render_form' ) );
         add_action( 'admin_post_nopriv_botsauto_save', array( $this, 'handle_submit' ) );
         add_action( 'admin_post_botsauto_save', array( $this, 'handle_submit' ) );
+        add_action( 'wp_ajax_botsauto_import', array( $this, 'ajax_import' ) );
     }
 
     public function mail_from( $orig ) {
@@ -54,10 +71,15 @@ class BOTSAUTO_Checklist {
     }
 
     public function enqueue_admin_assets( $hook ) {
-        if ( $hook !== 'toplevel_page_botsauto-checklist' ) {
-            return;
+        global $post_type;
+        if ( $hook === 'post-new.php' || $hook === 'post.php' ) {
+            if ( $post_type === $this->list_post_type ) {
+                wp_enqueue_script( 'botsauto-admin', plugin_dir_url( __FILE__ ) . 'js/admin.js', array( 'jquery' ), '1.0', true );
+                wp_localize_script( 'botsauto-admin', 'botsautoAjax', array(
+                    'ajaxurl' => admin_url( 'admin-ajax.php' ),
+                ) );
+            }
         }
-        wp_enqueue_script( 'botsauto-admin', plugin_dir_url( __FILE__ ) . 'js/admin.js', array( 'jquery' ), '1.0', true );
     }
 
     private function pdf_string( $text ) {
@@ -70,90 +92,100 @@ class BOTSAUTO_Checklist {
         return utf8_decode( $text );
     }
 
-    public function register_post_type() {
+    public function register_post_types() {
         register_post_type( $this->post_type, array(
             'public' => false,
             'label'  => 'BOTSAUTO Submissions',
             'supports' => array('title'),
             'show_ui' => true,
         ));
+        register_post_type( $this->list_post_type, array(
+            'public' => false,
+            'label'  => 'BOTSAUTO Checklists',
+            'supports' => array('title'),
+            'show_ui' => true,
+        ));
     }
 
-    public function admin_menu() {
-        add_menu_page( 'BOTSAUTO Checklist', 'BOTSAUTO Checklist', 'manage_options', 'botsauto-checklist', array( $this, 'admin_page' ) );
+    public function add_meta_boxes() {
+        add_meta_box( 'botsauto_lines', 'Checklist items', array( $this, 'meta_box_lines' ), $this->list_post_type, 'normal', 'default' );
+        add_meta_box( 'botsauto_shortcode', 'Shortcode', array( $this, 'meta_box_shortcode' ), $this->list_post_type, 'side' );
+        add_meta_box( 'botsauto_submission', 'Inzending', array( $this, 'meta_box_submission' ), $this->post_type, 'normal' );
     }
 
-    public function admin_page() {
-        if ( isset( $_POST['checklist_content'] ) ) {
-            update_option( $this->option_name, wp_unslash( $_POST['checklist_content'] ) );
-            echo '<div class="updated"><p>Checklist opgeslagen.</p></div>';
-        }
-        $items   = $this->checklist_items();
-        $content = get_option( $this->option_name, $this->default_checklist() );
-        echo '<div class="wrap"><h1>Checklist beheer</h1>';
-        echo '<form method="post" id="botsauto-form">';
-        echo '<textarea id="botsauto_content" name="checklist_content" style="display:none;">' . esc_textarea( $content ) . '</textarea>';
-        echo '<style>
-        #botsauto-editor p{display:flex;align-items:center;gap:6px;margin:4px 0;}
-        #botsauto-editor label{flex:1;display:flex;align-items:center;min-width:0;}
-        #botsauto-editor label span{display:inline-block;width:140px;}
-        #botsauto-editor input{width:100%;max-width:400px;}
-        #botsauto-editor .question-line{margin-left:2em;}
-        #botsauto-editor .item-line{margin-left:4em;}
-        </style>';
-        echo '<div id="botsauto-editor">';
-        $current_phase = null;
-        $current_question = null;
-        foreach ( $items as $item ) {
-            if ( $item['phase'] !== $current_phase ) {
-                if ( $current_phase !== null ) {
-                    if ( $current_question !== null ) {
-                        echo '<p><button type="button" class="button botsauto-add-item">Item toevoegen</button></p></div>';
-                    }
-                    echo '</div><p><button type="button" class="button botsauto-add-question">Vraag toevoegen</button></p></details></div>';
-                }
-                echo '<div class="botsauto-phase"><details open><summary></summary>';
-                echo '<p class="phase-line"><label><span>Fase:</span> <input type="text" class="phase-field" value="' . esc_attr( $item['phase'] ) . '"></label> <button type="button" class="button botsauto-remove-phase">Verwijder</button></p>';
-                echo '<p class="desc-line"><label><span>Toelichting:</span> <input type="text" class="desc-field" value="' . esc_attr( $item['desc'] ) . '"></label></p>';
-                echo '<div class="botsauto-questions">';
-                $current_phase = $item['phase'];
-                $current_question = null;
-            }
-            if ( $item['question'] !== '' || $current_question === null ) {
-                if ( $current_question !== null ) {
-                    echo '<p><button type="button" class="button botsauto-add-item">Item toevoegen</button></p></div>';
-                }
-                echo '<div class="botsauto-question">';
-                echo '<p class="question-line"><label><span>Vraag:</span> <input type="text" class="question-field" value="' . esc_attr( $item['question'] ) . '"></label> <button type="button" class="button botsauto-remove-question">Verwijder</button></p>';
-                echo '<div class="botsauto-items">';
-                $current_question = $item['question'];
-            }
-            echo '<div class="botsauto-item"><p class="item-line"><label><span>Checklist item:</span> <input type="text" class="item-field" value="' . esc_attr( $item['item'] ) . '"></label> <button type="button" class="button botsauto-remove-item">Verwijder</button></p></div>';
-        }
-        if ( $current_phase !== null ) {
-            if ( $current_question !== null ) {
-                echo '<p><button type="button" class="button botsauto-add-item">Item toevoegen</button></p></div>';
-            }
-            echo '</div><p><button type="button" class="button botsauto-add-question">Vraag toevoegen</button></p></details></div>';
-        }
-        echo '</div>'; // editor
+    public function meta_box_lines( $post ) {
+        $content = get_post_meta( $post->ID, 'botsauto_lines', true );
+        if ( ! $content ) $content = $this->default_checklist();
+        echo '<textarea id="botsauto_content" name="botsauto_content" style="display:none">'.esc_textarea( $content ).'</textarea>';
+        echo '<div id="botsauto-editor"></div>';
         echo '<p><button type="button" class="button" id="botsauto-add-phase">Fase toevoegen</button></p>';
-        submit_button();
-        echo '</form>';
-
-        // templates
-        echo '<script type="text/template" id="botsauto-phase-template">';
-        echo '<div class="botsauto-phase"><details open><summary></summary><p class="phase-line"><label><span>Fase:</span> <input type="text" class="phase-field"></label> <button type="button" class="button botsauto-remove-phase">Verwijder</button></p><p class="desc-line"><label><span>Toelichting:</span> <input type="text" class="desc-field"></label></p><div class="botsauto-questions"></div><p><button type="button" class="button botsauto-add-question">Vraag toevoegen</button></p></details></div>';
-        echo '</script>';
-        echo '<script type="text/template" id="botsauto-question-template">';
-        echo '<div class="botsauto-question"><p class="question-line"><label><span>Vraag:</span> <input type="text" class="question-field"></label> <button type="button" class="button botsauto-remove-question">Verwijder</button></p><div class="botsauto-items"></div><p><button type="button" class="button botsauto-add-item">Item toevoegen</button></p></div>';
-        echo '</script>';
-        echo '<script type="text/template" id="botsauto-item-template">';
-        echo '<div class="botsauto-item"><p class="item-line"><label><span>Checklist item:</span> <input type="text" class="item-field"></label> <button type="button" class="button botsauto-remove-item">Verwijder</button></p></div>';
-        echo '</script>';
-
-        echo '</div>';
+        echo '<input type="hidden" name="botsauto_lines_nonce" value="'.wp_create_nonce('botsauto_lines').'" />';
+        echo '<script type="text/template" id="botsauto-phase-template"><div class="botsauto-phase"><details open><summary></summary><p class="phase-line"><label><span>Fase:</span> <input type="text" class="phase-field"></label> <button type="button" class="button botsauto-remove-phase">Verwijder</button></p><p class="desc-line"><label><span>Toelichting:</span> <input type="text" class="desc-field"></label></p><div class="botsauto-questions"></div><p><button type="button" class="button botsauto-add-question">Vraag toevoegen</button></p></details></div></script>';
+        echo '<script type="text/template" id="botsauto-question-template"><div class="botsauto-question"><p class="question-line"><label><span>Vraag:</span> <input type="text" class="question-field"></label> <button type="button" class="button botsauto-remove-question">Verwijder</button></p><div class="botsauto-items"></div><p><button type="button" class="button botsauto-add-item">Item toevoegen</button></p></div></script>';
+        echo '<script type="text/template" id="botsauto-item-template"><div class="botsauto-item"><p class="item-line"><label><span>Checklist item:</span> <input type="text" class="item-field"></label> <button type="button" class="button botsauto-remove-item">Verwijder</button></p></div></script>';
+        echo '<style>#botsauto-editor p{display:flex;align-items:center;gap:6px;margin:4px 0;}#botsauto-editor label{flex:1;display:flex;align-items:center;min-width:0;}#botsauto-editor label span{display:inline-block;width:140px;}#botsauto-editor input{width:100%;max-width:400px;}#botsauto-editor .question-line{margin-left:2em;}#botsauto-editor .item-line{margin-left:4em;}</style>';
     }
+
+    public function meta_box_shortcode( $post ) {
+        echo '<p>[botsauto_checklist id="'.$post->ID.'"]</p>';
+        $lists = get_posts( array( 'post_type' => $this->list_post_type, 'exclude' => array( $post->ID ), 'numberposts' => -1 ) );
+        if ( $lists ) {
+            echo '<p><select id="botsauto-import-select"><option value="">Checklist importeren...</option>';
+            foreach ( $lists as $l ) {
+                echo '<option value="'.$l->ID.'">'.esc_html( $l->post_title ).'</option>';
+            }
+            echo '</select> <button class="button" id="botsauto-import-btn">Import</button></p>';
+        }
+    }
+
+    public function meta_box_submission( $post ) {
+        $name = get_post_meta( $post->ID, 'name', true );
+        $email = get_post_meta( $post->ID, 'email', true );
+        $completed = get_post_meta( $post->ID, 'completed', true ) ? 'Ja' : 'Nee';
+        $snapshot = get_post_meta( $post->ID, 'items_snapshot', true );
+        $answers = get_post_meta( $post->ID, 'answers', true );
+        if ( ! is_array( $snapshot ) ) return;
+        echo '<p><strong>Naam:</strong> '.esc_html( $name ).'<br><strong>Email:</strong> '.esc_html( $email ).'<br><strong>Afgerond:</strong> '.$completed.'</p>';
+        echo '<ul>';
+        foreach ( $snapshot as $hash => $item ) {
+            $ck = isset( $answers[$hash] ) ? '&#10003;' : '&#10007;';
+            echo '<li>'.esc_html( $item['item'] ).' '.$ck.'</li>';
+        }
+        echo '</ul>';
+    }
+
+    public function save_post( $post_id ) {
+        if ( get_post_type( $post_id ) === $this->list_post_type ) {
+            if ( isset( $_POST['botsauto_lines_nonce'] ) && wp_verify_nonce( $_POST['botsauto_lines_nonce'], 'botsauto_lines' ) ) {
+                if ( isset( $_POST['botsauto_content'] ) ) {
+                    update_post_meta( $post_id, 'botsauto_lines', wp_unslash( $_POST['botsauto_content'] ) );
+                }
+            }
+        }
+    }
+
+    public function submission_columns( $cols ) {
+        $cols['checklist'] = 'Checklist';
+        return $cols;
+    }
+
+    public function submission_column_content( $column, $post_id ) {
+        if ( $column === 'checklist' ) {
+            $list_id = get_post_meta( $post_id, 'checklist_id', true );
+            if ( $list_id ) {
+                $title = get_the_title( $list_id );
+                echo esc_html( $title );
+            }
+        }
+    }
+
+    public function ajax_import() {
+        if ( ! current_user_can( 'edit_posts' ) ) wp_die();
+        $id = intval( $_GET['id'] );
+        $content = get_post_meta( $id, 'botsauto_lines', true );
+        wp_send_json_success( $content );
+    }
+
 
     private function default_checklist() {
         return <<<CHECKLIST
@@ -201,8 +233,11 @@ Algemene verankeringen en documentatie: Structuur & borging||Pijlers en BOTSAUTO
 CHECKLIST;
     }
 
-    private function checklist_items() {
-        $content = get_option( $this->option_name, $this->default_checklist() );
+    private function get_checklist_items( $list_id ) {
+        $content = get_post_meta( $list_id, 'botsauto_lines', true );
+        if ( ! $content ) {
+            $content = $this->default_checklist();
+        }
         $lines   = array_filter( array_map( 'trim', explode( "\n", $content ) ) );
         $items   = array();
         foreach ( $lines as $line ) {
@@ -227,6 +262,15 @@ CHECKLIST;
     }
 
     public function render_form( $atts ) {
+        $list_id = isset( $atts['id'] ) ? intval( $atts['id'] ) : 0;
+        if ( ! $list_id ) {
+            $first = get_posts( array( 'post_type' => $this->list_post_type, 'numberposts' => 1 ) );
+            if ( $first ) {
+                $list_id = $first[0]->ID;
+            } else {
+                return 'Checklist niet gevonden.';
+            }
+        }
         $token = isset( $_GET['botsauto_edit'] ) ? sanitize_text_field( $_GET['botsauto_edit'] ) : '';
         $post_id = $this->get_post_id_by_token( $token );
         $values = array();
@@ -238,9 +282,9 @@ CHECKLIST;
             $completed = get_post_meta( $post_id, 'completed', true );
             $email = get_post_meta( $post_id, 'email', true );
             $name = get_post_meta( $post_id, 'name', true );
+            $list_id = intval( get_post_meta( $post_id, 'checklist_id', true ) );
         }
-
-        $current_items = $this->associate_items( $this->checklist_items() );
+        $current_items = $this->associate_items( $this->get_checklist_items( $list_id ) );
         $snapshot      = $post_id ? get_post_meta( $post_id, 'items_snapshot', true ) : array();
         if ( ! is_array( $snapshot ) || empty( $snapshot ) ) {
             $snapshot = $current_items;
@@ -269,6 +313,7 @@ CHECKLIST;
         ob_start();
         echo '<form method="post" action="' . esc_url( admin_url('admin-post.php') ) . '">';
         echo '<input type="hidden" name="action" value="botsauto_save">';
+        echo '<input type="hidden" name="checklist_id" value="' . intval( $list_id ) . '" />';
         if ( $post_id ) {
             echo '<input type="hidden" name="post_id" value="' . intval($post_id) . '" />';
             echo '<input type="hidden" name="items_snapshot" value="' . esc_attr( wp_json_encode( $snapshot ) ) . '" />';
@@ -322,7 +367,8 @@ CHECKLIST;
         $email   = sanitize_email( $_POST['email'] );
         $completed = isset($_POST['completed']) ? '1' : '';
 
-        $current_items  = $this->associate_items( $this->checklist_items() );
+        $list_id       = isset( $_POST['checklist_id'] ) ? intval( $_POST['checklist_id'] ) : 0;
+        $current_items  = $this->associate_items( $this->get_checklist_items( $list_id ) );
         $snapshot_field = isset( $_POST['items_snapshot'] ) ? json_decode( stripslashes( $_POST['items_snapshot'] ), true ) : array();
         if ( ! is_array( $snapshot_field ) || empty( $snapshot_field ) ) {
             $snapshot_field = $current_items;
@@ -352,6 +398,7 @@ CHECKLIST;
         update_post_meta( $post_id, 'answers', $answers );
         update_post_meta( $post_id, 'items_snapshot', $snapshot );
         update_post_meta( $post_id, 'completed', $completed );
+        update_post_meta( $post_id, 'checklist_id', $list_id );
         $token = get_post_meta( $post_id, 'token', true );
         $referer = wp_get_referer();
         if ( ! $referer ) {

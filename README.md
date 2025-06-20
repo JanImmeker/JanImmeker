@@ -4,7 +4,13 @@ Dit repository bevat een eenvoudige WordPress plugin voor de BOTSAUTO Sales Chec
 
 Plaats de map `botsauto-checklist` in de map `wp-content/plugins` van je WordPress installatie en activeer de plugin.
 
-Gebruik de shortcode `[botsauto_checklist]` om de checklist op een pagina weer te geven. In de beheeromgeving verschijnt een menu item "BOTSAUTO Checklist" waar de checklist kan worden aangepast en ingezonden formulieren worden opgeslagen als custom post type.
+Elke checklist is een apart bericht van het type **BOTSAUTO Checklist**. De plugin installeert standaard één checklist met alle BOTSAUTO vragen maar de beheerder kan extra checklists aanmaken. Iedere checklist heeft een eigen shortcode:
+
+```
+[botsauto_checklist id="123"]
+```
+
+waarbij `123` het ID van de checklist is. In de lijstweergave van checklists wordt het juiste shortcode getoond. Een checklist kan de inhoud van een andere checklist importeren via het zijpaneel in het bewerkscherm.
 
 De plugin genereert een PDF van de ingevulde checklist via de meegeleverde FPDF-bibliotheek. Alleen het fontbestand `helvetica.php` is nodig en meegeleverd in `botsauto-checklist/lib/font`.
 
@@ -17,6 +23,8 @@ Voorbereiden|Korte uitleg fase|KEM toegepast?|Is de potentiële opdrachtgever ge
 Deze structuur wordt zowel in de admin als op de frontend getoond.
 In het beheerscherm verschijnen de checklistregels gegroepeerd per fase in inklapbare secties.
 Met knoppen kan de beheerder eenvoudig fases, vragen en checklistitems toevoegen of verwijderen. De verwijderknoppen staan direct naast de invoervelden zodat alles netjes is uitgelijnd. Een fase kan direct worden verwijderd en verdwijnt automatisch wanneer alle onderliggende vragen worden weggehaald. Bij een vraag kunnen meerdere checklistitems worden toegevoegd.
+
+Ingezonden formulieren worden opgeslagen als custom post type **BOTSAUTO Submission**. In de lijst met submissions staat in een extra kolom van welke checklist de inzending afkomstig is. Bij het openen van een submission wordt de ingevulde checklist overzichtelijk weergegeven.
 
 Na het versturen ontvangt de gebruiker een e‑mail met de PDF in de bijlage en een unieke link om de checklist later te bewerken. De plugin stuurt de bezoeker na het opslaan automatisch terug naar dezelfde pagina met deze link in de URL. Speciale tekens worden voor de PDF geconverteerd naar Latin‑1 zodat woorden zoals "geïdentificeerd" correct worden weergegeven.
 
