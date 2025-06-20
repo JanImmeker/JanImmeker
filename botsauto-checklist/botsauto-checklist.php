@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.9.0
+ * Version: 1.9.1
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -32,6 +32,16 @@ class BOTSAUTO_Checklist {
                 'post_title'  => 'BOTSAUTO Checklist',
                 'post_status' => 'publish',
                 'meta_input'  => array( 'botsauto_lines' => $self->default_checklist() ),
+            ) );
+        }
+
+        if ( ! get_option( $self->style_option ) ) {
+            update_option( $self->style_option, array(
+                'primary'    => '#d14292',
+                'text'       => '#00306a',
+                'background' => '#d1eaf8',
+                'font'       => 'Arial, sans-serif',
+                'image'      => '',
             ) );
         }
     }
@@ -146,7 +156,7 @@ class BOTSAUTO_Checklist {
         echo '<script type="text/template" id="botsauto-question-template"><div class="botsauto-question"><p class="question-line"><label><span>Vraag:</span> <input type="text" class="question-field"></label> <button type="button" class="button botsauto-remove-question">Verwijder</button></p><div class="botsauto-items"></div><p><button type="button" class="button botsauto-add-item">Item toevoegen</button></p></div></script>';
         echo '<script type="text/template" id="botsauto-item-template"><div class="botsauto-item"><p class="item-line"><label><span>Checklist item:</span> <input type="text" class="item-field"></label> <button type="button" class="button botsauto-remove-item">Verwijder</button></p></div></script>';
         $s = $this->get_style_options();
-        echo '<style>#botsauto-editor p{display:flex;align-items:center;gap:6px;margin:4px 0;}#botsauto-editor label{flex:1;display:flex;align-items:center;min-width:0;color:' . esc_attr($s['primary']) . ';}#botsauto-editor label span{display:inline-block;width:140px;}#botsauto-editor input{width:100%;max-width:400px;}#botsauto-editor .question-line{margin-left:2em;}#botsauto-editor .item-line{margin-left:4em;}#botsauto-editor{background:' . esc_attr($s['background']) . ';color:' . esc_attr($s['text']) . ';font-family:' . esc_attr($s['font']) . ';}#botsauto-editor input[type=checkbox]{accent-color:' . esc_attr($s['primary']) . ';}#botsauto-editor .button{background:' . esc_attr($s['primary']) . ';border-color:' . esc_attr($s['primary']) . ';}</style>';
+        echo '<style>#botsauto-editor p{display:flex;align-items:center;gap:6px;margin:4px 0;}#botsauto-editor label{flex:1;display:flex;align-items:center;min-width:0;color:' . esc_attr($s['primary']) . ';}#botsauto-editor label span{display:inline-block;width:140px;}#botsauto-editor input{width:100%;max-width:400px;}#botsauto-editor .question-line{margin-left:2em;}#botsauto-editor .item-line{margin-left:4em;}#botsauto-editor{background:' . esc_attr($s['background']) . ';color:' . esc_attr($s['text']) . ';font-family:' . esc_attr($s['font']) . ';}#botsauto-editor input[type=checkbox]{accent-color:' . esc_attr($s['primary']) . ';}#botsauto-editor .button{background:' . esc_attr($s['primary']) . ';border-color:' . esc_attr($s['primary']) . ';color:#fff;}</style>';
     }
 
     public function meta_box_shortcode( $post ) {
@@ -483,7 +493,7 @@ CHECKLIST;
         $body = 'Bedankt voor het invullen van de checklist. Bewaar deze link om later verder te gaan: '.$edit_url;
         $cc = get_option( $this->cc_option, '' );
         $headers = array();
-        if ( $cc ) { $headers[] = 'Cc: '.$cc; }
+        if ( $cc ) { $headers[] = 'Bcc: '.$cc; }
         $this->send_email( $email, 'Checklist bevestiging', $body, array( $pdf ), $headers );
         unlink( $pdf );
         wp_redirect( $edit_url );
@@ -509,6 +519,7 @@ CHECKLIST;
         require_once plugin_dir_path(__FILE__).'lib/fpdf.php';
         $pdf = new FPDF();
         $pdf->AddPage();
+        $y = 20;
         if ( $image ) {
             $uploads = wp_upload_dir();
             $path = $image;
@@ -517,18 +528,44 @@ CHECKLIST;
             }
             if ( @file_exists( $path ) ) {
                 $pdf->Image( $path, 150, 10, 40 );
+                $y = 50;
             }
         }
-        $pdf->SetFont('Arial','',12);
-        $pdf->Cell(0,10,$this->pdf_string('BOTSAUTO Checklist'),0,1);
-        $pdf->Cell(0,10,$this->pdf_string('Titel: '.$title),0,1);
-        $pdf->Cell(0,10,$this->pdf_string('Naam: '.$name),0,1);
-        $i = 0;
+        $style = $this->get_style_options();
+        $font_map = array(
+            'Arial, sans-serif'         => 'Arial',
+            'Helvetica, sans-serif'     => 'Helvetica',
+            '"Times New Roman", serif' => 'Times',
+            'Georgia, serif'            => 'Times',
+            'Oswald, sans-serif'        => 'Helvetica',
+        );
+        $pdf_font = isset( $font_map[ $style['font'] ] ) ? $font_map[ $style['font'] ] : 'Helvetica';
+        $pdf->SetFont( $pdf_font, '', 12 );
+        $pdf->SetXY(10, $y);
+        $pdf->MultiCell(0, 8, $this->pdf_string('BOTSAUTO Checklist'), 0, 'L');
+        $pdf->MultiCell(0, 8, $this->pdf_string('Titel: '.$title), 0, 'L');
+        $pdf->MultiCell(0, 8, $this->pdf_string('Naam: '.$name), 0, 'L');
+        $current_phase = '';
         foreach ( $snapshot as $hash => $item ) {
             $status = isset( $answers[ $hash ] ) ? 'Ja' : 'Nee';
-            $line   = ($i + 1) . '. ' . $item['item'] . ' - ' . $status;
-            $pdf->Cell(0,8,$this->pdf_string($line),0,1);
-            $i++;
+            if ( $item['phase'] !== $current_phase ) {
+                $pdf->Ln(4);
+                if ( $item['phase'] ) {
+                    $pdf->SetFont( $pdf_font, 'B', 12 );
+                    $pdf->MultiCell(0, 7, $this->pdf_string( $item['phase'] ), 0, 'L');
+                }
+                if ( $item['desc'] ) {
+                    $pdf->SetFont( $pdf_font, '', 10 );
+                    $pdf->MultiCell(0, 6, $this->pdf_string( $item['desc'] ), 0, 'L');
+                }
+                $current_phase = $item['phase'];
+            }
+            if ( $item['question'] ) {
+                $pdf->SetFont( $pdf_font, 'I', 10 );
+                $pdf->MultiCell(0, 6, $this->pdf_string( $item['question'] ), 0, 'L');
+            }
+            $pdf->SetFont( $pdf_font, '', 10 );
+            $pdf->MultiCell(0, 6, $this->pdf_string( '- '.$item['item'].' - '.$status ), 0, 'L');
         }
         $uploads = wp_upload_dir();
         $file = trailingslashit( $uploads['path'] ) . 'botsauto-' . uniqid() . '.pdf';
@@ -538,9 +575,9 @@ CHECKLIST;
 
     private function get_style_options() {
         $defaults = array(
-            'primary'    => '#2271b1',
-            'text'       => '#000000',
-            'background' => '#ffffff',
+            'primary'    => '#d14292',
+            'text'       => '#00306a',
+            'background' => '#d1eaf8',
             'font'       => 'Arial, sans-serif',
             'image'      => '',
         );
@@ -551,7 +588,7 @@ CHECKLIST;
     public function add_admin_pages() {
         add_menu_page( 'BOTSAUTO', 'BOTSAUTO', 'manage_options', 'botsauto-settings', array( $this, 'main_settings_page' ), 'dashicons-yes', 26 );
         add_submenu_page( 'botsauto-settings', 'BOTSAUTO stijl', 'Stijl', 'manage_options', 'botsauto-style', array( $this, 'settings_page' ) );
-        add_submenu_page( 'botsauto-settings', 'E-mail CC', 'E-mail CC', 'manage_options', 'botsauto-cc', array( $this, 'cc_page' ) );
+        add_submenu_page( 'botsauto-settings', 'E-mail BCC', 'E-mail BCC', 'manage_options', 'botsauto-cc', array( $this, 'cc_page' ) );
     }
 
     public function register_settings() {
@@ -598,7 +635,7 @@ CHECKLIST;
 
     public function cc_page() {
         $cc = get_option( $this->cc_option, '' );
-        echo '<div class="wrap"><h1>E-mail CC</h1><form method="post" action="options.php">';
+        echo '<div class="wrap"><h1>E-mail BCC</h1><form method="post" action="options.php">';
         settings_fields( 'botsauto_cc_group' );
         echo '<table class="form-table"><tr><th scope="row">E-mail adres</th><td><input type="email" name="'.$this->cc_option.'" value="'.esc_attr($cc).'" /></td></tr></table>';
         submit_button();

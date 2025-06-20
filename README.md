@@ -37,5 +37,5 @@ De standaardinstallatie bevat de complete BOTSAUTO Sales Checklist met alle fase
 
 ### Stijl aanpassen
 
-Na activering verschijnt onder **Instellingen → BOTSAUTO** een hoofdmenu met twee submenu's. In **Stijl** kies je de primaire kleur, tekstkleur, achtergrondkleur, het lettertype (waaronder Google Font *Oswald*) en kun je een afbeelding selecteren die rechtsboven in de checklist wordt getoond. Deze afbeelding komt ook in de PDF terecht. In het submenu **E-mail CC** kun je een adres instellen dat alle inzendingen in cc ontvangt.
-De primaire kleur bepaalt tevens de kleur van de checkboxen en de labels van titel, naam, e-mail en checklistitems.
+Na activering verschijnt onder **Instellingen → BOTSAUTO** een hoofdmenu met twee submenu's. In **Stijl** kies je de primaire kleur, tekstkleur, achtergrondkleur, het lettertype (waaronder Google Font *Oswald*) en kun je een afbeelding selecteren die rechtsboven in de checklist wordt getoond. Deze afbeelding komt ook in de PDF terecht. In het submenu **E-mail BCC** kun je een adres instellen dat alle inzendingen in bcc ontvangt. Bij een nieuwe installatie worden automatisch de kleuren `#d14292` (primair), `#00306a` (tekst) en `#d1eaf8` (achtergrond) ingesteld.
+De primaire kleur bepaalt tevens de kleur van de checkboxen en de labels van titel, naam, e‑mail en checklistitems.
