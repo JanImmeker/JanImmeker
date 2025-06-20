@@ -57,3 +57,7 @@ Alle labels in de plugin zijn vertaalbaar. Gebruik het bestand `languages/botsau
 ### Nieuwe mogelijkheden
 
 De checklist werkt nu ook op gewone Berichten. De velden **Titel**, **Naam** en **E‑mail** zijn gelijk uitgelijnd en hebben dezelfde breedte tot aan een eventuele afbeelding. Zowel deze velden als de uitklapbare fasetitel gebruiken het gekozen lettertype en de primaire kleur.
+
+Elke vraag kan nu een extra toelichting meekrijgen. Klik op het icoon naast een checklist‑item om een notitieveld te openen. Het gebruikte Font Awesome icoon is instelbaar op de pagina **Opmaak**.
+
+Bij elke inzending wordt een PDF-bestand bewaard. In de beheerder zie je een overzicht van alle gegenereerde PDF’s, met knoppen om het bestand opnieuw te versturen of een nieuwe versie te genereren. Alle PDF’s blijven bewaard in een log.

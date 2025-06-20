@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.11.1
+ * Version: 1.12.0
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -45,6 +45,7 @@ class BOTSAUTO_Checklist {
                 'background' => '#d1eaf8',
                 'font'       => 'Arial, sans-serif',
                 'image'      => '',
+                'note_icon'  => 'fa-clipboard',
             ) );
         }
 
@@ -84,6 +85,8 @@ class BOTSAUTO_Checklist {
         add_action( 'admin_post_botsauto_save', array( $this, 'handle_submit' ) );
         add_action( 'wp_ajax_botsauto_import', array( $this, 'ajax_import' ) );
         add_action( 'admin_post_botsauto_export_style', array( $this, 'export_style' ) );
+        add_action( 'admin_post_botsauto_generate_pdf', array( $this, 'admin_generate_pdf' ) );
+        add_action( 'admin_post_botsauto_resend_pdf', array( $this, 'admin_resend_pdf' ) );
         add_action( 'admin_menu', array( $this, 'add_admin_pages' ) );
         add_action( 'admin_init', array( $this, 'register_settings' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_color_picker_assets' ) );
@@ -211,6 +214,8 @@ class BOTSAUTO_Checklist {
         $url   = get_post_meta( $post->ID, 'edit_url', true );
         $snapshot = get_post_meta( $post->ID, 'items_snapshot', true );
         $answers = get_post_meta( $post->ID, 'answers', true );
+        $notes   = get_post_meta( $post->ID, 'notes', true );
+        $history = get_post_meta( $post->ID, 'pdf_history', true );
         if ( ! is_array( $snapshot ) ) return;
         echo '<p><strong>Titel:</strong> '.esc_html( $title ).'<br><strong>Naam:</strong> '.esc_html( $name ).'<br><strong>Email:</strong> '.esc_html( $email ).'<br><strong>Afgerond:</strong> '.$completed.'</p>';
         if ( $url ) {
@@ -219,9 +224,22 @@ class BOTSAUTO_Checklist {
         echo '<ul>';
         foreach ( $snapshot as $hash => $item ) {
             $ck = isset( $answers[$hash] ) ? '&#10003;' : '&#10007;';
-            echo '<li>'.esc_html( $item['item'] ).' '.$ck.'</li>';
+            $note = isset( $notes[$hash] ) ? ' - '.esc_html( wp_trim_words( strip_tags($notes[$hash]), 10 ) ) : '';
+            echo '<li>'.esc_html( $item['item'] ).' '.$ck.$note.'</li>';
         }
         echo '</ul>';
+        if ( $history && is_array( $history ) ) {
+            echo '<h4>PDF\'s</h4><ul>';
+            foreach ( $history as $h ) {
+                $file = esc_url( $h['file'] );
+                $time = esc_html( date_i18n( 'Y-m-d H:i', $h['time'] ) );
+                $link = wp_nonce_url( admin_url('admin-post.php?action=botsauto_resend_pdf&post_id='.$post->ID.'&file='.urlencode($file)), 'botsauto_resend_'.$post->ID );
+                echo '<li><a href="'.$file.'">'.basename( $file ).'</a> ('.$time.') - <a href="'.$link.'">'.esc_html__( 'Opnieuw versturen', 'botsauto-checklist' ).'</a></li>';
+            }
+            echo '</ul>';
+        }
+        $gen_url = wp_nonce_url( admin_url('admin-post.php?action=botsauto_generate_pdf&post_id='.$post->ID), 'botsauto_gen_'.$post->ID );
+        echo '<p><a href="'.$gen_url.'" class="button">'.esc_html__( 'Nieuwe PDF genereren', 'botsauto-checklist' ).'</a></p>';
     }
 
     public function save_post( $post_id ) {
@@ -448,6 +466,7 @@ CHECKLIST;
         $email = '';
         $name = '';
         $title = '';
+        $notes = array();
         if ( $post_id ) {
             $values = get_post_meta( $post_id, 'answers', true );
             $completed = get_post_meta( $post_id, 'completed', true );
@@ -455,6 +474,7 @@ CHECKLIST;
             $name = get_post_meta( $post_id, 'name', true );
             $title = get_the_title( $post_id );
             $list_id = intval( get_post_meta( $post_id, 'checklist_id', true ) );
+            $notes   = get_post_meta( $post_id, 'notes', true );
         }
         $current_items = $this->associate_items( $this->get_checklist_items( $list_id ) );
         $snapshot      = $post_id ? get_post_meta( $post_id, 'items_snapshot', true ) : array();
@@ -488,6 +508,7 @@ CHECKLIST;
         $adv   = $this->get_adv_style_options();
         $custom = get_option( $this->custom_css_option, '' );
         $wrapper = 'botsauto-' . wp_generate_password(6, false, false);
+        echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />';
         echo '<style>';
         echo '#'.$wrapper.' *,#'.$wrapper.' *::before,#'.$wrapper.' *::after{box-sizing:border-box;margin:0;padding:0;}' .
              '#'.$wrapper.'{color:'.$style['text'].';background:'.$style['background'].';font-size:'.$adv['container']['font-size'].';padding:'.$adv['container']['padding'].';font-family:'.$style['font'].';}' .
@@ -501,7 +522,10 @@ CHECKLIST;
              '#'.$wrapper.' input:checked+label{color:'.$adv['checked']['text-color'].'!important;text-decoration:'.$adv['checked']['text-decoration'].';}' .
              '#'.$wrapper.' .botsauto-checkbox{accent-color:'.$adv['checkbox']['color'].'!important;width:'.$adv['checkbox']['size'].'!important;height:'.$adv['checkbox']['size'].'!important;appearance:auto!important;}' .
              '#'.$wrapper.' .button-primary{background:'.$adv['button']['background-color'].'!important;color:'.$adv['button']['text-color'].'!important;padding:'.$adv['button']['padding'].';border-radius:'.$adv['button']['border-radius'].';}' .
-             '#'.$wrapper.' input[type=text],#'.$wrapper.' input[type=email]{background:'.$adv['field']['background-color'].'!important;color:'.$adv['field']['text-color'].'!important;border-color:'.$adv['field']['border-color'].'!important;border-radius:'.$adv['field']['border-radius'].';border-style:'.$adv['field']['border-style'].';border-width:'.$adv['field']['border-width'].';width:'.$adv['field']['width'].';box-sizing:border-box;}' ;
+             '#'.$wrapper.' input[type=text],#'.$wrapper.' input[type=email]{background:'.$adv['field']['background-color'].'!important;color:'.$adv['field']['text-color'].'!important;border-color:'.$adv['field']['border-color'].'!important;border-radius:'.$adv['field']['border-radius'].';border-style:'.$adv['field']['border-style'].';border-width:'.$adv['field']['border-width'].';width:'.$adv['field']['width'].';box-sizing:border-box;}' .
+             '#'.$wrapper.' .botsauto-note{margin-top:.5em;}' .
+             '#'.$wrapper.' .botsauto-note textarea{width:100%;height:80px;}' .
+             '#'.$wrapper.' .botsauto-note-btn{background:none;border:none;color:'.$style['primary'].';cursor:pointer;margin-left:5px;}';
         if ( strpos( $style['font'], 'Oswald' ) !== false ) {
             echo '@import url("https://fonts.googleapis.com/css2?family=Oswald&display=swap");';
         }
@@ -548,7 +572,9 @@ CHECKLIST;
                 echo '<strong>'.esc_html( $data['question'] ).'</strong><br>';
             }
             $cid = 'cb_'.esc_attr( $hash );
-            echo '<input type="checkbox" id="'.$cid.'" class="botsauto-checkbox" name="answers['.$hash.']" '.$checked.'> <label for="'.$cid.'">'.esc_html( $data['item'] ).'</label>';
+            $note = isset( $notes[$hash] ) ? esc_textarea( $notes[$hash] ) : '';
+            $icon = esc_attr( $style['note_icon'] );
+            echo '<input type="checkbox" id="'.$cid.'" class="botsauto-checkbox" name="answers['.$hash.']" '.$checked.'> <label for="'.$cid.'">'.esc_html( $data['item'] ).'</label> <button type="button" class="botsauto-note-btn"><i class="fa '.$icon.'"></i></button><div class="botsauto-note" style="display:none"><textarea name="notes['.$hash.']">'.$note.'</textarea></div>';
             echo '</li>';
         }
         if ( $open_ul ) {
@@ -563,6 +589,7 @@ CHECKLIST;
         $label = $post_id ? esc_html__( 'Opslaan', 'botsauto-checklist' ) : esc_html__( 'Checklist verzenden', 'botsauto-checklist' );
         echo '<p><input type="submit" class="button button-primary" value="'.esc_attr($label).'" /></p>';
         echo '</form></div>';
+        echo '<script>document.addEventListener("click",function(e){var b=e.target.closest(".botsauto-note-btn");if(b){e.preventDefault();var n=b.nextElementSibling;n.style.display=n.style.display==="none"?"block":"none";}});</script>';
         return ob_get_clean();
     }
 
@@ -583,9 +610,15 @@ CHECKLIST;
         $snapshot    = $use_current ? $current_items : $snapshot_field;
 
         $answers = array();
+        $notes   = array();
         if ( isset( $_POST['answers'] ) && is_array( $_POST['answers'] ) ) {
             foreach ( $_POST['answers'] as $hash => $val ) {
                 $answers[ sanitize_key( $hash ) ] = true;
+            }
+        }
+        if ( isset( $_POST['notes'] ) && is_array( $_POST['notes'] ) ) {
+            foreach ( $_POST['notes'] as $hash => $val ) {
+                $notes[ sanitize_key( $hash ) ] = wp_kses_post( $val );
             }
         }
         if ( $post_id ) {
@@ -602,6 +635,7 @@ CHECKLIST;
         update_post_meta( $post_id, 'name', $name );
         update_post_meta( $post_id, 'email', $email );
         update_post_meta( $post_id, 'answers', $answers );
+        update_post_meta( $post_id, 'notes', $notes );
         update_post_meta( $post_id, 'items_snapshot', $snapshot );
         update_post_meta( $post_id, 'completed', $completed );
         update_post_meta( $post_id, 'checklist_id', $list_id );
@@ -618,13 +652,18 @@ CHECKLIST;
             exit;
         }
         $style = $this->get_style_options();
-        $pdf = $this->generate_pdf( $title, $name, $answers, $snapshot, $style['image'] );
+        $pdf = $this->generate_pdf( $title, $name, $answers, $snapshot, $notes, $style['image'] );
         $body = sprintf( __( 'Bedankt voor het invullen van de checklist. Bewaar deze link om later verder te gaan: %s', 'botsauto-checklist' ), $edit_url );
         $cc = get_option( $this->cc_option, '' );
         $headers = array();
         if ( $cc ) { $headers[] = 'Bcc: '.$cc; }
         $this->send_email( $email, __( 'Checklist bevestiging', 'botsauto-checklist' ), $body, array( $pdf ), $headers );
-        unlink( $pdf );
+        $uploads = wp_upload_dir();
+        $url = str_replace( $uploads['basedir'], $uploads['baseurl'], $pdf );
+        $history = get_post_meta( $post_id, 'pdf_history', true );
+        if ( ! is_array( $history ) ) { $history = array(); }
+        $history[] = array( 'file' => $url, 'time' => time() );
+        update_post_meta( $post_id, 'pdf_history', $history );
         wp_redirect( $edit_url );
         exit;
     }
@@ -643,7 +682,7 @@ CHECKLIST;
         return 0;
     }
 
-    private function generate_pdf( $title, $name, $answers, $snapshot, $image = '' ) {
+    private function generate_pdf( $title, $name, $answers, $snapshot, $notes = array(), $image = '' ) {
         if ( ! defined( 'FPDF_FONTPATH' ) ) {
             define( 'FPDF_FONTPATH', plugin_dir_path( __FILE__ ) . 'lib/font/' );
         }
@@ -703,6 +742,10 @@ CHECKLIST;
             }
             $pdf->SetFont( $pdf_font, '', 10 );
             $pdf->MultiCell(0, 6, $this->pdf_string( '- '.$item['item'].' - '.$status ), 0, 'L');
+            if ( isset( $notes[$hash] ) && $notes[$hash] !== '' ) {
+                $pdf->SetFont( $pdf_font, '', 9 );
+                $pdf->MultiCell(0, 6, $this->pdf_string( strip_tags( $notes[$hash] ) ), 0, 'L');
+            }
             list( $r, $g, $b ) = $this->hex_to_rgb( $adv['item']['text-color'] );
             $pdf->SetTextColor( $r, $g, $b );
         }
@@ -719,6 +762,7 @@ CHECKLIST;
             'background' => '#d1eaf8',
             'font'       => 'Arial, sans-serif',
             'image'      => '',
+            'note_icon'  => 'fa-clipboard',
         );
         $opt = get_option( $this->style_option, array() );
         return wp_parse_args( $opt, $defaults );
@@ -795,6 +839,7 @@ CHECKLIST;
         }
         echo '</select></td></tr>';
         echo '<tr><th scope="row">'.esc_html__( 'Afbeelding', 'botsauto-checklist' ).'</th><td><input type="text" id="botsauto-image" name="'.$this->style_option.'[image]" value="'.esc_attr($opts['image']).'" /> <button type="button" class="button" id="botsauto-image-btn">'.esc_html__( 'Selecteer afbeelding', 'botsauto-checklist' ).'</button></td></tr>';
+        echo '<tr><th scope="row">'.esc_html__( 'Notitie-icoon', 'botsauto-checklist' ).'</th><td><input type="text" name="'.$this->style_option.'[note_icon]" value="'.esc_attr($opts['note_icon']).'" /> <i class="fa '.esc_attr($opts['note_icon']).'"></i></td></tr>';
         echo '</table>';
         echo '<h2>Elementen</h2><table class="form-table">';
         $labels = array(
@@ -905,6 +950,48 @@ CHECKLIST;
             . '.botsauto-checklist .button-primary{background:' . esc_attr($o['primary']) . ';border-color:' . esc_attr($o['primary']) . ';}'
             . '.botsauto-completed{margin-top:1.5em;}'
             . '</style>';
+    }
+
+    public function admin_generate_pdf() {
+        if ( ! current_user_can( 'edit_posts' ) ) wp_die();
+        $id = intval( $_GET['post_id'] );
+        check_admin_referer( 'botsauto_gen_' . $id );
+        $title = get_the_title( $id );
+        $name  = get_post_meta( $id, 'name', true );
+        $email = get_post_meta( $id, 'email', true );
+        $answers = get_post_meta( $id, 'answers', true );
+        $snapshot = get_post_meta( $id, 'items_snapshot', true );
+        $notes    = get_post_meta( $id, 'notes', true );
+        $style = $this->get_style_options();
+        $pdf = $this->generate_pdf( $title, $name, $answers, $snapshot, $notes, $style['image'] );
+        $uploads = wp_upload_dir();
+        $url = str_replace( $uploads['basedir'], $uploads['baseurl'], $pdf );
+        $history = get_post_meta( $id, 'pdf_history', true );
+        if ( ! is_array( $history ) ) { $history = array(); }
+        $history[] = array( 'file' => $url, 'time' => time() );
+        update_post_meta( $id, 'pdf_history', $history );
+        $body = sprintf( __( 'Hierbij de PDF van uw checklist: %s', 'botsauto-checklist' ), get_post_meta( $id, 'edit_url', true ) );
+        $cc = get_option( $this->cc_option, '' );
+        $headers = array();
+        if ( $cc ) { $headers[] = 'Bcc: '.$cc; }
+        $this->send_email( $email, __( 'Checklist PDF', 'botsauto-checklist' ), $body, array( $pdf ), $headers );
+        wp_redirect( get_edit_post_link( $id, 'url' ) );
+        exit;
+    }
+
+    public function admin_resend_pdf() {
+        if ( ! current_user_can( 'edit_posts' ) ) wp_die();
+        $id = intval( $_GET['post_id'] );
+        check_admin_referer( 'botsauto_resend_' . $id );
+        $file = esc_url_raw( $_GET['file'] );
+        $email = get_post_meta( $id, 'email', true );
+        $body = sprintf( __( 'Hierbij de PDF van uw checklist: %s', 'botsauto-checklist' ), get_post_meta( $id, 'edit_url', true ) );
+        $cc = get_option( $this->cc_option, '' );
+        $headers = array();
+        if ( $cc ) { $headers[] = 'Bcc: '.$cc; }
+        $this->send_email( $email, __( 'Checklist PDF', 'botsauto-checklist' ), $body, array( $file ), $headers );
+        wp_redirect( get_edit_post_link( $id, 'url' ) );
+        exit;
     }
 }
 
