@@ -41,7 +41,7 @@ De standaardinstallatie bevat de complete BOTSAUTO Sales Checklist met alle fase
 ### Stijl aanpassen
 
 Onder **Instellingen → BOTSAUTO** staat nu één submenu **Opmaak**. Hier kies je de primaire kleur, tekstkleur, achtergrondkleur, het lettertype (waaronder Google Font *Oswald*) en kun je een afbeelding selecteren die rechtsboven in de checklist verschijnt en ook in de PDF wordt opgenomen. In hetzelfde scherm stel je tevens de geavanceerde opmaak per element in (fase, vraag, item, knoppen, velden en checkboxen). De kleuren `#d14292` (primair), `#00306a` (tekst) en `#d1eaf8` (achtergrond) worden bij installatie als standaard ingesteld.
-De primaire kleur bepaalt ook de kleur van checkboxen en labels. Voor de geavanceerde stijl worden standaard onder meer een lettergrootte van **18px** voor de container en **22px** voor fasekoppen gebruikt, terwijl checklistitems in **#00306a** worden weergegeven. Deze waarden kun je allemaal aanpassen.
+De primaire kleur bepaalt ook de kleur van checkboxen en labels. Voor de geavanceerde stijl worden standaard onder meer een lettergrootte van **18px** voor de container en **22px** voor fasekoppen gebruikt, terwijl checklistitems in **#00306a** worden weergegeven. Invulvelden hebben standaard een afgeronde rand van **5px** met een dunne, solide lijn en nemen de volledige breedte in. Al deze waarden kun je aanpassen.
 
 Onderaan het scherm kun je de stijlinstellingen exporteren naar een JSON‑bestand en weer importeren. Een knop *Reset naar standaard* zet alle waarden terug. Via het submenu **E-mail BCC** kan een adres ingesteld worden dat elke inzending in bcc ontvangt.
 

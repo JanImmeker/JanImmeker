@@ -173,7 +173,8 @@ class BOTSAUTO_Checklist {
         echo '<script type="text/template" id="botsauto-question-template"><div class="botsauto-question"><p class="question-line"><label><span>Vraag:</span> <input type="text" class="question-field"></label> <button type="button" class="button botsauto-remove-question">Verwijder</button></p><div class="botsauto-items"></div><p><button type="button" class="button botsauto-add-item">Item toevoegen</button></p></div></script>';
         echo '<script type="text/template" id="botsauto-item-template"><div class="botsauto-item"><p class="item-line"><label><span>Checklist item:</span> <input type="text" class="item-field"></label> <button type="button" class="button botsauto-remove-item">Verwijder</button></p></div></script>';
         $s = $this->get_style_options();
-        echo '<style>#botsauto-editor p{display:flex;align-items:center;gap:6px;margin:4px 0;}#botsauto-editor label{flex:1;display:flex;align-items:center;min-width:0;color:' . esc_attr($s['primary']) . ';}#botsauto-editor label span{display:inline-block;width:140px;}#botsauto-editor input{flex:1;width:100%;max-width:none;}#botsauto-editor .question-line{margin-left:2em;}#botsauto-editor .item-line{margin-left:4em;}#botsauto-editor{background:' . esc_attr($s['background']) . ';color:' . esc_attr($s['text']) . ';font-family:' . esc_attr($s['font']) . ';}#botsauto-editor input[type=checkbox]{accent-color:' . esc_attr($s['primary']) . '!important;display:inline-block!important;width:auto!important;height:auto!important;appearance:auto!important;}#botsauto-editor .button{background:' . esc_attr($s['primary']) . ';border-color:' . esc_attr($s['primary']) . ';color:#fff;}#botsauto-editor .botsauto-phase>details>summary{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($s['primary']) . ';list-style:none;position:relative;padding-left:1.2em;}#botsauto-editor .botsauto-phase>details>summary::before{content:"\25B6";position:absolute;left:0;}#botsauto-editor .botsauto-phase>details[open]>summary::before{content:"\25BC";}</style>';
+        $adv = $this->get_adv_style_options();
+        echo '<style>#botsauto-editor p{display:flex;align-items:center;gap:6px;margin:4px 0;}#botsauto-editor label{flex:1;display:flex;align-items:center;min-width:0;color:' . esc_attr($s['primary']) . ';}#botsauto-editor label span{display:inline-block;width:140px;}#botsauto-editor input{flex:1;width:' . esc_attr($adv['field']['width']) . ';max-width:none;border-radius:' . esc_attr($adv['field']['border-radius']) . ';border-style:' . esc_attr($adv['field']['border-style']) . ';border-width:' . esc_attr($adv['field']['border-width']) . ';border-color:' . esc_attr($adv['field']['border-color']) . ';background:' . esc_attr($adv['field']['background-color']) . ';color:' . esc_attr($adv['field']['text-color']) . ';box-sizing:border-box;}#botsauto-editor .question-line{margin-left:2em;}#botsauto-editor .item-line{margin-left:4em;}#botsauto-editor{background:' . esc_attr($s['background']) . ';color:' . esc_attr($s['text']) . ';font-family:' . esc_attr($s['font']) . ';}#botsauto-editor input[type=checkbox]{accent-color:' . esc_attr($s['primary']) . '!important;display:inline-block!important;width:auto!important;height:auto!important;appearance:auto!important;}#botsauto-editor .button{background:' . esc_attr($s['primary']) . ';border-color:' . esc_attr($s['primary']) . ';color:#fff;}#botsauto-editor .botsauto-phase>details>summary{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($s['primary']) . ';list-style:none;position:relative;padding-left:1.2em;}#botsauto-editor .botsauto-phase>details>summary::before{content:"\25B6";position:absolute;left:0;}#botsauto-editor .botsauto-phase>details[open]>summary::before{content:"\25BC";}</style>';
     }
 
     public function meta_box_shortcode( $post ) {
@@ -365,6 +366,10 @@ CHECKLIST;
                 'background-color' => '#ffffff',
                 'text-color'       => '#00306a',
                 'border-color'     => '#4d4d4d',
+                'border-radius'    => '5px',
+                'border-style'     => 'solid',
+                'border-width'     => 'thin',
+                'width'            => '100%',
             ),
             'checkbox' => array(
                 'color' => '#d14292',
@@ -474,7 +479,7 @@ CHECKLIST;
              '#'.$wrapper.' .botsauto-checklist label{color:'.$adv['item']['text-color'].'!important;font-size:'.$adv['item']['font-size'].';}' .
              '#'.$wrapper.' .botsauto-checkbox{accent-color:'.$adv['checkbox']['color'].'!important;width:'.$adv['checkbox']['size'].'!important;height:'.$adv['checkbox']['size'].'!important;appearance:auto!important;}' .
              '#'.$wrapper.' .button-primary{background:'.$adv['button']['background-color'].'!important;color:'.$adv['button']['text-color'].'!important;padding:'.$adv['button']['padding'].';border-radius:'.$adv['button']['border-radius'].';}' .
-             '#'.$wrapper.' input[type=text],#'.$wrapper.' input[type=email]{background:'.$adv['field']['background-color'].'!important;color:'.$adv['field']['text-color'].'!important;border-color:'.$adv['field']['border-color'].'!important;}' ;
+             '#'.$wrapper.' input[type=text],#'.$wrapper.' input[type=email]{background:'.$adv['field']['background-color'].'!important;color:'.$adv['field']['text-color'].'!important;border-color:'.$adv['field']['border-color'].'!important;border-radius:'.$adv['field']['border-radius'].';border-style:'.$adv['field']['border-style'].';border-width:'.$adv['field']['border-width'].';width:'.$adv['field']['width'].';box-sizing:border-box;}' ;
         if ( strpos( $style['font'], 'Oswald' ) !== false ) {
             echo '@import url("https://fonts.googleapis.com/css2?family=Oswald&display=swap");';
         }
@@ -759,7 +764,21 @@ CHECKLIST;
         echo '</table>';
         echo '<h2>Elementen</h2><table class="form-table">';
         $labels = array('container'=>'Container','phase'=>'Fase','question'=>'Vraag','item'=>'Checklist item','button'=>'Knop','field'=>'Invulveld','checkbox'=>'Checkbox');
-        $field_labels = array('text-color'=>'Tekstkleur','background-color'=>'Achtergrondkleur','font-size'=>'Lettergrootte','font-weight'=>'Letterdikte','font-style'=>'Tekststijl','padding'=>'Padding','border-radius'=>'Randhoek','border-color'=>'Randkleur','color'=>'Kleur','size'=>'Grootte');
+        $field_labels = array(
+            'text-color'       => 'Tekstkleur',
+            'background-color' => 'Achtergrondkleur',
+            'font-size'        => 'Lettergrootte',
+            'font-weight'      => 'Letterdikte',
+            'font-style'       => 'Tekststijl',
+            'padding'          => 'Padding',
+            'border-radius'    => 'Randhoek',
+            'border-style'     => 'Randstijl',
+            'border-width'     => 'Randdikte',
+            'border-color'     => 'Randkleur',
+            'width'            => 'Breedte',
+            'color'            => 'Kleur',
+            'size'             => 'Grootte'
+        );
         foreach ( $this->default_adv_style() as $key => $vals ) {
             echo '<tr><th colspan="2"><h2>'.esc_html( $labels[$key] ).'</h2></th></tr>';
             foreach ( $vals as $field => $default ) {
@@ -827,7 +846,7 @@ CHECKLIST;
             . '.botsauto-header .botsauto-fields{flex:1;margin-right:1em;max-width:500px;}'
             . '.botsauto-header .botsauto-fields p{margin:0;}'
             . '.botsauto-header label{color:' . esc_attr($o['primary']) . ';display:block;margin-bottom:.5em;}'
-            . '.botsauto-header input[type=text],.botsauto-header input[type=email]{width:100%;box-sizing:border-box;}'
+            . '.botsauto-header input[type=text],.botsauto-header input[type=email]{width:' . esc_attr($adv['field']['width']) . ';box-sizing:border-box;border-radius:' . esc_attr($adv['field']['border-radius']) . ';border-style:' . esc_attr($adv['field']['border-style']) . ';border-width:' . esc_attr($adv['field']['border-width']) . ';border-color:' . esc_attr($adv['field']['border-color']) . ';background:' . esc_attr($adv['field']['background-color']) . ';color:' . esc_attr($adv['field']['text-color']) . ';}'
             . '.botsauto-checklist label{color:' . esc_attr($o['primary']) . ';}'
             . '.botsauto-checklist strong{color:' . esc_attr($o['primary']) . ';}'
             . '.botsauto-phase>summary{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($o['primary']) . ';list-style:none;position:relative;padding-left:1.2em;}'
