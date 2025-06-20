@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.7.0
+ * Version: 1.8.0
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -16,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class BOTSAUTO_Checklist {
     private $post_type      = 'botsauto_submission';
     private $list_post_type = 'botsauto_list';
+    private $style_option   = 'botsauto_style';
 
     public static function install() {
         $self = new self();
@@ -53,6 +54,10 @@ class BOTSAUTO_Checklist {
         add_action( 'admin_post_nopriv_botsauto_save', array( $this, 'handle_submit' ) );
         add_action( 'admin_post_botsauto_save', array( $this, 'handle_submit' ) );
         add_action( 'wp_ajax_botsauto_import', array( $this, 'ajax_import' ) );
+        add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
+        add_action( 'admin_init', array( $this, 'register_settings' ) );
+        add_action( 'wp_head', array( $this, 'output_frontend_style' ) );
+        add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_color_picker_assets' ) );
     }
 
     public function mail_from( $orig ) {
@@ -138,7 +143,8 @@ class BOTSAUTO_Checklist {
         echo '<script type="text/template" id="botsauto-phase-template"><div class="botsauto-phase"><details open><summary></summary><p class="phase-line"><label><span>Fase:</span> <input type="text" class="phase-field"></label> <button type="button" class="button botsauto-remove-phase">Verwijder</button></p><p class="desc-line"><label><span>Toelichting:</span> <input type="text" class="desc-field"></label></p><div class="botsauto-questions"></div><p><button type="button" class="button botsauto-add-question">Vraag toevoegen</button></p></details></div></script>';
         echo '<script type="text/template" id="botsauto-question-template"><div class="botsauto-question"><p class="question-line"><label><span>Vraag:</span> <input type="text" class="question-field"></label> <button type="button" class="button botsauto-remove-question">Verwijder</button></p><div class="botsauto-items"></div><p><button type="button" class="button botsauto-add-item">Item toevoegen</button></p></div></script>';
         echo '<script type="text/template" id="botsauto-item-template"><div class="botsauto-item"><p class="item-line"><label><span>Checklist item:</span> <input type="text" class="item-field"></label> <button type="button" class="button botsauto-remove-item">Verwijder</button></p></div></script>';
-        echo '<style>#botsauto-editor p{display:flex;align-items:center;gap:6px;margin:4px 0;}#botsauto-editor label{flex:1;display:flex;align-items:center;min-width:0;}#botsauto-editor label span{display:inline-block;width:140px;}#botsauto-editor input{width:100%;max-width:400px;}#botsauto-editor .question-line{margin-left:2em;}#botsauto-editor .item-line{margin-left:4em;}</style>';
+        $s = $this->get_style_options();
+        echo '<style>#botsauto-editor p{display:flex;align-items:center;gap:6px;margin:4px 0;}#botsauto-editor label{flex:1;display:flex;align-items:center;min-width:0;}#botsauto-editor label span{display:inline-block;width:140px;}#botsauto-editor input{width:100%;max-width:400px;}#botsauto-editor .question-line{margin-left:2em;}#botsauto-editor .item-line{margin-left:4em;}#botsauto-editor{background:' . esc_attr($s['background']) . ';color:' . esc_attr($s['text']) . ';font-family:' . esc_attr($s['font']) . ';}#botsauto-editor .button{background:' . esc_attr($s['primary']) . ';border-color:' . esc_attr($s['primary']) . ';}</style>';
     }
 
     public function meta_box_shortcode( $post ) {
@@ -505,6 +511,63 @@ CHECKLIST;
         $file = trailingslashit( $uploads['path'] ) . 'botsauto-' . uniqid() . '.pdf';
         $pdf->Output( $file, 'F' );
         return $file;
+    }
+
+    private function get_style_options() {
+        $defaults = array(
+            'primary'    => '#2271b1',
+            'text'       => '#000000',
+            'background' => '#ffffff',
+            'font'       => 'Arial, sans-serif',
+        );
+        $opt = get_option( $this->style_option, array() );
+        return wp_parse_args( $opt, $defaults );
+    }
+
+    public function add_settings_page() {
+        add_options_page( 'BOTSAUTO stijl', 'BOTSAUTO stijl', 'manage_options', 'botsauto-style', array( $this, 'settings_page' ) );
+    }
+
+    public function register_settings() {
+        register_setting( 'botsauto_style_group', $this->style_option );
+    }
+
+    public function enqueue_color_picker_assets( $hook ) {
+        if ( $hook === 'settings_page_botsauto-style' ) {
+            wp_enqueue_style( 'wp-color-picker' );
+            wp_enqueue_script( 'wp-color-picker' );
+            wp_add_inline_script( 'wp-color-picker', 'jQuery(function($){$(".color-field").wpColorPicker();});' );
+        }
+    }
+
+    public function settings_page() {
+        $opts  = $this->get_style_options();
+        $fonts = array(
+            'Arial, sans-serif'         => 'Arial',
+            'Helvetica, sans-serif'     => 'Helvetica',
+            '"Times New Roman", serif' => 'Times New Roman',
+            'Georgia, serif'            => 'Georgia',
+        );
+        echo '<div class="wrap"><h1>BOTSAUTO stijl</h1><form method="post" action="options.php">';
+        settings_fields( 'botsauto_style_group' );
+        echo '<table class="form-table">';
+        echo '<tr><th scope="row">Primaire kleur</th><td><input type="text" class="color-field" name="'.$this->style_option.'[primary]" value="'.esc_attr($opts['primary']).'" /></td></tr>';
+        echo '<tr><th scope="row">Tekstkleur</th><td><input type="text" class="color-field" name="'.$this->style_option.'[text]" value="'.esc_attr($opts['text']).'" /></td></tr>';
+        echo '<tr><th scope="row">Achtergrondkleur</th><td><input type="text" class="color-field" name="'.$this->style_option.'[background]" value="'.esc_attr($opts['background']).'" /></td></tr>';
+        echo '<tr><th scope="row">Lettertype</th><td><select name="'.$this->style_option.'[font]">';
+        foreach ( $fonts as $val => $label ) {
+            $sel = selected( $opts['font'], $val, false );
+            echo '<option value="'.esc_attr($val).'" '.$sel.'>'.esc_html($label).'</option>';
+        }
+        echo '</select></td></tr>';
+        echo '</table>';
+        submit_button();
+        echo '</form></div>';
+    }
+
+    public function output_frontend_style() {
+        $o = $this->get_style_options();
+        echo '<style class="botsauto-style">.botsauto-checklist{background:' . esc_attr($o['background']) . ';color:' . esc_attr($o['text']) . ';font-family:' . esc_attr($o['font']) . ';}.botsauto-checklist .button-primary{background:' . esc_attr($o['primary']) . ';border-color:' . esc_attr($o['primary']) . ';}</style>';
     }
 }
 

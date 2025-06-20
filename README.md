@@ -34,3 +34,7 @@ Voor het versturen van e‑mail gebruikt de plugin de standaard `wp_mail` functi
 
 Wanneer je de plugin verwijdert via het WordPress pluginoverzicht worden alle opgeslagen checklistregels eveneens verwijderd. Bij een nieuwe installatie wordt zo altijd de standaard checklist van de plugin geladen. Via het importmenu in het bewerkscherm kan deze originele checklist altijd opnieuw worden geïmporteerd onder de optie **BOTSAUTO standaard**.
 De standaardinstallatie bevat de complete BOTSAUTO Sales Checklist met alle fases, vragen en checklistitems, zodat je direct aan de slag kunt.
+
+### Stijl aanpassen
+
+Via **Instellingen → BOTSAUTO stijl** kun je de primaire kleur, tekstkleur, achtergrondkleur en het lettertype van de checklist wijzigen. De gekozen waarden worden toegepast in het beheerscherm en op de frontend.
