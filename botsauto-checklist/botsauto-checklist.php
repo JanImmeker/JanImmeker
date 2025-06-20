@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.9.5
+ * Version: 1.9.6
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -450,7 +450,7 @@ CHECKLIST;
             if ( $data['question'] ) {
                 echo '<strong>'.esc_html( $data['question'] ).'</strong><br>';
             }
-            echo '<label><input type="checkbox" name="answers['.$hash.']" '.$checked.'> '.esc_html( $data['item'] ).'</label>';
+            echo '<label><input type="checkbox" class="botsauto-checkbox" name="answers['.$hash.']" '.$checked.'> '.esc_html( $data['item'] ).'</label>';
             echo '</li>';
         }
         if ( $open_ul ) {
@@ -458,10 +458,10 @@ CHECKLIST;
         }
         echo '</div>';
         if ( $show_update ) {
-            echo '<p><label><input type="checkbox" name="update_items" value="1"> De checklist is gewijzigd, nieuwe versie gebruiken</label></p>';
+            echo '<p><label><input type="checkbox" class="botsauto-checkbox" name="update_items" value="1"> De checklist is gewijzigd, nieuwe versie gebruiken</label></p>';
         }
         $c = $completed ? 'checked' : '';
-        echo '<p><label><input type="checkbox" name="completed" value="1" '.$c.'> Checklist afgerond</label></p>';
+        echo '<p><label><input type="checkbox" class="botsauto-checkbox" name="completed" value="1" '.$c.'> Checklist afgerond</label></p>';
         $label = $post_id ? 'Opslaan' : 'Checklist verzenden';
         echo '<p><input type="submit" class="button button-primary" value="'.esc_attr($label).'"></p>';
         echo '</form>';
@@ -694,7 +694,9 @@ CHECKLIST;
             . '.botsauto-checklist label{color:' . esc_attr($o['primary']) . ';}'
             . '.botsauto-checklist strong{color:' . esc_attr($o['primary']) . ';}'
             . '.botsauto-phase>summary{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($o['primary']) . ';}'
-            . '.botsauto-checklist input[type=checkbox]{accent-color:' . esc_attr($o['primary']) . ';display:inline-block!important;width:auto!important;height:auto!important;}'
+            . '.botsauto-phase>summary::-webkit-details-marker{display:list-item;}'
+            . '.botsauto-phase>summary::marker{color:' . esc_attr($o['primary']) . ';}'
+            . '.botsauto-checkbox{accent-color:' . esc_attr($o['primary']) . ';display:inline-block!important;width:auto!important;height:auto!important;appearance:auto!important;visibility:visible!important;}'
             . '.botsauto-checklist .button-primary{background:' . esc_attr($o['primary']) . ';border-color:' . esc_attr($o['primary']) . ';}'
             . '.botsauto-completed{margin-top:1.5em;}'
             . '</style>';

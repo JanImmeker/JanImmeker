@@ -41,6 +41,8 @@ De standaardinstallatie bevat de complete BOTSAUTO Sales Checklist met alle fase
 Na activering verschijnt onder **Instellingen → BOTSAUTO** een hoofdmenu met twee submenu's. In **Stijl** kies je de primaire kleur, tekstkleur, achtergrondkleur, het lettertype (waaronder Google Font *Oswald*) en kun je een afbeelding selecteren die rechtsboven in de checklist wordt getoond. Deze afbeelding komt ook in de PDF terecht. In het submenu **E-mail BCC** kun je een adres instellen dat alle inzendingen in bcc ontvangt. Bij een nieuwe installatie worden automatisch de kleuren `#d14292` (primair), `#00306a` (tekst) en `#d1eaf8` (achtergrond) ingesteld.
 De primaire kleur bepaalt tevens de kleur van de checkboxen en de labels van titel, naam, e‑mail en checklistitems.
 
+Alle elementen van de checklist krijgen hun eigen CSS-class, zodat thema-stijlen geen ongewenste invloed hebben. Mocht een thema de standaard checkbox of de marker van `<summary>` verbergen, dan zorgt de pluginstijl ervoor dat deze onderdelen toch zichtbaar blijven.
+
 ### Nieuwe mogelijkheden
 
 De checklist werkt nu ook op gewone Berichten. De velden **Titel**, **Naam** en **E‑mail** zijn gelijk uitgelijnd en hebben dezelfde breedte tot aan een eventuele afbeelding. Zowel deze velden als de uitklapbare fasetitel gebruiken het gekozen lettertype en de primaire kleur.
