@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.9.4
+ * Version: 1.9.5
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -64,6 +64,10 @@ class BOTSAUTO_Checklist {
         add_filter( 'manage_' . $this->list_post_type . '_posts_columns', array( $this, 'checklist_columns' ) );
         add_action( 'manage_' . $this->list_post_type . '_posts_custom_column', array( $this, 'checklist_column_content' ), 10, 2 );
         add_shortcode( 'botsauto_checklist', array( $this, 'render_form' ) );
+        // Ensure shortcodes work on posts even if themes removed the default filter
+        if ( ! has_filter( 'the_content', 'do_shortcode' ) ) {
+            add_filter( 'the_content', 'do_shortcode', 11 );
+        }
         add_action( 'admin_post_nopriv_botsauto_save', array( $this, 'handle_submit' ) );
         add_action( 'admin_post_botsauto_save', array( $this, 'handle_submit' ) );
         add_action( 'wp_ajax_botsauto_import', array( $this, 'ajax_import' ) );
@@ -680,7 +684,21 @@ CHECKLIST;
             $font_link = '<link href="https://fonts.googleapis.com/css2?family=Oswald&display=swap" rel="stylesheet">';
         }
         echo $font_link;
-        echo '<style class="botsauto-style">.botsauto-checklist{background:' . esc_attr($o['background']) . ';color:' . esc_attr($o['text']) . ';font-family:' . esc_attr($o['font']) . ';}.botsauto-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1em;}.botsauto-header .botsauto-fields p{margin:0;} .botsauto-checklist label{color:' . esc_attr($o['primary']) . ';}.botsauto-checklist input[type=checkbox]{accent-color:' . esc_attr($o['primary']) . ';}.botsauto-checklist .button-primary{background:' . esc_attr($o['primary']) . ';border-color:' . esc_attr($o['primary']) . ';}.botsauto-completed{margin-top:1.5em;}</style>';
+        echo '<style class="botsauto-style">'
+            . '.botsauto-checklist{background:' . esc_attr($o['background']) . ';color:' . esc_attr($o['text']) . ';font-family:' . esc_attr($o['font']) . ';}'
+            . '.botsauto-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1em;font-family:' . esc_attr($o['font']) . ';}'
+            . '.botsauto-header .botsauto-fields{flex:1;margin-right:1em;max-width:500px;}'
+            . '.botsauto-header .botsauto-fields p{margin:0;}'
+            . '.botsauto-header label{color:' . esc_attr($o['primary']) . ';display:block;margin-bottom:.5em;}'
+            . '.botsauto-header input[type=text],.botsauto-header input[type=email]{width:100%;box-sizing:border-box;}'
+            . '.botsauto-checklist label{color:' . esc_attr($o['primary']) . ';}'
+            . '.botsauto-checklist strong{color:' . esc_attr($o['primary']) . ';}'
+            . '.botsauto-phase>summary{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($o['primary']) . ';}'
+            . '.botsauto-phase>summary::-webkit-details-marker{display:none;}'
+            . '.botsauto-checklist input[type=checkbox]{accent-color:' . esc_attr($o['primary']) . ';}'
+            . '.botsauto-checklist .button-primary{background:' . esc_attr($o['primary']) . ';border-color:' . esc_attr($o['primary']) . ';}'
+            . '.botsauto-completed{margin-top:1.5em;}'
+            . '</style>';
     }
 }
 
