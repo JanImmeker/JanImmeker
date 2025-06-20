@@ -609,7 +609,7 @@ document.addEventListener('DOMContentLoaded',function(){
   }
   var form=document.querySelector('#{$wrapper} form');
   if(!form)return;
-  var isNew=!form.querySelector("input[name=post_id]");
+  var isNew=!form.querySelector('input[name=post_id]');
   form.addEventListener('submit',function(e){
     if(typeof tinymce!='undefined') tinymce.triggerSave();
     var changed=false;var orig=botsautoOrig||{answers:{},notes:{},completed:''};
@@ -618,8 +618,8 @@ document.addEventListener('DOMContentLoaded',function(){
     form.querySelectorAll(\"input[name^='answers']\").forEach(function(inp){var h=inp.name.match(/answers\\[(.+)\\]/)[1];var v=inp.checked?'1':'';if((orig.answers&&orig.answers[h]?'1':'0')!=v) changed=true;});
     form.querySelectorAll(\"textarea[name^='notes']\").forEach(function(tx){var h=tx.name.match(/notes\\[(.+)\\]/)[1];if((orig.notes&&orig.notes[h]||'')!=tx.value) changed=true;});
     var sendField=form.querySelector('input[name=send_pdf]');
-    if(isNew){sendField.value="1";return;}
-    if(compNew==='1'){sendField.value="1";return;}
+    if(isNew){sendField.value='1';return;}
+    if(compNew==='1'){sendField.value='1';return;}
     if(changed){if(confirm('Wil je de bijgewerkte PDF per e-mail ontvangen?')){sendField.value='1';}}
   });
 });</script>";
