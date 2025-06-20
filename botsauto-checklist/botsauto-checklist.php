@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.6.1
+ * Version: 1.7.0
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -99,6 +99,8 @@ class BOTSAUTO_Checklist {
             'labels'       => array(
                 'name'          => 'BOTSAUTO inzendingen',
                 'singular_name' => 'BOTSAUTO Inzending',
+                'edit_item'     => 'Inzending bewerken',
+                'add_new_item'  => 'Nieuwe inzending',
             ),
             'supports'     => array('title'),
             'show_ui'      => true,
@@ -154,10 +156,15 @@ class BOTSAUTO_Checklist {
         $name = get_post_meta( $post->ID, 'name', true );
         $email = get_post_meta( $post->ID, 'email', true );
         $completed = get_post_meta( $post->ID, 'completed', true ) ? 'Ja' : 'Nee';
+        $title = get_the_title( $post->ID );
+        $url   = get_post_meta( $post->ID, 'edit_url', true );
         $snapshot = get_post_meta( $post->ID, 'items_snapshot', true );
         $answers = get_post_meta( $post->ID, 'answers', true );
         if ( ! is_array( $snapshot ) ) return;
-        echo '<p><strong>Naam:</strong> '.esc_html( $name ).'<br><strong>Email:</strong> '.esc_html( $email ).'<br><strong>Afgerond:</strong> '.$completed.'</p>';
+        echo '<p><strong>Titel:</strong> '.esc_html( $title ).'<br><strong>Naam:</strong> '.esc_html( $name ).'<br><strong>Email:</strong> '.esc_html( $email ).'<br><strong>Afgerond:</strong> '.$completed.'</p>';
+        if ( $url ) {
+            echo '<p><strong>URL:</strong> <a href="'.esc_url($url).'">'.esc_html($url).'</a></p>';
+        }
         echo '<ul>';
         foreach ( $snapshot as $hash => $item ) {
             $ck = isset( $answers[$hash] ) ? '&#10003;' : '&#10007;';
@@ -177,17 +184,42 @@ class BOTSAUTO_Checklist {
     }
 
     public function submission_columns( $cols ) {
-        $cols['checklist'] = 'Checklist';
-        return $cols;
+        $new = array();
+        $new['cb']        = $cols['cb'];
+        $new['title']     = 'Titel';
+        $new['name']      = 'Naam';
+        $new['email']     = 'Email';
+        $new['completed'] = 'Afgerond';
+        $new['date']      = 'Datum';
+        $new['checklist'] = 'Checklist';
+        $new['url']       = 'URL';
+        return $new;
     }
 
     public function submission_column_content( $column, $post_id ) {
-        if ( $column === 'checklist' ) {
-            $list_id = get_post_meta( $post_id, 'checklist_id', true );
-            if ( $list_id ) {
-                $title = get_the_title( $list_id );
-                echo esc_html( $title );
-            }
+        switch ( $column ) {
+            case 'name':
+                echo esc_html( get_post_meta( $post_id, 'name', true ) );
+                break;
+            case 'email':
+                echo esc_html( get_post_meta( $post_id, 'email', true ) );
+                break;
+            case 'completed':
+                $c = get_post_meta( $post_id, 'completed', true ) ? 'Ja' : 'Nee';
+                echo $c;
+                break;
+            case 'checklist':
+                $list_id = get_post_meta( $post_id, 'checklist_id', true );
+                if ( $list_id ) {
+                    echo esc_html( get_the_title( $list_id ) );
+                }
+                break;
+            case 'url':
+                $url = get_post_meta( $post_id, 'edit_url', true );
+                if ( $url ) {
+                    echo '<a href="' . esc_url( $url ) . '">link</a>';
+                }
+                break;
         }
     }
 
@@ -293,11 +325,13 @@ CHECKLIST;
         $completed = '';
         $email = '';
         $name = '';
+        $title = '';
         if ( $post_id ) {
             $values = get_post_meta( $post_id, 'answers', true );
             $completed = get_post_meta( $post_id, 'completed', true );
             $email = get_post_meta( $post_id, 'email', true );
             $name = get_post_meta( $post_id, 'name', true );
+            $title = get_the_title( $post_id );
             $list_id = intval( get_post_meta( $post_id, 'checklist_id', true ) );
         }
         $current_items = $this->associate_items( $this->get_checklist_items( $list_id ) );
@@ -334,6 +368,7 @@ CHECKLIST;
             echo '<input type="hidden" name="post_id" value="' . intval($post_id) . '" />';
             echo '<input type="hidden" name="items_snapshot" value="' . esc_attr( wp_json_encode( $snapshot ) ) . '" />';
         }
+        echo '<p><label>Titel: <input type="text" name="entry_title" value="' . esc_attr($title) . '" required></label></p>';
         echo '<p><label>Naam: <input type="text" name="name" value="' . esc_attr($name) . '" required></label></p>';
         echo '<p><label>Email: <input type="email" name="email" value="' . esc_attr($email) . '" required></label></p>';
         echo '<div class="botsauto-checklist">';
@@ -379,6 +414,7 @@ CHECKLIST;
 
     public function handle_submit() {
         $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+        $title   = sanitize_text_field( $_POST['entry_title'] );
         $name    = sanitize_text_field( $_POST['name'] );
         $email   = sanitize_email( $_POST['email'] );
         $completed = isset($_POST['completed']) ? '1' : '';
@@ -399,13 +435,13 @@ CHECKLIST;
             }
         }
         if ( $post_id ) {
-            wp_update_post( array( 'ID' => $post_id, 'post_title' => $name ) );
+            wp_update_post( array( 'ID' => $post_id, 'post_title' => $title ) );
         } else {
             $token = wp_generate_password(20,false,false);
             $post_id = wp_insert_post( array(
                 'post_type' => $this->post_type,
                 'post_status' => 'publish',
-                'post_title' => $name,
+                'post_title' => $title,
                 'meta_input' => array('token'=>$token)
             ));
         }
@@ -422,11 +458,12 @@ CHECKLIST;
         }
         $referer = remove_query_arg( 'botsauto_edit', $referer );
         $edit_url = add_query_arg( 'botsauto_edit', $token, $referer );
+        update_post_meta( $post_id, 'edit_url', $edit_url );
         if ( ! empty( $_POST['post_id'] ) ) {
             wp_redirect( $edit_url );
             exit;
         }
-        $pdf = $this->generate_pdf( $name, $answers, $snapshot );
+        $pdf = $this->generate_pdf( $title, $name, $answers, $snapshot );
         $body = 'Bedankt voor het invullen van de checklist. Bewaar deze link om later verder te gaan: '.$edit_url;
         $this->send_email( $email, 'Checklist bevestiging', $body, array( $pdf ) );
         unlink( $pdf );
@@ -446,7 +483,7 @@ CHECKLIST;
         return 0;
     }
 
-    private function generate_pdf( $name, $answers, $snapshot ) {
+    private function generate_pdf( $title, $name, $answers, $snapshot ) {
         if ( ! defined( 'FPDF_FONTPATH' ) ) {
             define( 'FPDF_FONTPATH', plugin_dir_path( __FILE__ ) . 'lib/font/' );
         }
@@ -455,6 +492,7 @@ CHECKLIST;
         $pdf->AddPage();
         $pdf->SetFont('Arial','',12);
         $pdf->Cell(0,10,$this->pdf_string('BOTSAUTO Checklist'),0,1);
+        $pdf->Cell(0,10,$this->pdf_string('Titel: '.$title),0,1);
         $pdf->Cell(0,10,$this->pdf_string('Naam: '.$name),0,1);
         $i = 0;
         foreach ( $snapshot as $hash => $item ) {
