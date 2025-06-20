@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.10.0
+ * Version: 1.10.1
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -81,6 +81,7 @@ class BOTSAUTO_Checklist {
         add_action( 'admin_post_nopriv_botsauto_save', array( $this, 'handle_submit' ) );
         add_action( 'admin_post_botsauto_save', array( $this, 'handle_submit' ) );
         add_action( 'wp_ajax_botsauto_import', array( $this, 'ajax_import' ) );
+        add_action( 'admin_post_botsauto_export_style', array( $this, 'export_style' ) );
         add_action( 'admin_menu', array( $this, 'add_admin_pages' ) );
         add_action( 'admin_init', array( $this, 'register_settings' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_color_picker_assets' ) );
@@ -172,7 +173,7 @@ class BOTSAUTO_Checklist {
         echo '<script type="text/template" id="botsauto-question-template"><div class="botsauto-question"><p class="question-line"><label><span>Vraag:</span> <input type="text" class="question-field"></label> <button type="button" class="button botsauto-remove-question">Verwijder</button></p><div class="botsauto-items"></div><p><button type="button" class="button botsauto-add-item">Item toevoegen</button></p></div></script>';
         echo '<script type="text/template" id="botsauto-item-template"><div class="botsauto-item"><p class="item-line"><label><span>Checklist item:</span> <input type="text" class="item-field"></label> <button type="button" class="button botsauto-remove-item">Verwijder</button></p></div></script>';
         $s = $this->get_style_options();
-        echo '<style>#botsauto-editor p{display:flex;align-items:center;gap:6px;margin:4px 0;}#botsauto-editor label{flex:1;display:flex;align-items:center;min-width:0;color:' . esc_attr($s['primary']) . ';}#botsauto-editor label span{display:inline-block;width:140px;}#botsauto-editor input{flex:1;width:100%;max-width:none;}#botsauto-editor .question-line{margin-left:2em;}#botsauto-editor .item-line{margin-left:4em;}#botsauto-editor{background:' . esc_attr($s['background']) . ';color:' . esc_attr($s['text']) . ';font-family:' . esc_attr($s['font']) . ';}#botsauto-editor input[type=checkbox]{accent-color:' . esc_attr($s['primary']) . ';display:inline-block!important;width:auto!important;height:auto!important;}#botsauto-editor .button{background:' . esc_attr($s['primary']) . ';border-color:' . esc_attr($s['primary']) . ';color:#fff;}#botsauto-editor .botsauto-phase>details>summary{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($s['primary']) . ';list-style:none;position:relative;padding-left:1.2em;}#botsauto-editor .botsauto-phase>details>summary::before{content:"\25B6";position:absolute;left:0;}#botsauto-editor .botsauto-phase>details[open]>summary::before{content:"\25BC";}</style>';
+        echo '<style>#botsauto-editor p{display:flex;align-items:center;gap:6px;margin:4px 0;}#botsauto-editor label{flex:1;display:flex;align-items:center;min-width:0;color:' . esc_attr($s['primary']) . ';}#botsauto-editor label span{display:inline-block;width:140px;}#botsauto-editor input{flex:1;width:100%;max-width:none;}#botsauto-editor .question-line{margin-left:2em;}#botsauto-editor .item-line{margin-left:4em;}#botsauto-editor{background:' . esc_attr($s['background']) . ';color:' . esc_attr($s['text']) . ';font-family:' . esc_attr($s['font']) . ';}#botsauto-editor input[type=checkbox]{accent-color:' . esc_attr($s['primary']) . '!important;display:inline-block!important;width:auto!important;height:auto!important;appearance:auto!important;}#botsauto-editor .button{background:' . esc_attr($s['primary']) . ';border-color:' . esc_attr($s['primary']) . ';color:#fff;}#botsauto-editor .botsauto-phase>details>summary{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($s['primary']) . ';list-style:none;position:relative;padding-left:1.2em;}#botsauto-editor .botsauto-phase>details>summary::before{content:"\25B6";position:absolute;left:0;}#botsauto-editor .botsauto-phase>details[open]>summary::before{content:"\25BC";}</style>';
     }
 
     public function meta_box_shortcode( $post ) {
@@ -336,8 +337,6 @@ CHECKLIST;
     private function default_adv_style() {
         return array(
             'container' => array(
-                'text-color'       => '#00306a',
-                'background-color' => '#ffffff',
                 'font-size'        => '16px',
                 'padding'          => '10px',
             ),
@@ -465,13 +464,16 @@ CHECKLIST;
         $custom = get_option( $this->custom_css_option, '' );
         $wrapper = 'botsauto-' . wp_generate_password(6, false, false);
         echo '<style>';
-        echo '#'.$wrapper.'{color:'.$adv['container']['text-color'].';background:'.$adv['container']['background-color'].';font-size:'.$adv['container']['font-size'].';padding:'.$adv['container']['padding'].';font-family:'.$style['font'].';}' .
-             '#'.$wrapper.' .botsauto-phase>summary{color:'.$adv['phase']['text-color'].';background:'.$adv['phase']['background-color'].';font-size:'.$adv['phase']['font-size'].';font-weight:'.$adv['phase']['font-weight'].';}' .
-             '#'.$wrapper.' .botsauto-question{color:'.$adv['question']['text-color'].';font-size:'.$adv['question']['font-size'].';font-style:'.$adv['question']['font-style'].';}' .
-             '#'.$wrapper.' label{color:'.$style['primary'].';}' .
-             '#'.$wrapper.' .botsauto-checkbox{accent-color:'.$adv['checkbox']['color'].';width:'.$adv['checkbox']['size'].';height:'.$adv['checkbox']['size'].';}' .
-             '#'.$wrapper.' .button-primary{background:'.$adv['button']['background-color'].';color:'.$adv['button']['text-color'].';padding:'.$adv['button']['padding'].';border-radius:'.$adv['button']['border-radius'].';}' .
-             '#'.$wrapper.' input[type=text],#'.$wrapper.' input[type=email]{background:'.$adv['field']['background-color'].';color:'.$adv['field']['text-color'].';border-color:'.$adv['field']['border-color'].';}' ;
+        echo '#'.$wrapper.'{color:'.$style['text'].';background:'.$style['background'].';font-size:'.$adv['container']['font-size'].';padding:'.$adv['container']['padding'].';font-family:'.$style['font'].';}' .
+             '#'.$wrapper.' .botsauto-phase>summary{color:'.$adv['phase']['text-color'].'!important;background:'.$adv['phase']['background-color'].'!important;font-size:'.$adv['phase']['font-size'].';font-weight:'.$adv['phase']['font-weight'].';list-style:none!important;position:relative;padding-left:1.2em;}' .
+             '#'.$wrapper.' .botsauto-phase>summary::-webkit-details-marker{display:none;}' .
+             '#'.$wrapper.' .botsauto-phase>summary::before{content:"\25B6";position:absolute;left:0;}' .
+             '#'.$wrapper.' .botsauto-phase[open]>summary::before{content:"\25BC";}' .
+             '#'.$wrapper.' .botsauto-question{color:'.$adv['question']['text-color'].'!important;font-size:'.$adv['question']['font-size'].';font-style:'.$adv['question']['font-style'].';}' .
+             '#'.$wrapper.' label{color:'.$style['primary'].'!important;}' .
+             '#'.$wrapper.' .botsauto-checkbox{accent-color:'.$adv['checkbox']['color'].'!important;width:'.$adv['checkbox']['size'].'!important;height:'.$adv['checkbox']['size'].'!important;appearance:auto!important;}' .
+             '#'.$wrapper.' .button-primary{background:'.$adv['button']['background-color'].'!important;color:'.$adv['button']['text-color'].'!important;padding:'.$adv['button']['padding'].';border-radius:'.$adv['button']['border-radius'].';}' .
+             '#'.$wrapper.' input[type=text],#'.$wrapper.' input[type=email]{background:'.$adv['field']['background-color'].'!important;color:'.$adv['field']['text-color'].'!important;border-color:'.$adv['field']['border-color'].'!important;}' ;
         if ( strpos( $style['font'], 'Oswald' ) !== false ) {
             echo '@import url("https://fonts.googleapis.com/css2?family=Oswald&display=swap");';
         }
@@ -696,8 +698,7 @@ CHECKLIST;
 
     public function add_admin_pages() {
         add_menu_page( 'BOTSAUTO', 'BOTSAUTO', 'manage_options', 'botsauto-settings', array( $this, 'main_settings_page' ), 'dashicons-yes', 26 );
-        add_submenu_page( 'botsauto-settings', 'BOTSAUTO stijl', 'Stijl', 'manage_options', 'botsauto-style', array( $this, 'settings_page' ) );
-        add_submenu_page( 'botsauto-settings', 'Geavanceerde Opmaak', 'Geavanceerde Opmaak', 'manage_options', 'botsauto-advanced', array( $this, 'advanced_page' ) );
+        add_submenu_page( 'botsauto-settings', 'Opmaak', 'Opmaak', 'manage_options', 'botsauto-style', array( $this, 'style_page' ) );
         add_submenu_page( 'botsauto-settings', 'E-mail BCC', 'E-mail BCC', 'manage_options', 'botsauto-cc', array( $this, 'cc_page' ) );
     }
 
@@ -717,7 +718,16 @@ CHECKLIST;
         }
     }
 
-    public function settings_page() {
+    public function style_page() {
+        if ( isset($_POST['botsauto_import_submit']) && check_admin_referer('botsauto_adv_import') ) {
+            if ( ! empty( $_FILES['adv_import']['tmp_name'] ) ) {
+                $data = json_decode( file_get_contents( $_FILES['adv_import']['tmp_name'] ), true );
+                if ( is_array( $data ) ) {
+                    update_option( $this->adv_style_option, $data );
+                    echo '<div class="updated"><p>Import succesvol.</p></div>';
+                }
+            }
+        }
         $opts  = $this->get_style_options();
         $fonts = array(
             'Arial, sans-serif'         => 'Arial',
@@ -726,9 +736,13 @@ CHECKLIST;
             'Georgia, serif'            => 'Georgia',
             'Oswald, sans-serif'        => 'Oswald',
         );
-        echo '<div class="wrap"><h1>BOTSAUTO stijl</h1><form method="post" action="options.php">';
+        $adv   = $this->get_adv_style_options();
+        $custom = get_option( $this->custom_css_option, '' );
+        echo '<div class="wrap"><h1>Opmaak</h1><form method="post" action="options.php" enctype="multipart/form-data">';
         settings_fields( 'botsauto_style_group' );
-        echo '<table class="form-table">';
+        settings_fields( 'botsauto_adv_style_group' );
+        settings_fields( 'botsauto_css_group' );
+        echo '<h2>Algemeen</h2><table class="form-table">';
         echo '<tr><th scope="row">Primaire kleur</th><td><input type="text" class="color-field" name="'.$this->style_option.'[primary]" value="'.esc_attr($opts['primary']).'" /></td></tr>';
         echo '<tr><th scope="row">Tekstkleur</th><td><input type="text" class="color-field" name="'.$this->style_option.'[text]" value="'.esc_attr($opts['text']).'" /></td></tr>';
         echo '<tr><th scope="row">Achtergrondkleur</th><td><input type="text" class="color-field" name="'.$this->style_option.'[background]" value="'.esc_attr($opts['background']).'" /></td></tr>';
@@ -740,32 +754,28 @@ CHECKLIST;
         echo '</select></td></tr>';
         echo '<tr><th scope="row">Afbeelding</th><td><input type="text" id="botsauto-image" name="'.$this->style_option.'[image]" value="'.esc_attr($opts['image']).'" /> <button type="button" class="button" id="botsauto-image-btn">Selecteer afbeelding</button></td></tr>';
         echo '</table>';
-        submit_button();
-        echo '</form></div>';
-        echo '<script>jQuery(function($){$("#botsauto-image-btn").on("click",function(e){e.preventDefault();var frame=wp.media({title:"Selecteer afbeelding",multiple:false});frame.on("select",function(){var url=frame.state().get("selection").first().toJSON().url;$("#botsauto-image").val(url);});frame.open();});});</script>';
-    }
-
-    public function advanced_page() {
-        $opts = $this->get_adv_style_options();
-        $custom = get_option( $this->custom_css_option, '' );
-        echo '<div class="wrap"><h1>Geavanceerde Opmaak</h1><form method="post" action="options.php">';
-        settings_fields( 'botsauto_adv_style_group' );
-        echo '<table class="form-table">';
+        echo '<h2>Elementen</h2><table class="form-table">';
+        $labels = array('container'=>'Container','phase'=>'Fase','question'=>'Vraag','item'=>'Checklist item','button'=>'Knop','field'=>'Invulveld','checkbox'=>'Checkbox');
+        $field_labels = array('text-color'=>'Tekstkleur','background-color'=>'Achtergrondkleur','font-size'=>'Lettergrootte','font-weight'=>'Letterdikte','font-style'=>'Tekststijl','padding'=>'Padding','border-radius'=>'Randhoek','border-color'=>'Randkleur','color'=>'Kleur','size'=>'Grootte');
         foreach ( $this->default_adv_style() as $key => $vals ) {
-            echo '<tr><th colspan="2"><h2>'.esc_html( ucfirst($key) ).'</h2></th></tr>';
+            echo '<tr><th colspan="2"><h2>'.esc_html( $labels[$key] ).'</h2></th></tr>';
             foreach ( $vals as $field => $default ) {
-                $val = isset( $opts[$key][$field] ) ? $opts[$key][$field] : $default;
+                $val = isset( $adv[$key][$field] ) ? $adv[$key][$field] : $default;
                 $name = $this->adv_style_option.'['.$key.']['.$field.']';
                 $type = strpos( $field, 'color' ) !== false ? 'text' : 'text';
                 $class = strpos( $field, 'color' ) !== false ? 'color-field' : '';
-                echo '<tr><th scope="row">'.esc_html( $field ).'</th><td><input type="'.$type.'" class="'.$class.'" name="'.$name.'" value="'.esc_attr($val).'" /></td></tr>';
+                $label = isset($field_labels[$field]) ? $field_labels[$field] : $field;
+                echo '<tr><th scope="row">'.esc_html( $label ).'</th><td><input type="'.$type.'" class="'.$class.'" name="'.$name.'" value="'.esc_attr($val).'" /></td></tr>';
             }
         }
-        echo '<tr><th scope="row">Custom CSS</th><td><textarea name="'.$this->custom_css_option.'" rows="5" cols="50">'.esc_textarea($custom).'</textarea></td></tr>';
+        echo '<tr><th scope="row">Aangepaste CSS</th><td><textarea name="'.$this->custom_css_option.'" rows="5" cols="50">'.esc_textarea($custom).'</textarea></td></tr>';
         echo '</table>';
         submit_button();
         echo '</form>';
-        echo '<h2>Export</h2><textarea readonly rows="5" style="width:100%">'.esc_textarea( wp_json_encode( $opts ) )."</textarea>";
+        echo '<h2>Import / Export</h2><p><a href="'.admin_url('admin-post.php?action=botsauto_export_style').'" class="button">Exporteren</a></p>';
+        echo '<form method="post" enctype="multipart/form-data"><input type="file" name="adv_import" accept="application/json" />';
+        wp_nonce_field('botsauto_adv_import');
+        echo '<p><input type="submit" class="button" name="botsauto_import_submit" value="Importeren"></p></form>';
         echo '<form method="post" style="margin-top:1em;"><input type="hidden" name="botsauto_reset_adv" value="1" />';
         submit_button( 'Reset naar standaard', 'delete' );
         echo '</form></div>';
@@ -786,8 +796,19 @@ CHECKLIST;
         echo '</form></div>';
     }
 
+    public function export_style() {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_die();
+        }
+        $data = get_option( $this->adv_style_option, array() );
+        header( 'Content-Type: application/json' );
+        header( 'Content-Disposition: attachment; filename=botsauto-style.json' );
+        echo wp_json_encode( $data );
+        exit;
+    }
+
     public function main_settings_page() {
-        echo '<div class="wrap"><h1>BOTSAUTO instellingen</h1><p>Gebruik de submenu\'s om de stijl en e-mail opties in te stellen.</p></div>';
+        echo '<div class="wrap"><h1>BOTSAUTO instellingen</h1><p>Gebruik het submenu <strong>Opmaak</strong> voor alle stijlopties en <strong>E-mail BCC</strong> om een kopieadres in te stellen.</p></div>';
     }
 
     public function output_frontend_style() {

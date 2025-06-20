@@ -40,10 +40,10 @@ De standaardinstallatie bevat de complete BOTSAUTO Sales Checklist met alle fase
 
 ### Stijl aanpassen
 
-Na activering verschijnt onder **Instellingen → BOTSAUTO** een hoofdmenu met twee submenu's. In **Stijl** kies je de primaire kleur, tekstkleur, achtergrondkleur, het lettertype (waaronder Google Font *Oswald*) en kun je een afbeelding selecteren die rechtsboven in de checklist wordt getoond. Deze afbeelding komt ook in de PDF terecht. In het submenu **E-mail BCC** kun je een adres instellen dat alle inzendingen in bcc ontvangt. Bij een nieuwe installatie worden automatisch de kleuren `#d14292` (primair), `#00306a` (tekst) en `#d1eaf8` (achtergrond) ingesteld.
-De primaire kleur bepaalt tevens de kleur van de checkboxen en de labels van titel, naam, e‑mail en checklistitems.
+Onder **Instellingen → BOTSAUTO** staat nu één submenu **Opmaak**. Hier kies je de primaire kleur, tekstkleur, achtergrondkleur, het lettertype (waaronder Google Font *Oswald*) en kun je een afbeelding selecteren die rechtsboven in de checklist verschijnt en ook in de PDF wordt opgenomen. In hetzelfde scherm stel je tevens de geavanceerde opmaak per element in (fase, vraag, item, knoppen, velden en checkboxen). De kleuren `#d14292` (primair), `#00306a` (tekst) en `#d1eaf8` (achtergrond) worden bij installatie als standaard ingesteld.
+De primaire kleur bepaalt ook de kleur van checkboxen en labels.
 
-Via het tabblad **Geavanceerde Opmaak** kun je per element (container, fase, vraag, item, knoppen, velden en checkboxen) kleuren, lettertype‑grootte, randen en padding instellen. De waarden worden als JSON opgeslagen en de plugin genereert voor iedere checklist een unieke wrapper met een inline stylesheet zodat thema’s en andere plugins geen invloed hebben. Optioneel kun je eigen CSS toevoegen dat alleen binnen deze wrapper wordt geladen. Een knop *Reset naar standaard* zet alle waarden terug. De pagina toont tevens het JSON om te kopiëren voor import of export.
+Onderaan het scherm kun je de stijlinstellingen exporteren naar een JSON‑bestand en weer importeren. Een knop *Reset naar standaard* zet alle waarden terug. Via het submenu **E-mail BCC** kan een adres ingesteld worden dat elke inzending in bcc ontvangt.
 
 Alle elementen van de checklist krijgen hun eigen CSS-class. De fases gebruiken nu een eigen pijl-icoon via CSS zodat de driehoekjes altijd zichtbaar zijn, ook als een thema de standaard marker van `<summary>` verbergt. De plugin dwingt tevens de weergave van checkboxes af zodat thema-stijlen geen ongewenste invloed hebben.
 
