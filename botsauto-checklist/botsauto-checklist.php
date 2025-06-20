@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.9.6
+ * Version: 1.9.7
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -70,6 +70,7 @@ class BOTSAUTO_Checklist {
         }
         add_action( 'admin_post_nopriv_botsauto_save', array( $this, 'handle_submit' ) );
         add_action( 'admin_post_botsauto_save', array( $this, 'handle_submit' ) );
+        add_action( 'template_redirect', array( $this, 'handle_front_submit' ) );
         add_action( 'wp_ajax_botsauto_import', array( $this, 'ajax_import' ) );
         add_action( 'admin_menu', array( $this, 'add_admin_pages' ) );
         add_action( 'admin_init', array( $this, 'register_settings' ) );
@@ -163,7 +164,7 @@ class BOTSAUTO_Checklist {
         echo '<script type="text/template" id="botsauto-question-template"><div class="botsauto-question"><p class="question-line"><label><span>Vraag:</span> <input type="text" class="question-field"></label> <button type="button" class="button botsauto-remove-question">Verwijder</button></p><div class="botsauto-items"></div><p><button type="button" class="button botsauto-add-item">Item toevoegen</button></p></div></script>';
         echo '<script type="text/template" id="botsauto-item-template"><div class="botsauto-item"><p class="item-line"><label><span>Checklist item:</span> <input type="text" class="item-field"></label> <button type="button" class="button botsauto-remove-item">Verwijder</button></p></div></script>';
         $s = $this->get_style_options();
-        echo '<style>#botsauto-editor p{display:flex;align-items:center;gap:6px;margin:4px 0;}#botsauto-editor label{flex:1;display:flex;align-items:center;min-width:0;color:' . esc_attr($s['primary']) . ';}#botsauto-editor label span{display:inline-block;width:140px;}#botsauto-editor input{flex:1;width:100%;max-width:none;}#botsauto-editor .question-line{margin-left:2em;}#botsauto-editor .item-line{margin-left:4em;}#botsauto-editor{background:' . esc_attr($s['background']) . ';color:' . esc_attr($s['text']) . ';font-family:' . esc_attr($s['font']) . ';}#botsauto-editor input[type=checkbox]{accent-color:' . esc_attr($s['primary']) . ';display:inline-block!important;width:auto!important;height:auto!important;}#botsauto-editor .button{background:' . esc_attr($s['primary']) . ';border-color:' . esc_attr($s['primary']) . ';color:#fff;}</style>';
+        echo '<style>#botsauto-editor p{display:flex;align-items:center;gap:6px;margin:4px 0;}#botsauto-editor label{flex:1;display:flex;align-items:center;min-width:0;color:' . esc_attr($s['primary']) . ';}#botsauto-editor label span{display:inline-block;width:140px;}#botsauto-editor input{flex:1;width:100%;max-width:none;}#botsauto-editor .question-line{margin-left:2em;}#botsauto-editor .item-line{margin-left:4em;}#botsauto-editor{background:' . esc_attr($s['background']) . ';color:' . esc_attr($s['text']) . ';font-family:' . esc_attr($s['font']) . ';}#botsauto-editor input[type=checkbox]{accent-color:' . esc_attr($s['primary']) . ';display:inline-block!important;width:auto!important;height:auto!important;}#botsauto-editor .button{background:' . esc_attr($s['primary']) . ';border-color:' . esc_attr($s['primary']) . ';color:#fff;}#botsauto-editor .botsauto-phase>details>summary{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($s['primary']) . ';list-style:none;position:relative;padding-left:1.2em;}#botsauto-editor .botsauto-phase>details>summary::before{content:"\25B6";position:absolute;left:0;}#botsauto-editor .botsauto-phase>details[open]>summary::before{content:"\25BC";}</style>';
     }
 
     public function meta_box_shortcode( $post ) {
@@ -411,8 +412,8 @@ CHECKLIST;
 
         ob_start();
         $style = $this->get_style_options();
-        echo '<form method="post" action="' . esc_url( admin_url('admin-post.php') ) . '">';
-        echo '<input type="hidden" name="action" value="botsauto_save">';
+        echo '<form method="post">';
+        echo '<input type="hidden" name="botsauto_front_submit" value="1">';
         echo '<input type="hidden" name="checklist_id" value="' . intval( $list_id ) . '" />';
         if ( $post_id ) {
             echo '<input type="hidden" name="post_id" value="' . intval($post_id) . '" />';
@@ -529,6 +530,12 @@ CHECKLIST;
         unlink( $pdf );
         wp_redirect( $edit_url );
         exit;
+    }
+
+    public function handle_front_submit() {
+        if ( isset( $_POST['botsauto_front_submit'] ) ) {
+            $this->handle_submit();
+        }
     }
 
     private function get_post_id_by_token( $token ) {
@@ -693,9 +700,9 @@ CHECKLIST;
             . '.botsauto-header input[type=text],.botsauto-header input[type=email]{width:100%;box-sizing:border-box;}'
             . '.botsauto-checklist label{color:' . esc_attr($o['primary']) . ';}'
             . '.botsauto-checklist strong{color:' . esc_attr($o['primary']) . ';}'
-            . '.botsauto-phase>summary{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($o['primary']) . ';}'
-            . '.botsauto-phase>summary::-webkit-details-marker{display:list-item;}'
-            . '.botsauto-phase>summary::marker{color:' . esc_attr($o['primary']) . ';}'
+            . '.botsauto-phase>summary{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($o['primary']) . ';list-style:none;position:relative;padding-left:1.2em;}'
+            . '.botsauto-phase>summary::before{content:"\25B6";position:absolute;left:0;}'
+            . '.botsauto-phase[open]>summary::before{content:"\25BC";}'
             . '.botsauto-checkbox{accent-color:' . esc_attr($o['primary']) . ';display:inline-block!important;width:auto!important;height:auto!important;appearance:auto!important;visibility:visible!important;}'
             . '.botsauto-checklist .button-primary{background:' . esc_attr($o['primary']) . ';border-color:' . esc_attr($o['primary']) . ';}'
             . '.botsauto-completed{margin-top:1.5em;}'

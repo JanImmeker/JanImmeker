@@ -29,6 +29,8 @@ Ingezonden formulieren worden opgeslagen als custom post type **BOTSAUTO inzendi
 
 Na het versturen ontvangt de gebruiker een e‑mail met de PDF in de bijlage en een unieke link om de checklist later te bewerken. De plugin stuurt de bezoeker na het opslaan automatisch terug naar dezelfde pagina met deze link in de URL. Speciale tekens worden voor de PDF geconverteerd naar Latin‑1 zodat woorden zoals "geïdentificeerd" correct worden weergegeven.
 
+Om te voorkomen dat beveiligingsplugins de inzending blokkeren, wordt het formulier naar dezelfde pagina gepost. Krijg je toch een melding dat je geen toegang hebt tot het dashboard, controleer dan of een beveiligingsplugin het pad `/wp-admin/admin-post.php` blokkeert en sta dit toe.
+
 Wanneer de beheerder de checklist wijzigt terwijl een gebruiker al een ingevulde versie heeft, ziet de gebruiker bij het openen een melding met de keuze om de nieuwe checklist te gebruiken. De antwoorden blijven gekoppeld aan de oorspronkelijke vragen zodat er geen vinkjes verspringen.
 
 Voor het versturen van e‑mail gebruikt de plugin de standaard `wp_mail` functie. De afzender wordt expliciet gezet op het beheerdersadres van de site zodat SMTP-plugins de mail correct afleveren.
@@ -41,7 +43,7 @@ De standaardinstallatie bevat de complete BOTSAUTO Sales Checklist met alle fase
 Na activering verschijnt onder **Instellingen → BOTSAUTO** een hoofdmenu met twee submenu's. In **Stijl** kies je de primaire kleur, tekstkleur, achtergrondkleur, het lettertype (waaronder Google Font *Oswald*) en kun je een afbeelding selecteren die rechtsboven in de checklist wordt getoond. Deze afbeelding komt ook in de PDF terecht. In het submenu **E-mail BCC** kun je een adres instellen dat alle inzendingen in bcc ontvangt. Bij een nieuwe installatie worden automatisch de kleuren `#d14292` (primair), `#00306a` (tekst) en `#d1eaf8` (achtergrond) ingesteld.
 De primaire kleur bepaalt tevens de kleur van de checkboxen en de labels van titel, naam, e‑mail en checklistitems.
 
-Alle elementen van de checklist krijgen hun eigen CSS-class, zodat thema-stijlen geen ongewenste invloed hebben. Mocht een thema de standaard checkbox of de marker van `<summary>` verbergen, dan zorgt de pluginstijl ervoor dat deze onderdelen toch zichtbaar blijven.
+Alle elementen van de checklist krijgen hun eigen CSS-class. De fases gebruiken nu een eigen pijl-icoon via CSS zodat de driehoekjes altijd zichtbaar zijn, ook als een thema de standaard marker van `<summary>` verbergt. De plugin dwingt tevens de weergave van checkboxes af zodat thema-stijlen geen ongewenste invloed hebben.
 
 ### Nieuwe mogelijkheden
 
