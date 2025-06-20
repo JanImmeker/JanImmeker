@@ -517,29 +517,11 @@ CHECKLIST;
         $custom = get_option( $this->custom_css_option, '' );
         $wrapper = 'botsauto-' . wp_generate_password(6, false, false);
         echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />';
-        echo '<style>';
-        echo '#'.$wrapper.' *,#'.$wrapper.' *::before,#'.$wrapper.' *::after{box-sizing:border-box;margin:0;padding:0;}' .
-             '#'.$wrapper.'{color:'.$style['text'].';background:'.$style['background'].';font-size:'.$adv['container']['font-size'].';padding:'.$adv['container']['padding'].';font-family:'.$style['font'].';}' .
-             '#'.$wrapper.' .botsauto-phase>summary{color:'.$adv['phase']['text-color'].'!important;background:'.$adv['phase']['background-color'].'!important;font-size:'.$adv['phase']['font-size'].';font-weight:'.$adv['phase']['font-weight'].';list-style:none!important;position:relative;padding-left:1.2em;padding-top:10px;padding-bottom:10px;}' .
-             '#'.$wrapper.' .botsauto-phase>summary::-webkit-details-marker{display:none;}' .
-             '#'.$wrapper.' .botsauto-phase>summary::before{content:"\25B6";position:absolute;left:0;}' .
-             '#'.$wrapper.' .botsauto-phase[open]>summary::before{content:"\25BC";}' .
-             '#'.$wrapper.' .botsauto-question-text{color:'.$adv['question']['text-color'].'!important;font-size:'.$adv['question']['font-size'].';font-style:'.$adv['question']['font-style'].';margin:0 0 .2em;flex-basis:100%;}' .
-             '#'.$wrapper.' .botsauto-header label{color:'.$style['primary'].'!important;}' .
-             '#'.$wrapper.' .botsauto-checklist li{display:flex;flex-wrap:wrap;align-items:flex-start;margin-bottom:.5em;}' .
-             '#'.$wrapper.' .botsauto-checklist label{color:'.$adv['item']['text-color'].'!important;font-size:'.$adv['item']['font-size'].';margin-left:.25em;flex:1;}' .
-             '#'.$wrapper.' input:checked+label{color:'.$adv['checked']['text-color'].'!important;text-decoration:'.$adv['checked']['text-decoration'].';}' .
-             '#'.$wrapper.' .botsauto-checkbox{accent-color:'.$adv['checkbox']['color'].'!important;width:'.$adv['checkbox']['size'].'!important;height:'.$adv['checkbox']['size'].'!important;appearance:auto!important;flex:0 0 auto;}' .
-             '#'.$wrapper.' .button-primary{background:'.$adv['button']['background-color'].'!important;color:'.$adv['button']['text-color'].'!important;padding:'.$adv['button']['padding'].';border-radius:'.$adv['button']['border-radius'].';}' .
-             '#'.$wrapper.' input[type=text],#'.$wrapper.' input[type=email]{background:'.$adv['field']['background-color'].'!important;color:'.$adv['field']['text-color'].'!important;border-color:'.$adv['field']['border-color'].'!important;border-radius:'.$adv['field']['border-radius'].';border-style:'.$adv['field']['border-style'].';border-width:'.$adv['field']['border-width'].';width:'.$adv['field']['width'].';box-sizing:border-box;}' .
-             '#'.$wrapper.' .botsauto-note{width:100%;margin-top:.5em;}' .
-             '#'.$wrapper.' .botsauto-note textarea{width:100%;height:80px;font-size:'.$adv['note']['font-size'].';color:'.$adv['note']['text-color'].';background:'.$adv['note']['background-color'].';}' .
-             '#'.$wrapper.' .botsauto-note-btn{background:none;border:none;color:'.$style['primary'].';cursor:pointer;margin-left:5px;flex:0 0 auto;}';
+        $css = $this->build_css( $style, $adv, '#' . $wrapper, $custom );
         if ( strpos( $style['font'], 'Oswald' ) !== false ) {
-            echo '@import url("https://fonts.googleapis.com/css2?family=Oswald&display=swap");';
+            $css = '@import url("https://fonts.googleapis.com/css2?family=Oswald&display=swap");' . $css;
         }
-        if ( $custom ) { echo $custom; }
-        echo '</style>';
+        echo '<style>' . $css . '</style>';
         echo '<div id="'.$wrapper.'">';
         echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
         echo '<input type="hidden" name="action" value="botsauto_save">';
@@ -817,6 +799,28 @@ document.addEventListener('DOMContentLoaded',function(){
         return wp_parse_args( $opt, $defaults );
     }
 
+    private function build_css( $style, $adv, $selector, $custom = '' ) {
+        $css  = "$selector *,${selector} *::before,${selector} *::after{box-sizing:border-box;margin:0;padding:0;}";
+        $css .= "$selector{color:{$style['text']};background:{$style['background']};font-size:{$adv['container']['font-size']};padding:{$adv['container']['padding']};font-family:{$style['font']};}";
+        $css .= "$selector .botsauto-phase>summary{color:{$adv['phase']['text-color']}!important;background:{$adv['phase']['background-color']}!important;font-size:{$adv['phase']['font-size']};font-weight:{$adv['phase']['font-weight']};list-style:none!important;position:relative;padding-left:1.2em;padding-top:10px;padding-bottom:10px;}";
+        $css .= "$selector .botsauto-phase>summary::-webkit-details-marker{display:none;}";
+        $css .= "$selector .botsauto-phase>summary::before{content:'\\25B6';position:absolute;left:0;}";
+        $css .= "$selector .botsauto-phase[open]>summary::before{content:'\\25BC';}";
+        $css .= "$selector .botsauto-question-text{color:{$adv['question']['text-color']}!important;font-size:{$adv['question']['font-size']};font-style:{$adv['question']['font-style']};margin:0 0 .2em;flex-basis:100%;}";
+        $css .= "$selector .botsauto-header label{color:{$style['primary']}!important;}";
+        $css .= "$selector .botsauto-checklist li{display:flex;flex-wrap:wrap;align-items:flex-start;margin-bottom:.5em;}";
+        $css .= "$selector .botsauto-checklist label{color:{$adv['item']['text-color']}!important;font-size:{$adv['item']['font-size']};margin-left:.25em;flex:1;}";
+        $css .= "$selector input:checked+label{color:{$adv['checked']['text-color']}!important;text-decoration:{$adv['checked']['text-decoration']};}";
+        $css .= "$selector .botsauto-checkbox{accent-color:{$adv['checkbox']['color']}!important;width:{$adv['checkbox']['size']}!important;height:{$adv['checkbox']['size']}!important;appearance:auto!important;flex:0 0 auto;}";
+        $css .= "$selector .button-primary{background:{$adv['button']['background-color']}!important;color:{$adv['button']['text-color']}!important;padding:{$adv['button']['padding']};border-radius:{$adv['button']['border-radius']};}";
+        $css .= "$selector input[type=text],${selector} input[type=email]{background:{$adv['field']['background-color']}!important;color:{$adv['field']['text-color']}!important;border-color:{$adv['field']['border-color']}!important;border-radius:{$adv['field']['border-radius']};border-style:{$adv['field']['border-style']};border-width:{$adv['field']['border-width']};width:{$adv['field']['width']};box-sizing:border-box;}";
+        $css .= "$selector .botsauto-note{width:100%;margin-top:.5em;}";
+        $css .= "$selector .botsauto-note textarea{width:100%;height:80px;font-size:{$adv['note']['font-size']};color:{$adv['note']['text-color']};background:{$adv['note']['background-color']};}";
+        $css .= "$selector .botsauto-note-btn{background:none;border:none;color:{$style['primary']};cursor:pointer;margin-left:5px;flex:0 0 auto;}";
+        if ( $custom ) $css .= $custom;
+        return $css;
+    }
+
     public function add_admin_pages() {
         add_menu_page( 'BOTSAUTO', 'BOTSAUTO', 'manage_options', 'botsauto-settings', array( $this, 'main_settings_page' ), 'dashicons-yes', 26 );
         add_submenu_page( 'botsauto-settings', 'Opmaak', 'Opmaak', 'manage_options', 'botsauto-style', array( $this, 'style_page' ) );
@@ -925,6 +929,11 @@ document.addEventListener('DOMContentLoaded',function(){
         echo '</form>';
         echo '<h2>'.esc_html__( 'Voorbeeld', 'botsauto-checklist' ).'</h2>';
         echo '<button type="button" class="button" id="botsauto-toggle-mobile">'.esc_html__( 'Toon als mobiele gebruiker', 'botsauto-checklist' ).'</button>';
+        $static_css = $this->build_css( $opts, $adv, '#botsauto-preview', $custom );
+        if ( strpos( $opts['font'], 'Oswald' ) !== false ) {
+            $static_css = '@import url("https://fonts.googleapis.com/css2?family=Oswald&display=swap");' . $static_css;
+        }
+        echo '<style id="botsauto-preview-static">'.$static_css.'</style>';
         echo '<style id="botsauto-preview-style"></style>';
         echo '<style>#botsauto-preview-container{border:1px solid #ddd;padding:10px;margin-top:1em;}#botsauto-preview-container.mobile{max-width:375px;}</style>';
         echo '<div id="botsauto-preview-container"><div id="botsauto-preview">\n<form><div class="botsauto-header"><div class="botsauto-fields"><p><label>'.esc_html__( 'Titel', 'botsauto-checklist' ).': <input type="text" value="Demo"></label></p><p><label>'.esc_html__( 'Naam', 'botsauto-checklist' ).': <input type="text" value="Demo"></label></p><p><label>'.esc_html__( 'E-mail', 'botsauto-checklist' ).': <input type="email" value="demo@example.com"></label></p></div></div><div class="botsauto-checklist"><details class="botsauto-phase" open><summary>Fase</summary><ul style="list-style:none"><li><p class="botsauto-question-text">Vraag?</p><input type="checkbox" id="preview_cb" class="botsauto-checkbox"> <label for="preview_cb">Item</label></li></ul></details></div><p><input type="submit" class="button button-primary" value="Submit"></p></form></div></div>';
