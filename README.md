@@ -10,7 +10,8 @@ Elke checklist is een apart bericht van het type **BOTSAUTO Checklist**. De plug
 [botsauto_checklist id="123"]
 ```
 
-waarbij `123` het ID van de checklist is. In de lijstweergave van checklists wordt het juiste shortcode getoond en kun je erop klikken om het automatisch te kopiëren. Een checklist kan de inhoud van een andere checklist importeren via het zijpaneel in het bewerkscherm.
+waarbij `123` het unieke ID van de checklist is. Dit ID is niet altijd oplopend, gebruik daarom het getal dat in de kolom **Shortcode** van het overzicht staat. Klik op die waarde om het volledige shortcode naar het klembord te kopiëren. Een checklist kan de inhoud van een andere checklist importeren via het zijpaneel in het bewerkscherm.
+Bestaat het opgegeven ID niet, dan verschijnt de melding *Checklist niet gevonden.* op de plaats van het shortcode.
 
 De plugin genereert een PDF van de ingevulde checklist via de meegeleverde FPDF-bibliotheek. Om vet en cursief te kunnen gebruiken zijn de standaard Helvetica-fontbestanden `helvetica.php`, `helveticab.php`, `helveticai.php` en `helveticabi.php` opgenomen in `botsauto-checklist/lib/font`.
 

@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.9.3
+ * Version: 1.9.4
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -349,8 +349,14 @@ CHECKLIST;
     }
 
     public function render_form( $atts ) {
-        $list_id = isset( $atts['id'] ) ? intval( $atts['id'] ) : 0;
-        if ( ! $list_id ) {
+        $atts = shortcode_atts( array( 'id' => 0 ), $atts, 'botsauto_checklist' );
+        $list_id = absint( $atts['id'] );
+        if ( $list_id ) {
+            $post = get_post( $list_id );
+            if ( ! $post || $post->post_type !== $this->list_post_type ) {
+                return 'Checklist niet gevonden.';
+            }
+        } else {
             $first = get_posts( array( 'post_type' => $this->list_post_type, 'numberposts' => 1 ) );
             if ( $first ) {
                 $list_id = $first[0]->ID;
