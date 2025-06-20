@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.9.7
+ * Version: 1.9.8
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -70,7 +70,6 @@ class BOTSAUTO_Checklist {
         }
         add_action( 'admin_post_nopriv_botsauto_save', array( $this, 'handle_submit' ) );
         add_action( 'admin_post_botsauto_save', array( $this, 'handle_submit' ) );
-        add_action( 'template_redirect', array( $this, 'handle_front_submit' ) );
         add_action( 'wp_ajax_botsauto_import', array( $this, 'ajax_import' ) );
         add_action( 'admin_menu', array( $this, 'add_admin_pages' ) );
         add_action( 'admin_init', array( $this, 'register_settings' ) );
@@ -412,8 +411,8 @@ CHECKLIST;
 
         ob_start();
         $style = $this->get_style_options();
-        echo '<form method="post">';
-        echo '<input type="hidden" name="botsauto_front_submit" value="1">';
+        echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
+        echo '<input type="hidden" name="action" value="botsauto_save">';
         echo '<input type="hidden" name="checklist_id" value="' . intval( $list_id ) . '" />';
         if ( $post_id ) {
             echo '<input type="hidden" name="post_id" value="' . intval($post_id) . '" />';
@@ -532,11 +531,7 @@ CHECKLIST;
         exit;
     }
 
-    public function handle_front_submit() {
-        if ( isset( $_POST['botsauto_front_submit'] ) ) {
-            $this->handle_submit();
-        }
-    }
+
 
     private function get_post_id_by_token( $token ) {
         if ( ! $token ) return 0;
