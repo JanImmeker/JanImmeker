@@ -817,10 +817,14 @@ document.addEventListener('DOMContentLoaded',function(){
         $css .= "$selector{color:{$style['text']};background:{$style['background']};font-size:{$adv['container']['font-size']};padding:{$adv['container']['padding']};font-family:{$style['font']};}";
         $css .= "$selector .botsauto-phase>summary{color:{$adv['phase']['text-color']}!important;background:{$adv['phase']['background-color']}!important;font-size:{$adv['phase']['font-size']};font-weight:{$adv['phase']['font-weight']};list-style:none!important;position:relative;padding-left:1.2em;padding-top:10px;padding-bottom:10px;}";
         $css .= "$selector .botsauto-phase>summary::-webkit-details-marker{display:none;}";
+        $css .= "$selector .botsauto-phase>summary::marker{display:none;}";
         $css .= "$selector .botsauto-phase>summary::before{content:'\\25B6';position:absolute;left:0;}";
         $css .= "$selector .botsauto-phase[open]>summary::before{content:'\\25BC';}";
         $css .= "$selector .botsauto-question-text{color:{$adv['question']['text-color']}!important;font-size:{$adv['question']['font-size']};font-style:{$adv['question']['font-style']};margin:0 0 .2em;flex-basis:100%;}";
-        $css .= "$selector .botsauto-header label{color:{$style['primary']}!important;}";
+        $css .= "$selector .botsauto-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1em;font-family:{$style['font']};}";
+        $css .= "$selector .botsauto-header .botsauto-fields{flex:1;margin-right:1em;max-width:500px;}";
+        $css .= "$selector .botsauto-header .botsauto-fields p{margin:0;}";
+        $css .= "$selector .botsauto-header label{color:{$style['primary']}!important;display:block;margin-bottom:.5em;}";
         $css .= "$selector .botsauto-logo{text-align:{$style['image_align']};margin-bottom:1em;}";
         $css .= "$selector .botsauto-logo img{max-width:{$style['image_width']}px;height:auto;}";
         $css .= "$selector .botsauto-checklist li{display:flex;flex-wrap:wrap;align-items:flex-start;margin-bottom:.5em;}";
@@ -884,6 +888,7 @@ document.addEventListener('DOMContentLoaded',function(){
         );
         $adv   = $this->get_adv_style_options();
         $custom = get_option( $this->custom_css_option, '' );
+        echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />';
         echo '<div class="wrap"><h1>'.esc_html__( 'Opmaak', 'botsauto-checklist' ).'</h1><form method="post" action="options.php" enctype="multipart/form-data">';
         // Single settings group handles all style options so one call is enough
         settings_fields( 'botsauto_style_group' );
@@ -957,7 +962,7 @@ document.addEventListener('DOMContentLoaded',function(){
         echo '<style id="botsauto-preview-static">'.$static_css.'</style>';
         echo '<style id="botsauto-preview-style"></style>';
         echo '<style>#botsauto-preview-container{border:1px solid #ddd;padding:10px;margin-top:1em;}#botsauto-preview-container.mobile{max-width:375px;}</style>';
-        echo '<div id="botsauto-preview-container"><div id="botsauto-preview">\n<form><div class="botsauto-header"><div class="botsauto-fields"><p><label>'.esc_html__( 'Titel', 'botsauto-checklist' ).': <input type="text" value="Demo"></label></p><p><label>'.esc_html__( 'Naam', 'botsauto-checklist' ).': <input type="text" value="Demo"></label></p><p><label>'.esc_html__( 'E-mail', 'botsauto-checklist' ).': <input type="email" value="demo@example.com"></label></p></div></div><div class="botsauto-checklist"><details class="botsauto-phase" open><summary>Fase</summary><ul style="list-style:none"><li><p class="botsauto-question-text">Vraag?</p><input type="checkbox" id="preview_cb" class="botsauto-checkbox"> <label for="preview_cb">Item</label></li></ul></details></div><p><input type="submit" class="button button-primary" value="Submit"></p></form></div></div>';
+        echo '<div id="botsauto-preview-container"><div id="botsauto-preview"><form><div class="botsauto-header"><div class="botsauto-fields"><p><label>'.esc_html__( 'Titel', 'botsauto-checklist' ).': <input type="text" value="Demo"></label></p><p><label>'.esc_html__( 'Naam', 'botsauto-checklist' ).': <input type="text" value="Demo"></label></p><p><label>'.esc_html__( 'E-mail', 'botsauto-checklist' ).': <input type="email" value="demo@example.com"></label></p></div><div class="botsauto-logo">'.($opts['image']?'<img src="'.esc_url($opts['image']).'" />':'').'</div></div><div class="botsauto-checklist"><details class="botsauto-phase" open><summary>'.esc_html__('Voorbereiden: Kwalificatie & voorbereiding (KEM – Kwalificatie Expres Methode)','botsauto-checklist').'</summary><p>Kwalificatie, achtergrondinformatie en strategische voorbereiding.</p><ul style="list-style:none"><li><p class="botsauto-question-text">'.esc_html__('Kwalificatie Expres Methode toegepast?','botsauto-checklist').'</p><input type="checkbox" id="preview_cb" class="botsauto-checkbox"> <label for="preview_cb">'.esc_html__('Is de potentiële opdrachtgever gekwalificeerd op basis van de KEM (Kwalificatie Expres Methode)?','botsauto-checklist').'</label> <button type="button" class="botsauto-note-btn"><i class="fa '.esc_attr($opts['note_icon']).'"></i></button><div class="botsauto-note" style="display:none"><textarea class="botsauto-rich"></textarea></div></li></ul></details></div><p><input type="submit" class="button button-primary" value="Submit"></p></form></div></div>';
         echo '<h2>'.esc_html__( 'Import / Export', 'botsauto-checklist' ).'</h2><p><a href="'.admin_url('admin-post.php?action=botsauto_export_style').'" class="button">'.esc_html__( 'Exporteren', 'botsauto-checklist' ).'</a></p>';
         echo '<form method="post" enctype="multipart/form-data"><input type="file" name="adv_import" accept="application/json" />';
         wp_nonce_field('botsauto_adv_import');

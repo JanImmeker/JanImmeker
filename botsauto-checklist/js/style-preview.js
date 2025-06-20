@@ -38,7 +38,10 @@ jQuery(function($){
     if(adv.question){
       css += w+' .botsauto-question-text{color:'+adv.question['text-color']+';font-size:'+adv.question['font-size']+';font-style:'+adv.question['font-style']+';margin:0 0 .2em;flex-basis:100%;}';
     }
-    css += w+' .botsauto-header label{color:'+style.primary+';}';
+    css += w+' .botsauto-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1em;font-family:'+style.font+';}';
+    css += w+' .botsauto-header .botsauto-fields{flex:1;margin-right:1em;max-width:500px;}';
+    css += w+' .botsauto-header .botsauto-fields p{margin:0;}';
+    css += w+' .botsauto-header label{color:'+style.primary+';display:block;margin-bottom:.5em;}';
     if(style.image){
       css += w+' .botsauto-logo{text-align:'+style.image_align+';margin-bottom:1em;}';
       css += w+' .botsauto-logo img{max-width:'+style.image_width+'px;height:auto;}';
