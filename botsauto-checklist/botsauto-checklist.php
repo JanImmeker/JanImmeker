@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.9.8
+ * Version: 1.10.0
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -16,8 +16,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class BOTSAUTO_Checklist {
     private $post_type      = 'botsauto_submission';
     private $list_post_type = 'botsauto_list';
-    private $style_option   = 'botsauto_style';
-    private $cc_option      = 'botsauto_cc_email';
+    private $style_option    = 'botsauto_style';
+    private $adv_style_option = 'botsauto_adv_style';
+    private $custom_css_option = 'botsauto_custom_css';
+    private $cc_option       = 'botsauto_cc_email';
 
     public static function install() {
         $self = new self();
@@ -43,6 +45,14 @@ class BOTSAUTO_Checklist {
                 'font'       => 'Arial, sans-serif',
                 'image'      => '',
             ) );
+        }
+
+        if ( ! get_option( $self->adv_style_option ) ) {
+            update_option( $self->adv_style_option, $self->default_adv_style() );
+        }
+
+        if ( ! get_option( $self->custom_css_option ) ) {
+            update_option( $self->custom_css_option, '' );
         }
     }
 
@@ -73,7 +83,6 @@ class BOTSAUTO_Checklist {
         add_action( 'wp_ajax_botsauto_import', array( $this, 'ajax_import' ) );
         add_action( 'admin_menu', array( $this, 'add_admin_pages' ) );
         add_action( 'admin_init', array( $this, 'register_settings' ) );
-        add_action( 'wp_head', array( $this, 'output_frontend_style' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_color_picker_assets' ) );
     }
 
@@ -324,6 +333,47 @@ Algemene verankeringen en documentatie: Structuur & borging||Pijlers en BOTSAUTO
 CHECKLIST;
     }
 
+    private function default_adv_style() {
+        return array(
+            'container' => array(
+                'text-color'       => '#00306a',
+                'background-color' => '#ffffff',
+                'font-size'        => '16px',
+                'padding'          => '10px',
+            ),
+            'phase' => array(
+                'text-color'       => '#d14292',
+                'background-color' => 'transparent',
+                'font-size'        => '16px',
+                'font-weight'      => 'bold',
+            ),
+            'question' => array(
+                'text-color' => '#00306a',
+                'font-style' => 'italic',
+                'font-size'  => '14px',
+            ),
+            'item' => array(
+                'text-color' => '#00306a',
+                'font-size'  => '14px',
+            ),
+            'button' => array(
+                'text-color'       => '#ffffff',
+                'background-color' => '#d14292',
+                'padding'          => '6px 12px',
+                'border-radius'    => '4px',
+            ),
+            'field' => array(
+                'background-color' => '#ffffff',
+                'text-color'       => '#00306a',
+                'border-color'     => '#cccccc',
+            ),
+            'checkbox' => array(
+                'color' => '#d14292',
+                'size'  => '16px',
+            ),
+        );
+    }
+
     private function get_checklist_items( $list_id ) {
         $content = get_post_meta( $list_id, 'botsauto_lines', true );
         if ( ! $content ) {
@@ -411,6 +461,23 @@ CHECKLIST;
 
         ob_start();
         $style = $this->get_style_options();
+        $adv   = $this->get_adv_style_options();
+        $custom = get_option( $this->custom_css_option, '' );
+        $wrapper = 'botsauto-' . wp_generate_password(6, false, false);
+        echo '<style>';
+        echo '#'.$wrapper.'{color:'.$adv['container']['text-color'].';background:'.$adv['container']['background-color'].';font-size:'.$adv['container']['font-size'].';padding:'.$adv['container']['padding'].';font-family:'.$style['font'].';}' .
+             '#'.$wrapper.' .botsauto-phase>summary{color:'.$adv['phase']['text-color'].';background:'.$adv['phase']['background-color'].';font-size:'.$adv['phase']['font-size'].';font-weight:'.$adv['phase']['font-weight'].';}' .
+             '#'.$wrapper.' .botsauto-question{color:'.$adv['question']['text-color'].';font-size:'.$adv['question']['font-size'].';font-style:'.$adv['question']['font-style'].';}' .
+             '#'.$wrapper.' label{color:'.$style['primary'].';}' .
+             '#'.$wrapper.' .botsauto-checkbox{accent-color:'.$adv['checkbox']['color'].';width:'.$adv['checkbox']['size'].';height:'.$adv['checkbox']['size'].';}' .
+             '#'.$wrapper.' .button-primary{background:'.$adv['button']['background-color'].';color:'.$adv['button']['text-color'].';padding:'.$adv['button']['padding'].';border-radius:'.$adv['button']['border-radius'].';}' .
+             '#'.$wrapper.' input[type=text],#'.$wrapper.' input[type=email]{background:'.$adv['field']['background-color'].';color:'.$adv['field']['text-color'].';border-color:'.$adv['field']['border-color'].';}' ;
+        if ( strpos( $style['font'], 'Oswald' ) !== false ) {
+            echo '@import url("https://fonts.googleapis.com/css2?family=Oswald&display=swap");';
+        }
+        if ( $custom ) { echo $custom; }
+        echo '</style>';
+        echo '<div id="'.$wrapper.'">';
         echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
         echo '<input type="hidden" name="action" value="botsauto_save">';
         echo '<input type="hidden" name="checklist_id" value="' . intval( $list_id ) . '" />';
@@ -464,7 +531,7 @@ CHECKLIST;
         echo '<p><label><input type="checkbox" class="botsauto-checkbox" name="completed" value="1" '.$c.'> Checklist afgerond</label></p>';
         $label = $post_id ? 'Opslaan' : 'Checklist verzenden';
         echo '<p><input type="submit" class="button button-primary" value="'.esc_attr($label).'"></p>';
-        echo '</form>';
+        echo '</form></div>';
         return ob_get_clean();
     }
 
@@ -618,19 +685,31 @@ CHECKLIST;
         return wp_parse_args( $opt, $defaults );
     }
 
+    private function get_adv_style_options() {
+        $defaults = $this->default_adv_style();
+        $opt = get_option( $this->adv_style_option, array() );
+        if ( ! is_array( $opt ) ) {
+            $opt = json_decode( $opt, true );
+        }
+        return wp_parse_args( $opt, $defaults );
+    }
+
     public function add_admin_pages() {
         add_menu_page( 'BOTSAUTO', 'BOTSAUTO', 'manage_options', 'botsauto-settings', array( $this, 'main_settings_page' ), 'dashicons-yes', 26 );
         add_submenu_page( 'botsauto-settings', 'BOTSAUTO stijl', 'Stijl', 'manage_options', 'botsauto-style', array( $this, 'settings_page' ) );
+        add_submenu_page( 'botsauto-settings', 'Geavanceerde Opmaak', 'Geavanceerde Opmaak', 'manage_options', 'botsauto-advanced', array( $this, 'advanced_page' ) );
         add_submenu_page( 'botsauto-settings', 'E-mail BCC', 'E-mail BCC', 'manage_options', 'botsauto-cc', array( $this, 'cc_page' ) );
     }
 
     public function register_settings() {
         register_setting( 'botsauto_style_group', $this->style_option );
+        register_setting( 'botsauto_adv_style_group', $this->adv_style_option );
+        register_setting( 'botsauto_css_group', $this->custom_css_option );
         register_setting( 'botsauto_cc_group', $this->cc_option, array( 'sanitize_callback' => 'sanitize_email' ) );
     }
 
     public function enqueue_color_picker_assets( $hook ) {
-        if ( strpos( $hook, 'botsauto-style' ) !== false ) {
+        if ( strpos( $hook, 'botsauto-style' ) !== false || strpos( $hook, 'botsauto-advanced' ) !== false ) {
             wp_enqueue_style( 'wp-color-picker' );
             wp_enqueue_script( 'wp-color-picker' );
             wp_enqueue_media();
@@ -664,6 +743,38 @@ CHECKLIST;
         submit_button();
         echo '</form></div>';
         echo '<script>jQuery(function($){$("#botsauto-image-btn").on("click",function(e){e.preventDefault();var frame=wp.media({title:"Selecteer afbeelding",multiple:false});frame.on("select",function(){var url=frame.state().get("selection").first().toJSON().url;$("#botsauto-image").val(url);});frame.open();});});</script>';
+    }
+
+    public function advanced_page() {
+        $opts = $this->get_adv_style_options();
+        $custom = get_option( $this->custom_css_option, '' );
+        echo '<div class="wrap"><h1>Geavanceerde Opmaak</h1><form method="post" action="options.php">';
+        settings_fields( 'botsauto_adv_style_group' );
+        echo '<table class="form-table">';
+        foreach ( $this->default_adv_style() as $key => $vals ) {
+            echo '<tr><th colspan="2"><h2>'.esc_html( ucfirst($key) ).'</h2></th></tr>';
+            foreach ( $vals as $field => $default ) {
+                $val = isset( $opts[$key][$field] ) ? $opts[$key][$field] : $default;
+                $name = $this->adv_style_option.'['.$key.']['.$field.']';
+                $type = strpos( $field, 'color' ) !== false ? 'text' : 'text';
+                $class = strpos( $field, 'color' ) !== false ? 'color-field' : '';
+                echo '<tr><th scope="row">'.esc_html( $field ).'</th><td><input type="'.$type.'" class="'.$class.'" name="'.$name.'" value="'.esc_attr($val).'" /></td></tr>';
+            }
+        }
+        echo '<tr><th scope="row">Custom CSS</th><td><textarea name="'.$this->custom_css_option.'" rows="5" cols="50">'.esc_textarea($custom).'</textarea></td></tr>';
+        echo '</table>';
+        submit_button();
+        echo '</form>';
+        echo '<h2>Export</h2><textarea readonly rows="5" style="width:100%">'.esc_textarea( wp_json_encode( $opts ) )."</textarea>";
+        echo '<form method="post" style="margin-top:1em;"><input type="hidden" name="botsauto_reset_adv" value="1" />';
+        submit_button( 'Reset naar standaard', 'delete' );
+        echo '</form></div>';
+
+        if ( isset($_POST['botsauto_reset_adv']) ) {
+            update_option( $this->adv_style_option, $this->default_adv_style() );
+            update_option( $this->custom_css_option, '' );
+            echo '<div class="updated"><p>Opmaak gereset.</p></div>';
+        }
     }
 
     public function cc_page() {
