@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.10.1
+ * Version: 1.10.2
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -703,9 +703,12 @@ CHECKLIST;
     }
 
     public function register_settings() {
+        // All style related options are stored and updated together so one
+        // settings group is sufficient. This prevents the hidden option_page
+        // field from overriding others when the form is saved.
         register_setting( 'botsauto_style_group', $this->style_option );
-        register_setting( 'botsauto_adv_style_group', $this->adv_style_option );
-        register_setting( 'botsauto_css_group', $this->custom_css_option );
+        register_setting( 'botsauto_style_group', $this->adv_style_option );
+        register_setting( 'botsauto_style_group', $this->custom_css_option );
         register_setting( 'botsauto_cc_group', $this->cc_option, array( 'sanitize_callback' => 'sanitize_email' ) );
     }
 
@@ -739,9 +742,8 @@ CHECKLIST;
         $adv   = $this->get_adv_style_options();
         $custom = get_option( $this->custom_css_option, '' );
         echo '<div class="wrap"><h1>Opmaak</h1><form method="post" action="options.php" enctype="multipart/form-data">';
+        // Single settings group handles all style options so one call is enough
         settings_fields( 'botsauto_style_group' );
-        settings_fields( 'botsauto_adv_style_group' );
-        settings_fields( 'botsauto_css_group' );
         echo '<h2>Algemeen</h2><table class="form-table">';
         echo '<tr><th scope="row">Primaire kleur</th><td><input type="text" class="color-field" name="'.$this->style_option.'[primary]" value="'.esc_attr($opts['primary']).'" /></td></tr>';
         echo '<tr><th scope="row">Tekstkleur</th><td><input type="text" class="color-field" name="'.$this->style_option.'[text]" value="'.esc_attr($opts['text']).'" /></td></tr>';
