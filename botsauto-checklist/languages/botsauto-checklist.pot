@@ -1,0 +1,57 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: botsauto-checklist 1.11.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: \n"
+
+#: botsauto-checklist.php
+msgid "Opmaak"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Primaire kleur"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Tekstkleur"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Achtergrondkleur"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Lettertype"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Afbeelding"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Selecteer afbeelding"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Voorbeeld"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Toon als mobiele gebruiker"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Aangepaste CSS"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Import / Export"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Exporteren"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Importeren"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Reset naar standaard"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Opmaak gereset."
+msgstr ""
+#: botsauto-checklist.php
+msgid "Ongeldig importbestand."
+msgstr ""
+#: botsauto-checklist.php
+msgid "Import succesvol."
+msgstr ""

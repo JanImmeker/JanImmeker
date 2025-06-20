@@ -3,12 +3,13 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.10.2
+ * Version: 1.11.0
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: botsauto-checklist
+ * Domain Path: /languages
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -65,6 +66,7 @@ class BOTSAUTO_Checklist {
     }
 
     public function __construct() {
+        add_action( 'init', array( $this, 'load_textdomain' ) );
         add_action( 'init', array( $this, 'register_post_types' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
         add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
@@ -103,6 +105,19 @@ class BOTSAUTO_Checklist {
         return wp_mail( $to, $subject, $body, $headers, $attachments );
     }
 
+    private function hex_to_rgb( $hex ) {
+        $hex = ltrim( $hex, '#' );
+        if ( strlen( $hex ) === 3 ) {
+            $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
+        }
+        $int = hexdec( $hex );
+        return array( ($int >> 16) & 255, ($int >> 8) & 255, $int & 255 );
+    }
+
+    public function load_textdomain() {
+        load_plugin_textdomain( 'botsauto-checklist', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+    }
+
     public function enqueue_admin_assets( $hook ) {
         global $post_type;
         if ( $hook === 'post-new.php' || $hook === 'post.php' ) {
@@ -112,6 +127,8 @@ class BOTSAUTO_Checklist {
                     'ajaxurl' => admin_url( 'admin-ajax.php' ),
                 ) );
             }
+        } elseif ( $hook === 'settings_page_botsauto-style' ) {
+            wp_enqueue_script( 'botsauto-style-preview', plugin_dir_url( __FILE__ ) . 'js/style-preview.js', array( 'jquery' ), '1.0', true );
         }
     }
 
@@ -375,6 +392,10 @@ CHECKLIST;
                 'color' => '#d14292',
                 'size'  => '20px',
             ),
+            'checked' => array(
+                'text-color'       => '#6c6c6c',
+                'text-decoration'  => 'line-through',
+            ),
         );
     }
 
@@ -466,10 +487,12 @@ CHECKLIST;
         ob_start();
         $style = $this->get_style_options();
         $adv   = $this->get_adv_style_options();
+        $adv   = $this->get_adv_style_options();
         $custom = get_option( $this->custom_css_option, '' );
         $wrapper = 'botsauto-' . wp_generate_password(6, false, false);
         echo '<style>';
-        echo '#'.$wrapper.'{color:'.$style['text'].';background:'.$style['background'].';font-size:'.$adv['container']['font-size'].';padding:'.$adv['container']['padding'].';font-family:'.$style['font'].';}' .
+        echo '#'.$wrapper.' *,#'.$wrapper.' *::before,#'.$wrapper.' *::after{box-sizing:border-box;margin:0;padding:0;}' .
+             '#'.$wrapper.'{color:'.$style['text'].';background:'.$style['background'].';font-size:'.$adv['container']['font-size'].';padding:'.$adv['container']['padding'].';font-family:'.$style['font'].';}' .
              '#'.$wrapper.' .botsauto-phase>summary{color:'.$adv['phase']['text-color'].'!important;background:'.$adv['phase']['background-color'].'!important;font-size:'.$adv['phase']['font-size'].';font-weight:'.$adv['phase']['font-weight'].';list-style:none!important;position:relative;padding-left:1.2em;}' .
              '#'.$wrapper.' .botsauto-phase>summary::-webkit-details-marker{display:none;}' .
              '#'.$wrapper.' .botsauto-phase>summary::before{content:"\25B6";position:absolute;left:0;}' .
@@ -477,6 +500,7 @@ CHECKLIST;
              '#'.$wrapper.' .botsauto-question{color:'.$adv['question']['text-color'].'!important;font-size:'.$adv['question']['font-size'].';font-style:'.$adv['question']['font-style'].';}' .
              '#'.$wrapper.' .botsauto-header label{color:'.$style['primary'].'!important;}' .
              '#'.$wrapper.' .botsauto-checklist label{color:'.$adv['item']['text-color'].'!important;font-size:'.$adv['item']['font-size'].';}' .
+             '#'.$wrapper.' input:checked+label{color:'.$adv['checked']['text-color'].'!important;text-decoration:'.$adv['checked']['text-decoration'].';}' .
              '#'.$wrapper.' .botsauto-checkbox{accent-color:'.$adv['checkbox']['color'].'!important;width:'.$adv['checkbox']['size'].'!important;height:'.$adv['checkbox']['size'].'!important;appearance:auto!important;}' .
              '#'.$wrapper.' .button-primary{background:'.$adv['button']['background-color'].'!important;color:'.$adv['button']['text-color'].'!important;padding:'.$adv['button']['padding'].';border-radius:'.$adv['button']['border-radius'].';}' .
              '#'.$wrapper.' input[type=text],#'.$wrapper.' input[type=email]{background:'.$adv['field']['background-color'].'!important;color:'.$adv['field']['text-color'].'!important;border-color:'.$adv['field']['border-color'].'!important;border-radius:'.$adv['field']['border-radius'].';border-style:'.$adv['field']['border-style'].';border-width:'.$adv['field']['border-width'].';width:'.$adv['field']['width'].';box-sizing:border-box;}' ;
@@ -672,8 +696,16 @@ CHECKLIST;
                 $pdf->SetFont( $pdf_font, 'I', 10 );
                 $pdf->MultiCell(0, 6, $this->pdf_string( $item['question'] ), 0, 'L');
             }
+            list( $r, $g, $b ) = $this->hex_to_rgb( $adv['item']['text-color'] );
+            $pdf->SetTextColor( $r, $g, $b );
+            if ( isset( $answers[ $hash ] ) ) {
+                list( $r, $g, $b ) = $this->hex_to_rgb( $adv['checked']['text-color'] );
+                $pdf->SetTextColor( $r, $g, $b );
+            }
             $pdf->SetFont( $pdf_font, '', 10 );
             $pdf->MultiCell(0, 6, $this->pdf_string( '- '.$item['item'].' - '.$status ), 0, 'L');
+            list( $r, $g, $b ) = $this->hex_to_rgb( $adv['item']['text-color'] );
+            $pdf->SetTextColor( $r, $g, $b );
         }
         $uploads = wp_upload_dir();
         $file = trailingslashit( $uploads['path'] ) . 'botsauto-' . uniqid() . '.pdf';
@@ -730,10 +762,13 @@ CHECKLIST;
     public function style_page() {
         if ( isset($_POST['botsauto_import_submit']) && check_admin_referer('botsauto_adv_import') ) {
             if ( ! empty( $_FILES['adv_import']['tmp_name'] ) ) {
-                $data = json_decode( file_get_contents( $_FILES['adv_import']['tmp_name'] ), true );
-                if ( is_array( $data ) ) {
+                $json = file_get_contents( $_FILES['adv_import']['tmp_name'] );
+                $data = json_decode( $json, true );
+                if ( json_last_error() === JSON_ERROR_NONE && is_array( $data ) ) {
                     update_option( $this->adv_style_option, $data );
-                    echo '<div class="updated"><p>Import succesvol.</p></div>';
+                    echo '<div class="updated"><p>'.esc_html__( 'Import succesvol.', 'botsauto-checklist' ).'</p></div>';
+                } else {
+                    echo '<div class="error"><p>'.esc_html__( 'Ongeldig importbestand.', 'botsauto-checklist' ).'</p></div>';
                 }
             }
         }
@@ -747,23 +782,32 @@ CHECKLIST;
         );
         $adv   = $this->get_adv_style_options();
         $custom = get_option( $this->custom_css_option, '' );
-        echo '<div class="wrap"><h1>Opmaak</h1><form method="post" action="options.php" enctype="multipart/form-data">';
+        echo '<div class="wrap"><h1>'.esc_html__( 'Opmaak', 'botsauto-checklist' ).'</h1><form method="post" action="options.php" enctype="multipart/form-data">';
         // Single settings group handles all style options so one call is enough
         settings_fields( 'botsauto_style_group' );
-        echo '<h2>Algemeen</h2><table class="form-table">';
-        echo '<tr><th scope="row">Primaire kleur</th><td><input type="text" class="color-field" name="'.$this->style_option.'[primary]" value="'.esc_attr($opts['primary']).'" /></td></tr>';
-        echo '<tr><th scope="row">Tekstkleur</th><td><input type="text" class="color-field" name="'.$this->style_option.'[text]" value="'.esc_attr($opts['text']).'" /></td></tr>';
-        echo '<tr><th scope="row">Achtergrondkleur</th><td><input type="text" class="color-field" name="'.$this->style_option.'[background]" value="'.esc_attr($opts['background']).'" /></td></tr>';
-        echo '<tr><th scope="row">Lettertype</th><td><select name="'.$this->style_option.'[font]">';
+        echo '<h2>'.esc_html__( 'Algemeen', 'botsauto-checklist' ).'</h2><table class="form-table">';
+        echo '<tr><th scope="row">'.esc_html__( 'Primaire kleur', 'botsauto-checklist' ).'</th><td><input type="text" class="color-field" name="'.$this->style_option.'[primary]" value="'.esc_attr($opts['primary']).'" /></td></tr>';
+        echo '<tr><th scope="row">'.esc_html__( 'Tekstkleur', 'botsauto-checklist' ).'</th><td><input type="text" class="color-field" name="'.$this->style_option.'[text]" value="'.esc_attr($opts['text']).'" /></td></tr>';
+        echo '<tr><th scope="row">'.esc_html__( 'Achtergrondkleur', 'botsauto-checklist' ).'</th><td><input type="text" class="color-field" name="'.$this->style_option.'[background]" value="'.esc_attr($opts['background']).'" /></td></tr>';
+        echo '<tr><th scope="row">'.esc_html__( 'Lettertype', 'botsauto-checklist' ).'</th><td><select name="'.$this->style_option.'[font]">';
         foreach ( $fonts as $val => $label ) {
             $sel = selected( $opts['font'], $val, false );
             echo '<option value="'.esc_attr($val).'" '.$sel.'>'.esc_html($label).'</option>';
         }
         echo '</select></td></tr>';
-        echo '<tr><th scope="row">Afbeelding</th><td><input type="text" id="botsauto-image" name="'.$this->style_option.'[image]" value="'.esc_attr($opts['image']).'" /> <button type="button" class="button" id="botsauto-image-btn">Selecteer afbeelding</button></td></tr>';
+        echo '<tr><th scope="row">'.esc_html__( 'Afbeelding', 'botsauto-checklist' ).'</th><td><input type="text" id="botsauto-image" name="'.$this->style_option.'[image]" value="'.esc_attr($opts['image']).'" /> <button type="button" class="button" id="botsauto-image-btn">'.esc_html__( 'Selecteer afbeelding', 'botsauto-checklist' ).'</button></td></tr>';
         echo '</table>';
         echo '<h2>Elementen</h2><table class="form-table">';
-        $labels = array('container'=>'Container','phase'=>'Fase','question'=>'Vraag','item'=>'Checklist item','button'=>'Knop','field'=>'Invulveld','checkbox'=>'Checkbox');
+        $labels = array(
+            'container' => 'Container',
+            'phase'     => 'Fase',
+            'question'  => 'Vraag',
+            'item'      => 'Checklist item',
+            'button'    => 'Knop',
+            'field'     => 'Invulveld',
+            'checkbox'  => 'Checkbox',
+            'checked'   => 'Aangevinkt item'
+        );
         $field_labels = array(
             'text-color'       => 'Tekstkleur',
             'background-color' => 'Achtergrondkleur',
@@ -777,7 +821,8 @@ CHECKLIST;
             'border-color'     => 'Randkleur',
             'width'            => 'Breedte',
             'color'            => 'Kleur',
-            'size'             => 'Grootte'
+            'size'             => 'Grootte',
+            'text-decoration'  => 'Tekstdecoratie'
         );
         foreach ( $this->default_adv_style() as $key => $vals ) {
             echo '<tr><th colspan="2"><h2>'.esc_html( $labels[$key] ).'</h2></th></tr>';
@@ -790,22 +835,27 @@ CHECKLIST;
                 echo '<tr><th scope="row">'.esc_html( $label ).'</th><td><input type="'.$type.'" class="'.$class.'" name="'.$name.'" value="'.esc_attr($val).'" /></td></tr>';
             }
         }
-        echo '<tr><th scope="row">Aangepaste CSS</th><td><textarea name="'.$this->custom_css_option.'" rows="5" cols="50">'.esc_textarea($custom).'</textarea></td></tr>';
+        echo '<tr><th scope="row">'.esc_html__( 'Aangepaste CSS', 'botsauto-checklist' ).'</th><td><textarea name="'.$this->custom_css_option.'" rows="5" cols="50">'.esc_textarea($custom).'</textarea></td></tr>';
         echo '</table>';
         submit_button();
         echo '</form>';
-        echo '<h2>Import / Export</h2><p><a href="'.admin_url('admin-post.php?action=botsauto_export_style').'" class="button">Exporteren</a></p>';
+        echo '<h2>'.esc_html__( 'Voorbeeld', 'botsauto-checklist' ).'</h2>';
+        echo '<button type="button" class="button" id="botsauto-toggle-mobile">'.esc_html__( 'Toon als mobiele gebruiker', 'botsauto-checklist' ).'</button>';
+        echo '<style id="botsauto-preview-style"></style>';
+        echo '<style>#botsauto-preview-container{border:1px solid #ddd;padding:10px;margin-top:1em;}#botsauto-preview-container.mobile{max-width:375px;}</style>';
+        echo '<div id="botsauto-preview-container"><div id="botsauto-preview">\n<form><div class="botsauto-header"><div class="botsauto-fields"><p><label>Titel: <input type="text" value="Demo"></label></p><p><label>Naam: <input type="text" value="Demo"></label></p><p><label>E-mail: <input type="email" value="demo@example.com"></label></p></div></div><div class="botsauto-checklist"><details class="botsauto-phase" open><summary>Fase</summary><ul style="list-style:none"><li><strong>Vraag?</strong><br><label><input type="checkbox" class="botsauto-checkbox"> Item</label></li></ul></details></div><p><input type="submit" class="button button-primary" value="Submit"></p></form></div></div>';
+        echo '<h2>'.esc_html__( 'Import / Export', 'botsauto-checklist' ).'</h2><p><a href="'.admin_url('admin-post.php?action=botsauto_export_style').'" class="button">'.esc_html__( 'Exporteren', 'botsauto-checklist' ).'</a></p>';
         echo '<form method="post" enctype="multipart/form-data"><input type="file" name="adv_import" accept="application/json" />';
         wp_nonce_field('botsauto_adv_import');
-        echo '<p><input type="submit" class="button" name="botsauto_import_submit" value="Importeren"></p></form>';
+        echo '<p><input type="submit" class="button" name="botsauto_import_submit" value="'.esc_attr__( 'Importeren', 'botsauto-checklist' ).'"></p></form>';
         echo '<form method="post" style="margin-top:1em;"><input type="hidden" name="botsauto_reset_adv" value="1" />';
-        submit_button( 'Reset naar standaard', 'delete' );
+        submit_button( __( 'Reset naar standaard', 'botsauto-checklist' ), 'delete' );
         echo '</form></div>';
 
         if ( isset($_POST['botsauto_reset_adv']) ) {
             update_option( $this->adv_style_option, $this->default_adv_style() );
             update_option( $this->custom_css_option, '' );
-            echo '<div class="updated"><p>Opmaak gereset.</p></div>';
+            echo '<div class="updated"><p>'.esc_html__( 'Opmaak gereset.', 'botsauto-checklist' ).'</p></div>';
         }
     }
 

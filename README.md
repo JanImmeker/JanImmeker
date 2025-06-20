@@ -46,6 +46,12 @@ De primaire kleur bepaalt ook de kleur van checkboxen en labels. Voor de geavanc
 Onderaan het scherm kun je de stijlinstellingen exporteren naar een JSON‑bestand en weer importeren. Een knop *Reset naar standaard* zet alle waarden terug. Via het submenu **E-mail BCC** kan een adres ingesteld worden dat elke inzending in bcc ontvangt.
 
 Alle elementen van de checklist krijgen hun eigen CSS-class. De fases gebruiken nu een eigen pijl-icoon via CSS zodat de driehoekjes altijd zichtbaar zijn, ook als een thema de standaard marker van `<summary>` verbergt. De plugin dwingt tevens de weergave van checkboxes af zodat thema-stijlen geen ongewenste invloed hebben.
+### Live preview en conditional styling
+
+Op de pagina **Opmaak** staat nu een voorbeeldweergave van de checklist. Wanneer je kleuren of lettertypes wijzigt verschijnt het resultaat direct in deze preview, zonder de pagina te herladen. Met de knop *Toon als mobiele gebruiker* verklein je de weergave zodat je ziet hoe alles er op een smartphone uitziet.
+
+Naast de normale opmaak kun je instellen hoe een checklist‑item eruitziet zodra de checkbox is aangevinkt. Deze styling wordt zowel op de website als in het gegenereerde PDF‑bestand toegepast.
+
 
 ### Nieuwe mogelijkheden
 
