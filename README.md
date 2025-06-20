@@ -53,6 +53,7 @@ Op de pagina **Opmaak** staat nu een voorbeeldweergave van de checklist. Wanneer
 Naast de normale opmaak kun je instellen hoe een checklist‑item eruitziet zodra de checkbox is aangevinkt. Deze styling wordt zowel op de website als in het gegenereerde PDF‑bestand toegepast.
 
 
+Alle labels in de plugin zijn vertaalbaar. Gebruik het bestand `languages/botsauto-checklist.pot` om eigen vertalingen aan te maken.
 ### Nieuwe mogelijkheden
 
 De checklist werkt nu ook op gewone Berichten. De velden **Titel**, **Naam** en **E‑mail** zijn gelijk uitgelijnd en hebben dezelfde breedte tot aan een eventuele afbeelding. Zowel deze velden als de uitklapbare fasetitel gebruiken het gekozen lettertype en de primaire kleur.

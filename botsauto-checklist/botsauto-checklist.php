@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.11.0
+ * Version: 1.11.1
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -98,9 +98,7 @@ class BOTSAUTO_Checklist {
     }
 
     private function send_email( $to, $subject, $body, $attachments = array(), $extra_headers = array() ) {
-        $headers   = array();
-        $headers[] = 'Content-Type: text/html; charset=UTF-8';
-        $headers[] = 'From: ' . $this->mail_from_name( '' ) . ' <' . $this->mail_from( '' ) . '>';
+        $headers   = array( 'Content-Type: text/html; charset=UTF-8' );
         $headers   = array_merge( $headers, (array) $extra_headers );
         return wp_mail( $to, $subject, $body, $headers, $attachments );
     }
@@ -172,9 +170,9 @@ class BOTSAUTO_Checklist {
     }
 
     public function add_meta_boxes() {
-        add_meta_box( 'botsauto_lines', 'Checklist items', array( $this, 'meta_box_lines' ), $this->list_post_type, 'normal', 'default' );
-        add_meta_box( 'botsauto_shortcode', 'Shortcode', array( $this, 'meta_box_shortcode' ), $this->list_post_type, 'side' );
-        add_meta_box( 'botsauto_submission', 'Inzending', array( $this, 'meta_box_submission' ), $this->post_type, 'normal' );
+        add_meta_box( 'botsauto_lines', __( 'Checklist items', 'botsauto-checklist' ), array( $this, 'meta_box_lines' ), $this->list_post_type, 'normal', 'default' );
+        add_meta_box( 'botsauto_shortcode', __( 'Shortcode', 'botsauto-checklist' ), array( $this, 'meta_box_shortcode' ), $this->list_post_type, 'side' );
+        add_meta_box( 'botsauto_submission', __( 'Inzending', 'botsauto-checklist' ), array( $this, 'meta_box_submission' ), $this->post_type, 'normal' );
     }
 
     public function meta_box_lines( $post ) {
@@ -184,11 +182,11 @@ class BOTSAUTO_Checklist {
         }
         echo '<textarea id="botsauto_content" name="botsauto_content" style="display:none">'.esc_textarea( $content ).'</textarea>';
         echo '<div id="botsauto-editor"></div>';
-        echo '<p><button type="button" class="button" id="botsauto-add-phase">Fase toevoegen</button></p>';
+        echo '<p><button type="button" class="button" id="botsauto-add-phase">'.esc_html__( 'Fase toevoegen', 'botsauto-checklist' ).'</button></p>';
         echo '<input type="hidden" name="botsauto_lines_nonce" value="'.wp_create_nonce('botsauto_lines').'" />';
-        echo '<script type="text/template" id="botsauto-phase-template"><div class="botsauto-phase"><details open><summary></summary><p class="phase-line"><label><span>Fase:</span> <input type="text" class="phase-field"></label> <button type="button" class="button botsauto-remove-phase">Verwijder</button></p><p class="desc-line"><label><span>Toelichting:</span> <input type="text" class="desc-field"></label></p><div class="botsauto-questions"></div><p><button type="button" class="button botsauto-add-question">Vraag toevoegen</button></p></details></div></script>';
-        echo '<script type="text/template" id="botsauto-question-template"><div class="botsauto-question"><p class="question-line"><label><span>Vraag:</span> <input type="text" class="question-field"></label> <button type="button" class="button botsauto-remove-question">Verwijder</button></p><div class="botsauto-items"></div><p><button type="button" class="button botsauto-add-item">Item toevoegen</button></p></div></script>';
-        echo '<script type="text/template" id="botsauto-item-template"><div class="botsauto-item"><p class="item-line"><label><span>Checklist item:</span> <input type="text" class="item-field"></label> <button type="button" class="button botsauto-remove-item">Verwijder</button></p></div></script>';
+        echo '<script type="text/template" id="botsauto-phase-template"><div class="botsauto-phase"><details open><summary></summary><p class="phase-line"><label><span>'.esc_html__( 'Fase', 'botsauto-checklist' ).':</span> <input type="text" class="phase-field"></label> <button type="button" class="button botsauto-remove-phase">'.esc_html__( 'Verwijder', 'botsauto-checklist' ).'</button></p><p class="desc-line"><label><span>'.esc_html__( 'Toelichting', 'botsauto-checklist' ).':</span> <input type="text" class="desc-field"></label></p><div class="botsauto-questions"></div><p><button type="button" class="button botsauto-add-question">'.esc_html__( 'Vraag toevoegen', 'botsauto-checklist' ).'</button></p></details></div></script>';
+        echo '<script type="text/template" id="botsauto-question-template"><div class="botsauto-question"><p class="question-line"><label><span>'.esc_html__( 'Vraag', 'botsauto-checklist' ).':</span> <input type="text" class="question-field"></label> <button type="button" class="button botsauto-remove-question">'.esc_html__( 'Verwijder', 'botsauto-checklist' ).'</button></p><div class="botsauto-items"></div><p><button type="button" class="button botsauto-add-item">'.esc_html__( 'Item toevoegen', 'botsauto-checklist' ).'</button></p></div></script>';
+        echo '<script type="text/template" id="botsauto-item-template"><div class="botsauto-item"><p class="item-line"><label><span>'.esc_html__( 'Checklist item', 'botsauto-checklist' ).':</span> <input type="text" class="item-field"></label> <button type="button" class="button botsauto-remove-item">'.esc_html__( 'Verwijder', 'botsauto-checklist' ).'</button></p></div></script>';
         $s = $this->get_style_options();
         $adv = $this->get_adv_style_options();
         echo '<style>#botsauto-editor p{display:flex;align-items:center;gap:6px;margin:4px 0;}#botsauto-editor label{flex:1;display:flex;align-items:center;min-width:0;color:' . esc_attr($s['primary']) . ';}#botsauto-editor label span{display:inline-block;width:140px;}#botsauto-editor input{flex:1;width:' . esc_attr($adv['field']['width']) . ';max-width:none;border-radius:' . esc_attr($adv['field']['border-radius']) . ';border-style:' . esc_attr($adv['field']['border-style']) . ';border-width:' . esc_attr($adv['field']['border-width']) . ';border-color:' . esc_attr($adv['field']['border-color']) . ';background:' . esc_attr($adv['field']['background-color']) . ';color:' . esc_attr($adv['field']['text-color']) . ';box-sizing:border-box;}#botsauto-editor .question-line{margin-left:2em;}#botsauto-editor .item-line{margin-left:4em;}#botsauto-editor{background:' . esc_attr($s['background']) . ';color:' . esc_attr($s['text']) . ';font-family:' . esc_attr($s['font']) . ';}#botsauto-editor input[type=checkbox]{accent-color:' . esc_attr($s['primary']) . '!important;display:inline-block!important;width:auto!important;height:auto!important;appearance:auto!important;}#botsauto-editor .button{background:' . esc_attr($s['primary']) . ';border-color:' . esc_attr($s['primary']) . ';color:#fff;}#botsauto-editor .botsauto-phase>details>summary{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($s['primary']) . ';list-style:none;position:relative;padding-left:1.2em;}#botsauto-editor .botsauto-phase>details>summary::before{content:"\25B6";position:absolute;left:0;}#botsauto-editor .botsauto-phase>details[open]>summary::before{content:"\25BC";}</style>';
@@ -281,7 +279,7 @@ class BOTSAUTO_Checklist {
         foreach ( $cols as $key => $val ) {
             $new[ $key ] = $val;
             if ( $key === 'title' ) {
-                $new['shortcode'] = 'Shortcode';
+                $new['shortcode'] = __( 'Shortcode', 'botsauto-checklist' );
             }
         }
         return $new;
@@ -433,14 +431,14 @@ CHECKLIST;
         if ( $list_id ) {
             $post = get_post( $list_id );
             if ( ! $post || $post->post_type !== $this->list_post_type ) {
-                return 'Checklist niet gevonden.';
+                return __( 'Checklist niet gevonden.', 'botsauto-checklist' );
             }
         } else {
             $first = get_posts( array( 'post_type' => $this->list_post_type, 'numberposts' => 1 ) );
             if ( $first ) {
                 $list_id = $first[0]->ID;
             } else {
-                return 'Checklist niet gevonden.';
+                return __( 'Checklist niet gevonden.', 'botsauto-checklist' );
             }
         }
         $token = isset( $_GET['botsauto_edit'] ) ? sanitize_text_field( $_GET['botsauto_edit'] ) : '';
@@ -518,9 +516,9 @@ CHECKLIST;
             echo '<input type="hidden" name="items_snapshot" value="' . esc_attr( wp_json_encode( $snapshot ) ) . '" />';
         }
         echo '<div class="botsauto-header"><div class="botsauto-fields">';
-        echo '<p><label>Titel: <input type="text" name="entry_title" value="' . esc_attr($title) . '" required></label></p>';
-        echo '<p><label>Naam: <input type="text" name="name" value="' . esc_attr($name) . '" required></label></p>';
-        echo '<p><label>E-mail: <input type="email" name="email" value="' . esc_attr($email) . '" required></label></p>';
+        echo '<p><label>'.esc_html__( 'Titel', 'botsauto-checklist' ).': <input type="text" name="entry_title" value="' . esc_attr($title) . '" required></label></p>';
+        echo '<p><label>'.esc_html__( 'Naam', 'botsauto-checklist' ).': <input type="text" name="name" value="' . esc_attr($name) . '" required></label></p>';
+        echo '<p><label>'.esc_html__( 'E-mail', 'botsauto-checklist' ).': <input type="email" name="email" value="' . esc_attr($email) . '" required></label></p>';
         echo '</div>';
         if ( ! empty( $style['image'] ) ) {
             echo '<div class="botsauto-logo"><img src="' . esc_url( $style['image'] ) . '" style="max-width:150px;height:auto;" /></div>';
@@ -549,7 +547,8 @@ CHECKLIST;
             if ( $data['question'] ) {
                 echo '<strong>'.esc_html( $data['question'] ).'</strong><br>';
             }
-            echo '<label><input type="checkbox" class="botsauto-checkbox" name="answers['.$hash.']" '.$checked.'> '.esc_html( $data['item'] ).'</label>';
+            $cid = 'cb_'.esc_attr( $hash );
+            echo '<input type="checkbox" id="'.$cid.'" class="botsauto-checkbox" name="answers['.$hash.']" '.$checked.'> <label for="'.$cid.'">'.esc_html( $data['item'] ).'</label>';
             echo '</li>';
         }
         if ( $open_ul ) {
@@ -557,12 +556,12 @@ CHECKLIST;
         }
         echo '</div>';
         if ( $show_update ) {
-            echo '<p><label><input type="checkbox" class="botsauto-checkbox" name="update_items" value="1"> De checklist is gewijzigd, nieuwe versie gebruiken</label></p>';
+            echo '<p><label><input type="checkbox" class="botsauto-checkbox" name="update_items" value="1"> '.esc_html__( 'De checklist is gewijzigd, nieuwe versie gebruiken', 'botsauto-checklist' ).'</label></p>';
         }
         $c = $completed ? 'checked' : '';
-        echo '<p><label><input type="checkbox" class="botsauto-checkbox" name="completed" value="1" '.$c.'> Checklist afgerond</label></p>';
-        $label = $post_id ? 'Opslaan' : 'Checklist verzenden';
-        echo '<p><input type="submit" class="button button-primary" value="'.esc_attr($label).'"></p>';
+        echo '<p class="botsauto-completed"><label><input type="checkbox" class="botsauto-checkbox" name="completed" value="1" '.$c.'> '.esc_html__( 'Checklist afgerond', 'botsauto-checklist' ).'</label></p>';
+        $label = $post_id ? esc_html__( 'Opslaan', 'botsauto-checklist' ) : esc_html__( 'Checklist verzenden', 'botsauto-checklist' );
+        echo '<p><input type="submit" class="button button-primary" value="'.esc_attr($label).'" /></p>';
         echo '</form></div>';
         return ob_get_clean();
     }
@@ -620,11 +619,11 @@ CHECKLIST;
         }
         $style = $this->get_style_options();
         $pdf = $this->generate_pdf( $title, $name, $answers, $snapshot, $style['image'] );
-        $body = 'Bedankt voor het invullen van de checklist. Bewaar deze link om later verder te gaan: '.$edit_url;
+        $body = sprintf( __( 'Bedankt voor het invullen van de checklist. Bewaar deze link om later verder te gaan: %s', 'botsauto-checklist' ), $edit_url );
         $cc = get_option( $this->cc_option, '' );
         $headers = array();
         if ( $cc ) { $headers[] = 'Bcc: '.$cc; }
-        $this->send_email( $email, 'Checklist bevestiging', $body, array( $pdf ), $headers );
+        $this->send_email( $email, __( 'Checklist bevestiging', 'botsauto-checklist' ), $body, array( $pdf ), $headers );
         unlink( $pdf );
         wp_redirect( $edit_url );
         exit;
@@ -843,7 +842,7 @@ CHECKLIST;
         echo '<button type="button" class="button" id="botsauto-toggle-mobile">'.esc_html__( 'Toon als mobiele gebruiker', 'botsauto-checklist' ).'</button>';
         echo '<style id="botsauto-preview-style"></style>';
         echo '<style>#botsauto-preview-container{border:1px solid #ddd;padding:10px;margin-top:1em;}#botsauto-preview-container.mobile{max-width:375px;}</style>';
-        echo '<div id="botsauto-preview-container"><div id="botsauto-preview">\n<form><div class="botsauto-header"><div class="botsauto-fields"><p><label>Titel: <input type="text" value="Demo"></label></p><p><label>Naam: <input type="text" value="Demo"></label></p><p><label>E-mail: <input type="email" value="demo@example.com"></label></p></div></div><div class="botsauto-checklist"><details class="botsauto-phase" open><summary>Fase</summary><ul style="list-style:none"><li><strong>Vraag?</strong><br><label><input type="checkbox" class="botsauto-checkbox"> Item</label></li></ul></details></div><p><input type="submit" class="button button-primary" value="Submit"></p></form></div></div>';
+        echo '<div id="botsauto-preview-container"><div id="botsauto-preview">\n<form><div class="botsauto-header"><div class="botsauto-fields"><p><label>'.esc_html__( 'Titel', 'botsauto-checklist' ).': <input type="text" value="Demo"></label></p><p><label>'.esc_html__( 'Naam', 'botsauto-checklist' ).': <input type="text" value="Demo"></label></p><p><label>'.esc_html__( 'E-mail', 'botsauto-checklist' ).': <input type="email" value="demo@example.com"></label></p></div></div><div class="botsauto-checklist"><details class="botsauto-phase" open><summary>Fase</summary><ul style="list-style:none"><li><strong>Vraag?</strong><br><input type="checkbox" id="preview_cb" class="botsauto-checkbox"> <label for="preview_cb">Item</label></li></ul></details></div><p><input type="submit" class="button button-primary" value="Submit"></p></form></div></div>';
         echo '<h2>'.esc_html__( 'Import / Export', 'botsauto-checklist' ).'</h2><p><a href="'.admin_url('admin-post.php?action=botsauto_export_style').'" class="button">'.esc_html__( 'Exporteren', 'botsauto-checklist' ).'</a></p>';
         echo '<form method="post" enctype="multipart/form-data"><input type="file" name="adv_import" accept="application/json" />';
         wp_nonce_field('botsauto_adv_import');

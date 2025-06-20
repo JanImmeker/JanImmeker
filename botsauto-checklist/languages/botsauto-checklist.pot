@@ -55,3 +55,58 @@ msgstr ""
 #: botsauto-checklist.php
 msgid "Import succesvol."
 msgstr ""
+#: botsauto-checklist.php
+msgid "Fase"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Toelichting"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Vraag"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Checklist item"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Verwijder"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Vraag toevoegen"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Item toevoegen"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Fase toevoegen"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Titel"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Naam"
+msgstr ""
+#: botsauto-checklist.php
+msgid "E-mail"
+msgstr ""
+#: botsauto-checklist.php
+msgid "De checklist is gewijzigd, nieuwe versie gebruiken"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Checklist afgerond"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Opslaan"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Checklist verzenden"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Checklist bevestiging"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Bedankt voor het invullen van de checklist. Bewaar deze link om later verder te gaan: %s"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Checklist niet gevonden."
+msgstr ""
+
