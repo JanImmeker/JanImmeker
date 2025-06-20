@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.8.0
+ * Version: 1.9.0
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -17,6 +17,7 @@ class BOTSAUTO_Checklist {
     private $post_type      = 'botsauto_submission';
     private $list_post_type = 'botsauto_list';
     private $style_option   = 'botsauto_style';
+    private $cc_option      = 'botsauto_cc_email';
 
     public static function install() {
         $self = new self();
@@ -54,7 +55,7 @@ class BOTSAUTO_Checklist {
         add_action( 'admin_post_nopriv_botsauto_save', array( $this, 'handle_submit' ) );
         add_action( 'admin_post_botsauto_save', array( $this, 'handle_submit' ) );
         add_action( 'wp_ajax_botsauto_import', array( $this, 'ajax_import' ) );
-        add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
+        add_action( 'admin_menu', array( $this, 'add_admin_pages' ) );
         add_action( 'admin_init', array( $this, 'register_settings' ) );
         add_action( 'wp_head', array( $this, 'output_frontend_style' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_color_picker_assets' ) );
@@ -68,10 +69,11 @@ class BOTSAUTO_Checklist {
         return get_bloginfo( 'name' );
     }
 
-    private function send_email( $to, $subject, $body, $attachments = array() ) {
+    private function send_email( $to, $subject, $body, $attachments = array(), $extra_headers = array() ) {
         $headers   = array();
         $headers[] = 'Content-Type: text/html; charset=UTF-8';
         $headers[] = 'From: ' . $this->mail_from_name( '' ) . ' <' . $this->mail_from( '' ) . '>';
+        $headers   = array_merge( $headers, (array) $extra_headers );
         return wp_mail( $to, $subject, $body, $headers, $attachments );
     }
 
@@ -144,7 +146,7 @@ class BOTSAUTO_Checklist {
         echo '<script type="text/template" id="botsauto-question-template"><div class="botsauto-question"><p class="question-line"><label><span>Vraag:</span> <input type="text" class="question-field"></label> <button type="button" class="button botsauto-remove-question">Verwijder</button></p><div class="botsauto-items"></div><p><button type="button" class="button botsauto-add-item">Item toevoegen</button></p></div></script>';
         echo '<script type="text/template" id="botsauto-item-template"><div class="botsauto-item"><p class="item-line"><label><span>Checklist item:</span> <input type="text" class="item-field"></label> <button type="button" class="button botsauto-remove-item">Verwijder</button></p></div></script>';
         $s = $this->get_style_options();
-        echo '<style>#botsauto-editor p{display:flex;align-items:center;gap:6px;margin:4px 0;}#botsauto-editor label{flex:1;display:flex;align-items:center;min-width:0;}#botsauto-editor label span{display:inline-block;width:140px;}#botsauto-editor input{width:100%;max-width:400px;}#botsauto-editor .question-line{margin-left:2em;}#botsauto-editor .item-line{margin-left:4em;}#botsauto-editor{background:' . esc_attr($s['background']) . ';color:' . esc_attr($s['text']) . ';font-family:' . esc_attr($s['font']) . ';}#botsauto-editor .button{background:' . esc_attr($s['primary']) . ';border-color:' . esc_attr($s['primary']) . ';}</style>';
+        echo '<style>#botsauto-editor p{display:flex;align-items:center;gap:6px;margin:4px 0;}#botsauto-editor label{flex:1;display:flex;align-items:center;min-width:0;color:' . esc_attr($s['primary']) . ';}#botsauto-editor label span{display:inline-block;width:140px;}#botsauto-editor input{width:100%;max-width:400px;}#botsauto-editor .question-line{margin-left:2em;}#botsauto-editor .item-line{margin-left:4em;}#botsauto-editor{background:' . esc_attr($s['background']) . ';color:' . esc_attr($s['text']) . ';font-family:' . esc_attr($s['font']) . ';}#botsauto-editor input[type=checkbox]{accent-color:' . esc_attr($s['primary']) . ';}#botsauto-editor .button{background:' . esc_attr($s['primary']) . ';border-color:' . esc_attr($s['primary']) . ';}</style>';
     }
 
     public function meta_box_shortcode( $post ) {
@@ -367,6 +369,7 @@ CHECKLIST;
         }
 
         ob_start();
+        $style = $this->get_style_options();
         echo '<form method="post" action="' . esc_url( admin_url('admin-post.php') ) . '">';
         echo '<input type="hidden" name="action" value="botsauto_save">';
         echo '<input type="hidden" name="checklist_id" value="' . intval( $list_id ) . '" />';
@@ -374,9 +377,15 @@ CHECKLIST;
             echo '<input type="hidden" name="post_id" value="' . intval($post_id) . '" />';
             echo '<input type="hidden" name="items_snapshot" value="' . esc_attr( wp_json_encode( $snapshot ) ) . '" />';
         }
+        echo '<div class="botsauto-header"><div class="botsauto-fields">';
         echo '<p><label>Titel: <input type="text" name="entry_title" value="' . esc_attr($title) . '" required></label></p>';
         echo '<p><label>Naam: <input type="text" name="name" value="' . esc_attr($name) . '" required></label></p>';
-        echo '<p><label>Email: <input type="email" name="email" value="' . esc_attr($email) . '" required></label></p>';
+        echo '<p><label>E-mail: <input type="email" name="email" value="' . esc_attr($email) . '" required></label></p>';
+        echo '</div>';
+        if ( ! empty( $style['image'] ) ) {
+            echo '<div class="botsauto-logo"><img src="' . esc_url( $style['image'] ) . '" style="max-width:150px;height:auto;" /></div>';
+        }
+        echo '</div>';
         echo '<div class="botsauto-checklist">';
         $last_phase = null;
         $open_ul    = false;
@@ -469,9 +478,13 @@ CHECKLIST;
             wp_redirect( $edit_url );
             exit;
         }
-        $pdf = $this->generate_pdf( $title, $name, $answers, $snapshot );
+        $style = $this->get_style_options();
+        $pdf = $this->generate_pdf( $title, $name, $answers, $snapshot, $style['image'] );
         $body = 'Bedankt voor het invullen van de checklist. Bewaar deze link om later verder te gaan: '.$edit_url;
-        $this->send_email( $email, 'Checklist bevestiging', $body, array( $pdf ) );
+        $cc = get_option( $this->cc_option, '' );
+        $headers = array();
+        if ( $cc ) { $headers[] = 'Cc: '.$cc; }
+        $this->send_email( $email, 'Checklist bevestiging', $body, array( $pdf ), $headers );
         unlink( $pdf );
         wp_redirect( $edit_url );
         exit;
@@ -489,13 +502,23 @@ CHECKLIST;
         return 0;
     }
 
-    private function generate_pdf( $title, $name, $answers, $snapshot ) {
+    private function generate_pdf( $title, $name, $answers, $snapshot, $image = '' ) {
         if ( ! defined( 'FPDF_FONTPATH' ) ) {
             define( 'FPDF_FONTPATH', plugin_dir_path( __FILE__ ) . 'lib/font/' );
         }
         require_once plugin_dir_path(__FILE__).'lib/fpdf.php';
         $pdf = new FPDF();
         $pdf->AddPage();
+        if ( $image ) {
+            $uploads = wp_upload_dir();
+            $path = $image;
+            if ( strpos( $image, $uploads['baseurl'] ) === 0 ) {
+                $path = str_replace( $uploads['baseurl'], $uploads['basedir'], $image );
+            }
+            if ( @file_exists( $path ) ) {
+                $pdf->Image( $path, 150, 10, 40 );
+            }
+        }
         $pdf->SetFont('Arial','',12);
         $pdf->Cell(0,10,$this->pdf_string('BOTSAUTO Checklist'),0,1);
         $pdf->Cell(0,10,$this->pdf_string('Titel: '.$title),0,1);
@@ -519,23 +542,28 @@ CHECKLIST;
             'text'       => '#000000',
             'background' => '#ffffff',
             'font'       => 'Arial, sans-serif',
+            'image'      => '',
         );
         $opt = get_option( $this->style_option, array() );
         return wp_parse_args( $opt, $defaults );
     }
 
-    public function add_settings_page() {
-        add_options_page( 'BOTSAUTO stijl', 'BOTSAUTO stijl', 'manage_options', 'botsauto-style', array( $this, 'settings_page' ) );
+    public function add_admin_pages() {
+        add_menu_page( 'BOTSAUTO', 'BOTSAUTO', 'manage_options', 'botsauto-settings', array( $this, 'main_settings_page' ), 'dashicons-yes', 26 );
+        add_submenu_page( 'botsauto-settings', 'BOTSAUTO stijl', 'Stijl', 'manage_options', 'botsauto-style', array( $this, 'settings_page' ) );
+        add_submenu_page( 'botsauto-settings', 'E-mail CC', 'E-mail CC', 'manage_options', 'botsauto-cc', array( $this, 'cc_page' ) );
     }
 
     public function register_settings() {
         register_setting( 'botsauto_style_group', $this->style_option );
+        register_setting( 'botsauto_cc_group', $this->cc_option, array( 'sanitize_callback' => 'sanitize_email' ) );
     }
 
     public function enqueue_color_picker_assets( $hook ) {
-        if ( $hook === 'settings_page_botsauto-style' ) {
+        if ( strpos( $hook, 'botsauto-style' ) !== false ) {
             wp_enqueue_style( 'wp-color-picker' );
             wp_enqueue_script( 'wp-color-picker' );
+            wp_enqueue_media();
             wp_add_inline_script( 'wp-color-picker', 'jQuery(function($){$(".color-field").wpColorPicker();});' );
         }
     }
@@ -547,6 +575,7 @@ CHECKLIST;
             'Helvetica, sans-serif'     => 'Helvetica',
             '"Times New Roman", serif' => 'Times New Roman',
             'Georgia, serif'            => 'Georgia',
+            'Oswald, sans-serif'        => 'Oswald',
         );
         echo '<div class="wrap"><h1>BOTSAUTO stijl</h1><form method="post" action="options.php">';
         settings_fields( 'botsauto_style_group' );
@@ -560,14 +589,34 @@ CHECKLIST;
             echo '<option value="'.esc_attr($val).'" '.$sel.'>'.esc_html($label).'</option>';
         }
         echo '</select></td></tr>';
+        echo '<tr><th scope="row">Afbeelding</th><td><input type="text" id="botsauto-image" name="'.$this->style_option.'[image]" value="'.esc_attr($opts['image']).'" /> <button type="button" class="button" id="botsauto-image-btn">Selecteer afbeelding</button></td></tr>';
         echo '</table>';
+        submit_button();
+        echo '</form></div>';
+        echo '<script>jQuery(function($){$("#botsauto-image-btn").on("click",function(e){e.preventDefault();var frame=wp.media({title:"Selecteer afbeelding",multiple:false});frame.on("select",function(){var url=frame.state().get("selection").first().toJSON().url;$("#botsauto-image").val(url);});frame.open();});});</script>';
+    }
+
+    public function cc_page() {
+        $cc = get_option( $this->cc_option, '' );
+        echo '<div class="wrap"><h1>E-mail CC</h1><form method="post" action="options.php">';
+        settings_fields( 'botsauto_cc_group' );
+        echo '<table class="form-table"><tr><th scope="row">E-mail adres</th><td><input type="email" name="'.$this->cc_option.'" value="'.esc_attr($cc).'" /></td></tr></table>';
         submit_button();
         echo '</form></div>';
     }
 
+    public function main_settings_page() {
+        echo '<div class="wrap"><h1>BOTSAUTO instellingen</h1><p>Gebruik de submenu\'s om de stijl en e-mail opties in te stellen.</p></div>';
+    }
+
     public function output_frontend_style() {
         $o = $this->get_style_options();
-        echo '<style class="botsauto-style">.botsauto-checklist{background:' . esc_attr($o['background']) . ';color:' . esc_attr($o['text']) . ';font-family:' . esc_attr($o['font']) . ';}.botsauto-checklist .button-primary{background:' . esc_attr($o['primary']) . ';border-color:' . esc_attr($o['primary']) . ';}</style>';
+        $font_link = '';
+        if ( strpos( $o['font'], 'Oswald' ) !== false ) {
+            $font_link = '<link href="https://fonts.googleapis.com/css2?family=Oswald&display=swap" rel="stylesheet">';
+        }
+        echo $font_link;
+        echo '<style class="botsauto-style">.botsauto-checklist{background:' . esc_attr($o['background']) . ';color:' . esc_attr($o['text']) . ';font-family:' . esc_attr($o['font']) . ';}.botsauto-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1em;}.botsauto-header .botsauto-fields p{margin:0;} .botsauto-checklist label{color:' . esc_attr($o['primary']) . ';}.botsauto-checklist input[type=checkbox]{accent-color:' . esc_attr($o['primary']) . ';}.botsauto-checklist .button-primary{background:' . esc_attr($o['primary']) . ';border-color:' . esc_attr($o['primary']) . ';}.botsauto-completed{margin-top:1.5em;}</style>';
     }
 }
 
