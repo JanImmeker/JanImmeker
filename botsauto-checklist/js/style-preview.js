@@ -48,14 +48,26 @@ jQuery(function($){
     if(adv.button){
       css += w+' .button-primary{background:'+adv.button['background-color']+';color:'+adv.button['text-color']+';padding:'+adv.button.padding+';border-radius:'+adv.button['border-radius']+';}';
     }
-    if(adv.field){
+   if(adv.field){
       css += w+' input[type=text],'+w+' input[type=email]{background:'+adv.field['background-color']+';color:'+adv.field['text-color']+';border-color:'+adv.field['border-color']+';border-radius:'+adv.field['border-radius']+';border-style:'+adv.field['border-style']+';border-width:'+adv.field['border-width']+';width:'+adv.field.width+';box-sizing:border-box;}';
+   }
+    if(adv.note){
+       css += w+' .botsauto-note textarea{color:'+adv.note['text-color']+';background:'+adv.note['background-color']+';font-size:'+adv.note['font-size']+';}';
     }
-    $('#botsauto-preview-style').text(css);
-  }
+   $('#botsauto-preview-style').text(css);
+ }
   $('.color-field, select[name^="botsauto_style"], input[name^="botsauto_adv_style"]').on('input change', updatePreview);
   $('#botsauto-toggle-mobile').on('click',function(){
     $('#botsauto-preview-container').toggleClass('mobile');
+  });
+  $('#botsauto-image-btn').on('click',function(e){
+    e.preventDefault();
+    var frame=wp.media({title:'Selecteer afbeelding',button:{text:'Gebruik afbeelding'},multiple:false});
+    frame.on('select',function(){
+      var url=frame.state().get('selection').first().get('url');
+      $('#botsauto-image').val(url).trigger('change');
+    });
+    frame.open();
   });
   updatePreview();
 });

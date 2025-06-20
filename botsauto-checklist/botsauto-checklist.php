@@ -412,6 +412,11 @@ CHECKLIST;
                 'text-color'       => '#6c6c6c',
                 'text-decoration'  => 'line-through',
             ),
+            'note' => array(
+                'text-color'       => '#00306a',
+                'background-color' => '#ffffff',
+                'font-size'        => '14px',
+            ),
         );
     }
 
@@ -502,6 +507,9 @@ CHECKLIST;
             $values = $tmp;
         }
 
+        if ( function_exists( 'wp_enqueue_editor' ) ) {
+            wp_enqueue_editor();
+        }
         ob_start();
         $style = $this->get_style_options();
         $adv   = $this->get_adv_style_options();
@@ -518,14 +526,15 @@ CHECKLIST;
              '#'.$wrapper.' .botsauto-phase[open]>summary::before{content:"\25BC";}' .
              '#'.$wrapper.' .botsauto-question{color:'.$adv['question']['text-color'].'!important;font-size:'.$adv['question']['font-size'].';font-style:'.$adv['question']['font-style'].';}' .
              '#'.$wrapper.' .botsauto-header label{color:'.$style['primary'].'!important;}' .
-             '#'.$wrapper.' .botsauto-checklist label{color:'.$adv['item']['text-color'].'!important;font-size:'.$adv['item']['font-size'].';display:inline-block;vertical-align:middle;}' .
+             '#'.$wrapper.' .botsauto-checklist li{display:flex;flex-wrap:wrap;align-items:flex-start;margin-bottom:.5em;}' .
+             '#'.$wrapper.' .botsauto-checklist label{color:'.$adv['item']['text-color'].'!important;font-size:'.$adv['item']['font-size'].';margin-left:.25em;flex:1;}' .
              '#'.$wrapper.' input:checked+label{color:'.$adv['checked']['text-color'].'!important;text-decoration:'.$adv['checked']['text-decoration'].';}' .
-             '#'.$wrapper.' .botsauto-checkbox{accent-color:'.$adv['checkbox']['color'].'!important;width:'.$adv['checkbox']['size'].'!important;height:'.$adv['checkbox']['size'].'!important;appearance:auto!important;}' .
+             '#'.$wrapper.' .botsauto-checkbox{accent-color:'.$adv['checkbox']['color'].'!important;width:'.$adv['checkbox']['size'].'!important;height:'.$adv['checkbox']['size'].'!important;appearance:auto!important;flex:0 0 auto;}' .
              '#'.$wrapper.' .button-primary{background:'.$adv['button']['background-color'].'!important;color:'.$adv['button']['text-color'].'!important;padding:'.$adv['button']['padding'].';border-radius:'.$adv['button']['border-radius'].';}' .
              '#'.$wrapper.' input[type=text],#'.$wrapper.' input[type=email]{background:'.$adv['field']['background-color'].'!important;color:'.$adv['field']['text-color'].'!important;border-color:'.$adv['field']['border-color'].'!important;border-radius:'.$adv['field']['border-radius'].';border-style:'.$adv['field']['border-style'].';border-width:'.$adv['field']['border-width'].';width:'.$adv['field']['width'].';box-sizing:border-box;}' .
-             '#'.$wrapper.' .botsauto-note{margin-top:.5em;}' .
-             '#'.$wrapper.' .botsauto-note textarea{width:100%;height:80px;}' .
-             '#'.$wrapper.' .botsauto-note-btn{background:none;border:none;color:'.$style['primary'].';cursor:pointer;margin-left:5px;}';
+             '#'.$wrapper.' .botsauto-note{width:100%;margin-top:.5em;}' .
+             '#'.$wrapper.' .botsauto-note textarea{width:100%;height:80px;font-size:'.$adv['note']['font-size'].';color:'.$adv['note']['text-color'].';background:'.$adv['note']['background-color'].';}' .
+             '#'.$wrapper.' .botsauto-note-btn{background:none;border:none;color:'.$style['primary'].';cursor:pointer;margin-left:5px;flex:0 0 auto;}';
         if ( strpos( $style['font'], 'Oswald' ) !== false ) {
             echo '@import url("https://fonts.googleapis.com/css2?family=Oswald&display=swap");';
         }
@@ -571,10 +580,10 @@ CHECKLIST;
             if ( $data['question'] ) {
                 echo '<strong>'.esc_html( $data['question'] ).'</strong><br>';
             }
-            $cid = 'cb_'.esc_attr( $hash );
-            $note = isset( $notes[$hash] ) ? esc_textarea( $notes[$hash] ) : '';
-            $icon = esc_attr( $style['note_icon'] );
-            echo '<input type="checkbox" id="'.$cid.'" class="botsauto-checkbox" name="answers['.$hash.']" '.$checked.'> <label for="'.$cid.'">'.esc_html( $data['item'] ).'</label> <button type="button" class="botsauto-note-btn"><i class="fa '.$icon.'"></i></button><div class="botsauto-note" style="display:none"><textarea name="notes['.$hash.']">'.$note.'</textarea></div>';
+            $cid  = 'cb_'.esc_attr( $hash );
+            $note  = isset( $notes[$hash] ) ? esc_textarea( $notes[$hash] ) : '';
+            $icon  = esc_attr( $style['note_icon'] );
+            echo '<input type="checkbox" id="'.$cid.'" class="botsauto-checkbox" name="answers['.$hash.']" '.$checked.'> <label for="'.$cid.'">'.esc_html( $data['item'] ).'</label> <button type="button" class="botsauto-note-btn"><i class="fa '.$icon.'"></i></button><div class="botsauto-note" style="display:none"><textarea class="botsauto-rich" name="notes['.$hash.']">'.$note.'</textarea></div>';
             echo '</li>';
         }
         if ( $open_ul ) {
@@ -586,10 +595,32 @@ CHECKLIST;
         }
         $c = $completed ? 'checked' : '';
         echo '<p class="botsauto-completed"><label><input type="checkbox" class="botsauto-checkbox" name="completed" value="1" '.$c.'> '.esc_html__( 'Checklist afgerond', 'botsauto-checklist' ).'</label></p>';
+        echo '<input type="hidden" name="send_pdf" value="0" />';
+        $orig = array( 'answers' => $values, 'notes' => $notes, 'completed' => $completed );
         $label = $post_id ? esc_html__( 'Opslaan', 'botsauto-checklist' ) : esc_html__( 'Checklist verzenden', 'botsauto-checklist' );
         echo '<p><input type="submit" class="button button-primary" value="'.esc_attr($label).'" /></p>';
         echo '</form></div>';
+        echo '<script>var botsautoOrig='.wp_json_encode($orig).';</script>';
         echo '<script>document.addEventListener("click",function(e){var b=e.target.closest(".botsauto-note-btn");if(b){e.preventDefault();var n=b.nextElementSibling;n.style.display=n.style.display==="none"?"block":"none";}});</script>';
+        echo '<script>
+document.addEventListener("DOMContentLoaded",function(){
+  if(typeof tinymce!=="undefined"){
+    tinymce.init({selector:"#'.$wrapper.' .botsauto-rich",menubar:false,toolbar:"bold italic underline link",branding:false});
+  }
+  var form=document.querySelector("#'.$wrapper.' form");
+  if(!form)return;
+  form.addEventListener("submit",function(e){
+    if(typeof tinymce!="undefined") tinymce.triggerSave();
+    var changed=false;var orig=botsautoOrig||{answers:{},notes:{},completed:""};
+    var compNew=form.querySelector("input[name=completed]").checked?"1":"";
+    if(orig.completed!==compNew) changed=true;
+    form.querySelectorAll("input[name^='answers']").forEach(function(inp){var h=inp.name.match(/answers\[(.+)\]/)[1];var v=inp.checked?"1":"";if((orig.answers&&orig.answers[h]?"1":"0")!=v) changed=true;});
+    form.querySelectorAll("textarea[name^='notes']").forEach(function(tx){var h=tx.name.match(/notes\[(.+)\]/)[1];if((orig.notes&&orig.notes[h]||"")!=tx.value) changed=true;});
+    var sendField=form.querySelector("input[name=send_pdf]");
+    if(orig.completed!="1"&&compNew==="1"){sendField.value="1";return;}
+    if(changed){if(confirm("Wil je de bijgewerkte PDF per e-mail ontvangen?")){sendField.value="1";}}
+  });
+});</script>';
         return ob_get_clean();
     }
 
@@ -651,19 +682,27 @@ CHECKLIST;
             wp_redirect( $edit_url );
             exit;
         }
-        $style = $this->get_style_options();
-        $pdf = $this->generate_pdf( $title, $name, $answers, $snapshot, $notes, $style['image'] );
-        $body = sprintf( __( 'Bedankt voor het invullen van de checklist. Bewaar deze link om later verder te gaan: %s', 'botsauto-checklist' ), $edit_url );
-        $cc = get_option( $this->cc_option, '' );
-        $headers = array();
-        if ( $cc ) { $headers[] = 'Bcc: '.$cc; }
-        $this->send_email( $email, __( 'Checklist bevestiging', 'botsauto-checklist' ), $body, array( $pdf ), $headers );
-        $uploads = wp_upload_dir();
-        $url = str_replace( $uploads['basedir'], $uploads['baseurl'], $pdf );
-        $history = get_post_meta( $post_id, 'pdf_history', true );
-        if ( ! is_array( $history ) ) { $history = array(); }
-        $history[] = array( 'file' => $url, 'time' => time() );
-        update_post_meta( $post_id, 'pdf_history', $history );
+        $send_pdf = isset( $_POST['send_pdf'] ) && $_POST['send_pdf'];
+        $old_completed = get_post_meta( $post_id, 'completed', true );
+        if ( $old_completed !== '1' && $completed === '1' ) {
+            $send_pdf = true;
+        }
+        if ( $send_pdf ) {
+            $style = $this->get_style_options();
+            $pdf = $this->generate_pdf( $title, $name, $answers, $snapshot, $notes, $style['image'] );
+            $body = sprintf( __( 'Bedankt voor het invullen van de checklist. Bewaar deze link om later verder te gaan: %s', 'botsauto-checklist' ), $edit_url );
+            $cc = get_option( $this->cc_option, '' );
+            $headers = array();
+            if ( $cc ) { $headers[] = 'Bcc: '.$cc; }
+            $this->send_email( $email, __( 'Checklist bevestiging', 'botsauto-checklist' ), $body, array( $pdf ), $headers );
+            $uploads = wp_upload_dir();
+            $url = str_replace( $uploads['basedir'], $uploads['baseurl'], $pdf );
+            $history = get_post_meta( $post_id, 'pdf_history', true );
+            if ( ! is_array( $history ) ) { $history = array(); }
+            $history[] = array( 'file' => $url, 'time' => time() );
+            update_post_meta( $post_id, 'pdf_history', $history );
+        }
+        update_post_meta( $post_id, 'completed', $completed );
         wp_redirect( $edit_url );
         exit;
     }
