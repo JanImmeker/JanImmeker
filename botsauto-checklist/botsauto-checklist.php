@@ -491,13 +491,13 @@ CHECKLIST;
         echo '<style>';
         echo '#'.$wrapper.' *,#'.$wrapper.' *::before,#'.$wrapper.' *::after{box-sizing:border-box;margin:0;padding:0;}' .
              '#'.$wrapper.'{color:'.$style['text'].';background:'.$style['background'].';font-size:'.$adv['container']['font-size'].';padding:'.$adv['container']['padding'].';font-family:'.$style['font'].';}' .
-             '#'.$wrapper.' .botsauto-phase>summary{color:'.$adv['phase']['text-color'].'!important;background:'.$adv['phase']['background-color'].'!important;font-size:'.$adv['phase']['font-size'].';font-weight:'.$adv['phase']['font-weight'].';list-style:none!important;position:relative;padding-left:1.2em;}' .
+             '#'.$wrapper.' .botsauto-phase>summary{color:'.$adv['phase']['text-color'].'!important;background:'.$adv['phase']['background-color'].'!important;font-size:'.$adv['phase']['font-size'].';font-weight:'.$adv['phase']['font-weight'].';list-style:none!important;position:relative;padding-left:1.2em;padding-top:10px;padding-bottom:10px;}' .
              '#'.$wrapper.' .botsauto-phase>summary::-webkit-details-marker{display:none;}' .
              '#'.$wrapper.' .botsauto-phase>summary::before{content:"\25B6";position:absolute;left:0;}' .
              '#'.$wrapper.' .botsauto-phase[open]>summary::before{content:"\25BC";}' .
              '#'.$wrapper.' .botsauto-question{color:'.$adv['question']['text-color'].'!important;font-size:'.$adv['question']['font-size'].';font-style:'.$adv['question']['font-style'].';}' .
              '#'.$wrapper.' .botsauto-header label{color:'.$style['primary'].'!important;}' .
-             '#'.$wrapper.' .botsauto-checklist label{color:'.$adv['item']['text-color'].'!important;font-size:'.$adv['item']['font-size'].';}' .
+             '#'.$wrapper.' .botsauto-checklist label{color:'.$adv['item']['text-color'].'!important;font-size:'.$adv['item']['font-size'].';display:inline-block;vertical-align:middle;}' .
              '#'.$wrapper.' input:checked+label{color:'.$adv['checked']['text-color'].'!important;text-decoration:'.$adv['checked']['text-decoration'].';}' .
              '#'.$wrapper.' .botsauto-checkbox{accent-color:'.$adv['checkbox']['color'].'!important;width:'.$adv['checkbox']['size'].'!important;height:'.$adv['checkbox']['size'].'!important;appearance:auto!important;}' .
              '#'.$wrapper.' .button-primary{background:'.$adv['button']['background-color'].'!important;color:'.$adv['button']['text-color'].'!important;padding:'.$adv['button']['padding'].';border-radius:'.$adv['button']['border-radius'].';}' .
@@ -896,9 +896,9 @@ CHECKLIST;
             . '.botsauto-header .botsauto-fields p{margin:0;}'
             . '.botsauto-header label{color:' . esc_attr($o['primary']) . ';display:block;margin-bottom:.5em;}'
             . '.botsauto-header input[type=text],.botsauto-header input[type=email]{width:' . esc_attr($adv['field']['width']) . ';box-sizing:border-box;border-radius:' . esc_attr($adv['field']['border-radius']) . ';border-style:' . esc_attr($adv['field']['border-style']) . ';border-width:' . esc_attr($adv['field']['border-width']) . ';border-color:' . esc_attr($adv['field']['border-color']) . ';background:' . esc_attr($adv['field']['background-color']) . ';color:' . esc_attr($adv['field']['text-color']) . ';}'
-            . '.botsauto-checklist label{color:' . esc_attr($o['primary']) . ';}'
+            . '.botsauto-checklist label{color:' . esc_attr($o['primary']) . ';display:inline-block;vertical-align:middle;}'
             . '.botsauto-checklist strong{color:' . esc_attr($o['primary']) . ';}'
-            . '.botsauto-phase>summary{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($o['primary']) . ';list-style:none;position:relative;padding-left:1.2em;}'
+            . '.botsauto-phase>summary{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($o['primary']) . ';list-style:none;position:relative;padding-left:1.2em;padding-top:10px;padding-bottom:10px;}'
             . '.botsauto-phase>summary::before{content:"\25B6";position:absolute;left:0;}'
             . '.botsauto-phase[open]>summary::before{content:"\25BC";}'
             . '.botsauto-checkbox{accent-color:' . esc_attr($o['primary']) . ';display:inline-block!important;width:auto!important;height:auto!important;appearance:auto!important;visibility:visible!important;}'
