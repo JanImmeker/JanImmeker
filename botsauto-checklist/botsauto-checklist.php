@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.12.3
+ * Version: 1.12.4
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -817,7 +817,7 @@ document.addEventListener('DOMContentLoaded',function(){
         $css .= "$selector{color:{$style['text']};background:{$style['background']};font-size:{$adv['container']['font-size']};padding:{$adv['container']['padding']};font-family:{$style['font']};}";
         $css .= "$selector .botsauto-phase>summary{color:{$adv['phase']['text-color']}!important;background:{$adv['phase']['background-color']}!important;font-size:{$adv['phase']['font-size']};font-weight:{$adv['phase']['font-weight']};list-style:none!important;position:relative;padding-left:1.2em;padding-top:10px;padding-bottom:10px;}";
         $css .= "$selector .botsauto-phase>summary::-webkit-details-marker{display:none;}";
-        $css .= "$selector .botsauto-phase>summary::marker{display:none;}";
+        $css .= "$selector .botsauto-phase>summary::marker{content:'';font-size:0;}";
         $css .= "$selector .botsauto-phase>summary::before{content:'\\25B6';position:absolute;left:0;}";
         $css .= "$selector .botsauto-phase[open]>summary::before{content:'\\25BC';}";
         $css .= "$selector .botsauto-question-text{color:{$adv['question']['text-color']}!important;font-size:{$adv['question']['font-size']};font-style:{$adv['question']['font-style']};margin:0 0 .2em;flex-basis:100%;}";
@@ -827,7 +827,7 @@ document.addEventListener('DOMContentLoaded',function(){
         $css .= "$selector .botsauto-header label{color:{$style['primary']}!important;display:block;margin-bottom:.5em;}";
         $css .= "$selector .botsauto-logo{text-align:{$style['image_align']};margin-bottom:1em;}";
         $css .= "$selector .botsauto-logo img{max-width:{$style['image_width']}px;height:auto;}";
-        $css .= "$selector .botsauto-checklist li{display:flex;flex-wrap:wrap;align-items:flex-start;margin-bottom:.5em;}";
+        $css .= "$selector .botsauto-checklist li{display:flex;flex-wrap:wrap;align-items:flex-start;margin-bottom:.5em;padding-left:1.2em;}";
         $css .= "$selector .botsauto-checklist label{color:{$adv['item']['text-color']}!important;font-size:{$adv['item']['font-size']};margin-left:.25em;flex:1;}";
         $css .= "$selector input:checked+label{color:{$adv['checked']['text-color']}!important;text-decoration:{$adv['checked']['text-decoration']};}";
         $css .= "$selector .botsauto-checkbox{accent-color:{$adv['checkbox']['color']}!important;width:{$adv['checkbox']['size']}!important;height:{$adv['checkbox']['size']}!important;appearance:auto!important;flex:0 0 auto;}";

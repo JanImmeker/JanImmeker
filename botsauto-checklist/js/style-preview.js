@@ -32,6 +32,7 @@ jQuery(function($){
     if(adv.phase){
       css += w+' .botsauto-phase>summary{color:'+adv.phase['text-color']+';background:'+adv.phase['background-color']+';font-size:'+adv.phase['font-size']+';font-weight:'+adv.phase['font-weight']+';list-style:none;position:relative;padding-left:1.2em;padding-top:10px;padding-bottom:10px;}';
       css += w+' .botsauto-phase>summary::-webkit-details-marker{display:none;}';
+      css += w+" .botsauto-phase>summary::marker{content:"";font-size:0;}";
       css += w+' .botsauto-phase>summary::before{content:"\25B6";position:absolute;left:0;}';
       css += w+' .botsauto-phase[open]>summary::before{content:"\25BC";}';
     }
@@ -48,6 +49,7 @@ jQuery(function($){
     } else {
       css += w+' .botsauto-logo{display:none;}';
     }
+    css += w+" .botsauto-checklist li{display:flex;flex-wrap:wrap;align-items:flex-start;margin-bottom:.5em;padding-left:1.2em;}";
     if(adv.item){
       css += w+' .botsauto-checklist label{color:'+adv.item['text-color']+';font-size:'+adv.item['font-size']+';display:inline-block;vertical-align:middle;}';
     }
