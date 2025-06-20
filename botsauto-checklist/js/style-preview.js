@@ -33,8 +33,8 @@ jQuery(function($){
       css += w+' .botsauto-phase>summary{color:'+adv.phase['text-color']+';background:'+adv.phase['background-color']+';font-size:'+adv.phase['font-size']+';font-weight:'+adv.phase['font-weight']+';list-style:none;position:relative;padding-left:1.2em;padding-top:10px;padding-bottom:10px;}';
       css += w+' .botsauto-phase>summary::-webkit-details-marker{display:none;}';
       css += w+" .botsauto-phase>summary::marker{content:"";font-size:0;}";
-      css += w+' .botsauto-phase>summary::before{content:"▶";position:absolute;left:0;}';
-      css += w+' .botsauto-phase[open]>summary::before{content:"▼";}';
+      css += w+' .botsauto-phase>summary::before{content:"\\25B6";position:absolute;left:0;}';
+      css += w+' .botsauto-phase[open]>summary::before{content:"\\25BC";}';
     }
     if(adv.question){
       css += w+' .botsauto-question-text{color:'+adv.question['text-color']+';font-size:'+adv.question['font-size']+';font-style:'+adv.question['font-style']+';margin:0 0 .2em;flex-basis:100%;}';

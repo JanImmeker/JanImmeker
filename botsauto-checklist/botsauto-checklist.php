@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.12.4
+ * Version: 1.12.5
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -818,8 +818,8 @@ document.addEventListener('DOMContentLoaded',function(){
         $css .= "$selector .botsauto-phase>summary{color:{$adv['phase']['text-color']}!important;background:{$adv['phase']['background-color']}!important;font-size:{$adv['phase']['font-size']};font-weight:{$adv['phase']['font-weight']};list-style:none!important;position:relative;padding-left:1.2em;padding-top:10px;padding-bottom:10px;}";
         $css .= "$selector .botsauto-phase>summary::-webkit-details-marker{display:none;}";
         $css .= "$selector .botsauto-phase>summary::marker{content:'';font-size:0;}";
-        $css .= "$selector .botsauto-phase>summary::before{content:'▶';position:absolute;left:0;}";
-        $css .= "$selector .botsauto-phase[open]>summary::before{content:'▼';}";
+        $css .= "$selector .botsauto-phase>summary::before{content:'\\25B6';position:absolute;left:0;}";
+        $css .= "$selector .botsauto-phase[open]>summary::before{content:'\\25BC';}";
         $css .= "$selector .botsauto-question-text{color:{$adv['question']['text-color']}!important;font-size:{$adv['question']['font-size']};font-style:{$adv['question']['font-style']};margin:0 0 .2em;flex-basis:100%;}";
         $css .= "$selector .botsauto-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1em;font-family:{$style['font']};}";
         $css .= "$selector .botsauto-header .botsauto-fields{flex:1;margin-right:1em;max-width:500px;}";
