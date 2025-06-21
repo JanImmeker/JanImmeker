@@ -413,7 +413,6 @@ CHECKLIST;
             'completed' => array(
                 'text-color'       => '#006633',
                 'font-size'        => '18px',
-                'font-family'      => 'Oswald, sans-serif',
             ),
         );
     }
@@ -848,7 +847,7 @@ document.addEventListener('DOMContentLoaded',function(){
         $css .= "$selector .botsauto-note textarea{width:100%;height:80px;font-size:{$adv['note']['font-size']};color:{$adv['note']['text-color']};background:{$adv['note']['background-color']};}";
         $css .= "$selector .botsauto-note-btn{background:none;border:none;color:{$style['note_icon_color']};cursor:pointer;margin-left:5px;flex:0 0 auto;}";
         $css .= "$selector .botsauto-note-btn.botsauto-done{color:{$style['done_icon_color']};}";
-        $css .= "$selector .botsauto-completed label{color:{$adv['completed']['text-color']}!important;font-size:{$adv['completed']['font-size']};font-family:{$adv['completed']['font-family']};}";
+        $css .= "$selector .botsauto-completed label{color:{$adv['completed']['text-color']}!important;font-size:{$adv['completed']['font-size']};font-family:{$style['font']};}";
         if ( $custom ) $css .= $custom;
         return $css;
     }
@@ -943,7 +942,9 @@ document.addEventListener('DOMContentLoaded',function(){
             'button'    => 'Knop',
             'field'     => 'Invulveld',
             'checkbox'  => 'Checkbox',
-            'checked'   => 'Aangevinkt item'
+            'checked'   => 'Aangevinkt item',
+            'note'      => 'Notitieveld',
+            'completed' => 'Checklist afgerond'
         );
         $field_labels = array(
             'text-color'       => 'Tekstkleur',
@@ -1054,7 +1055,7 @@ document.addEventListener('DOMContentLoaded',function(){
             . '.botsauto-checkbox{accent-color:' . esc_attr($o['primary']) . ';display:inline-block!important;width:auto!important;height:auto!important;appearance:auto!important;visibility:visible!important;}'
             . '.botsauto-checklist .button-primary{background:' . esc_attr($adv['button']['background-color']) . ';color:' . esc_attr($adv['button']['text-color']) . ';padding:' . esc_attr($adv['button']['padding']) . ';border-radius:' . esc_attr($adv['button']['border-radius']) . ';border-color:' . esc_attr($adv['button']['border-color']) . ';}'
             . '.botsauto-completed{margin-top:2em;}'
-            . '.botsauto-completed label{color:' . esc_attr($adv['completed']['text-color']) . '!important;font-size:' . esc_attr($adv['completed']['font-size']) . ';font-family:' . esc_attr($adv['completed']['font-family']) . ';}'
+            . '.botsauto-completed label{color:' . esc_attr($adv['completed']['text-color']) . '!important;font-size:' . esc_attr($adv['completed']['font-size']) . ';font-family:' . esc_attr($o['font']) . ';}'
             . '</style>';
     }
 

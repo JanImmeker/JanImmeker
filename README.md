@@ -52,7 +52,7 @@ Alle elementen van de checklist krijgen hun eigen CSS-class. De fases gebruiken 
 Op de pagina **Opmaak** staat nu een voorbeeldweergave van de checklist. Deze gebruikt meteen de huidige instellingen zodat je direct ziet hoe de checklist er op de website uitziet. Wanneer je kleuren of lettertypes wijzigt verschijnt het resultaat direct in deze preview, zonder de pagina te herladen. Met de knop *Toon als mobiele gebruiker* verklein je de weergave zodat je ziet hoe alles er op een smartphone uitziet.
 
 Naast de normale opmaak kun je instellen hoe een checklist‑item eruitziet zodra de checkbox is aangevinkt. Deze styling wordt zowel op de website als in het gegenereerde PDF‑bestand toegepast.
-Ook het label **Checklist afgerond** heeft een eigen kleur, lettertype en grootte die hier kan worden aangepast.
+Ook het label **Checklist afgerond** heeft een eigen kleur en grootte die hier kan worden aangepast. Het lettertype volgt het gekozen **Lettertype**.
 
 
 Alle labels in de plugin zijn vertaalbaar. Gebruik het bestand `languages/botsauto-checklist.pot` om eigen vertalingen aan te maken.
@@ -64,6 +64,6 @@ Elke vraag kan nu een extra toelichting meekrijgen. Klik op het icoon naast een 
 De notitievelden ondersteunen rich text en hun lettertype en kleuren stel je in onder **Geavanceerde Opmaak**.
 
 Wanneer je een bestaande checklist bijwerkt krijg je de vraag of je een nieuwe PDF wilt ontvangen. Vink je **Checklist afgerond** aan, dan wordt altijd automatisch een bijgewerkte PDF gemaild.
-Het uiterlijk van het label **Checklist afgerond** stel je hier eveneens in.
+Het uiterlijk van het label **Checklist afgerond** (kleur en grootte) stel je hier eveneens in. Het lettertype volgt automatisch de gekozen algemene instelling.
 
 Bij elke inzending wordt een PDF-bestand bewaard. In de beheerder zie je een overzicht van alle gegenereerde PDF’s, met knoppen om het bestand opnieuw te versturen of een nieuwe versie te genereren. Alle PDF’s blijven bewaard in een log.
