@@ -600,10 +600,11 @@ CHECKLIST;
         echo '<script>var botsautoOrig='.wp_json_encode($orig).';</script>';
         echo '<script>var botsautoStyle='.wp_json_encode(array('note'=>$style['note_icon'],'done'=>$style['done_icon'])).';</script>';
         echo '<script>document.addEventListener("click",function(e){var b=e.target.closest(".botsauto-note-btn");if(b){e.preventDefault();var n=b.nextElementSibling;n.style.display=n.style.display==="none"?"block":"none";}});</script>';
+        $note_css = "body{color:{$adv['note']['text-color']};background:{$adv['note']['background-color']};font-size:{$adv['note']['font-size']};font-family:{$style['font']};}";
         echo "<script>
 document.addEventListener('DOMContentLoaded',function(){
   if(typeof tinymce!=='undefined'){
-    tinymce.init({selector:'#{$wrapper} .botsauto-rich',menubar:false,toolbar:'bold italic underline link',branding:false});
+    tinymce.init({selector:'#{$wrapper} .botsauto-rich',menubar:false,toolbar:'bold italic underline link',branding:false,content_style:'".$note_css."'});
   }
   var form=document.querySelector('#{$wrapper} form');
   if(!form)return;
@@ -845,6 +846,7 @@ document.addEventListener('DOMContentLoaded',function(){
         $css .= "$selector input[type=text],${selector} input[type=email]{background:{$adv['field']['background-color']}!important;color:{$adv['field']['text-color']}!important;border-color:{$adv['field']['border-color']}!important;border-radius:{$adv['field']['border-radius']};border-style:{$adv['field']['border-style']};border-width:{$adv['field']['border-width']};width:{$adv['field']['width']};box-sizing:border-box;}";
         $css .= "$selector .botsauto-note{width:100%;margin-top:.5em;}";
         $css .= "$selector .botsauto-note textarea{width:100%;height:80px;font-size:{$adv['note']['font-size']};color:{$adv['note']['text-color']};background:{$adv['note']['background-color']};}";
+        $css .= "$selector .botsauto-note .tox-tinymce{width:100%;}";
         $css .= "$selector .botsauto-note-btn{background:none;border:none;color:{$style['note_icon_color']};cursor:pointer;margin-left:5px;flex:0 0 auto;}";
         $css .= "$selector .botsauto-note-btn.botsauto-done{color:{$style['done_icon_color']};}";
         $css .= "$selector .botsauto-completed label{color:{$adv['completed']['text-color']}!important;font-size:{$adv['completed']['font-size']};font-family:{$style['font']};}";

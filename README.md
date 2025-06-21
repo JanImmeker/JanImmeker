@@ -62,6 +62,7 @@ De checklist werkt nu ook op gewone Berichten. De velden **Titel**, **Naam** en 
 
 Elke vraag kan nu een extra toelichting meekrijgen. Klik op het icoon naast een checklist‑item om een notitieveld te openen. Het gebruikte Font Awesome icoon is instelbaar op de pagina **Opmaak**. Wanneer er een notitie is ingevuld, verschijnt een ander icoon. In de rubriek **Iconen** kies je zelf welke pictogrammen gebruikt worden en welke kleuren ze hebben.
 De notitievelden ondersteunen rich text en hun lettertype en kleuren stel je in onder **Geavanceerde Opmaak**.
+De gekozen opmaak voor **Notitieveld** wordt tevens toegepast in het rich-text venster zodat de gebruiker exact ziet hoe zijn notities eruit komen te zien.
 
 Wanneer je een bestaande checklist bijwerkt krijg je de vraag of je een nieuwe PDF wilt ontvangen. Vink je **Checklist afgerond** aan, dan wordt altijd automatisch een bijgewerkte PDF gemaild.
 Het uiterlijk van het label **Checklist afgerond** (kleur en grootte) stel je hier eveneens in. Het lettertype volgt automatisch de gekozen algemene instelling.
