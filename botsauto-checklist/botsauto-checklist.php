@@ -5,7 +5,6 @@
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
  * Version: 1.12.6
  * Author: OpenAI Codex
- * Author URI: https://openai.com
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: botsauto-checklist
@@ -39,19 +38,8 @@ class BOTSAUTO_Checklist {
         }
 
         if ( ! get_option( $self->style_option ) ) {
-            update_option( $self->style_option, array(
-                'primary'    => '#d14292',
-                'text'       => '#00306a',
-                'background' => '#d1eaf8',
-                'font'       => 'Arial, sans-serif',
-                'image'      => '',
-                'image_align'=> 'right',
-                'image_width'=> '150',
-                'note_icon'  => 'fa-clipboard',
-                'note_icon_color' => '#d14292',
-                'done_icon'  => 'fa-clipboard-check',
-                'done_icon_color' => '#28a745',
-            ) );
+            update_option( $self->style_option, $self->default_style() );
+        }
         }
 
         if ( ! get_option( $self->adv_style_option ) ) {
@@ -377,7 +365,7 @@ CHECKLIST;
         return array(
             'container' => array(
                 'font-size'        => '18px',
-                'padding'          => '20px',
+                'padding'          => '18px',
             ),
             'phase' => array(
                 'text-color'       => '#d14292',
@@ -399,12 +387,13 @@ CHECKLIST;
                 'background-color' => '#d14292',
                 'padding'          => '9px 15px',
                 'border-radius'    => '8px',
+                'border-color'       => '#D14292',
             ),
             'field' => array(
                 'background-color' => '#ffffff',
                 'text-color'       => '#00306a',
                 'border-color'     => '#4d4d4d',
-                'border-radius'    => '5px',
+                'border-radius'    => '8px',
                 'border-style'     => 'solid',
                 'border-width'     => 'thin',
                 'width'            => '100%',
@@ -422,9 +411,29 @@ CHECKLIST;
                 'background-color' => '#ffffff',
                 'font-size'        => '14px',
             ),
+            'completed' => array(
+                'text-color'       => '#006633',
+                'font-size'        => '18px',
+                'font-family'      => 'Oswald, sans-serif',
+            ),
         );
     }
 
+    private function default_style() {
+        return array(
+            'primary'    => '#00306a',
+            'text'       => '#4D4D4D',
+            'background' => '#edf4f7',
+            'font'       => 'Oswald, sans-serif',
+            'image'      => '',
+            'image_align'=> 'center',
+            'image_width'=> '75',
+            'note_icon'  => 'fa-clipboard',
+            'note_icon_color' => '#d14292',
+            'done_icon'  => 'fa-clipboard-check',
+            'done_icon_color' => '#006633',
+        );
+    }
     private function get_checklist_items( $list_id ) {
         $content = get_post_meta( $list_id, 'botsauto_lines', true );
         if ( ! $content ) {
@@ -801,19 +810,7 @@ document.addEventListener('DOMContentLoaded',function(){
     }
 
     private function get_style_options() {
-        $defaults = array(
-            'primary'    => '#d14292',
-            'text'       => '#00306a',
-            'background' => '#d1eaf8',
-            'font'       => 'Arial, sans-serif',
-            'image'      => '',
-            'image_align'=> 'right',
-            'image_width'=> '150',
-            'note_icon'  => 'fa-clipboard',
-            'note_icon_color' => '#d14292',
-            'done_icon'  => 'fa-clipboard-check',
-            'done_icon_color' => '#28a745',
-        );
+        $defaults = $this->default_style();
         $opt = get_option( $this->style_option, array() );
         return wp_parse_args( $opt, $defaults );
     }
@@ -846,12 +843,13 @@ document.addEventListener('DOMContentLoaded',function(){
         $css .= "$selector .botsauto-checklist label{color:{$adv['item']['text-color']}!important;font-size:{$adv['item']['font-size']};margin-left:.25em;flex:1;}";
         $css .= "$selector input:checked+label{color:{$adv['checked']['text-color']}!important;text-decoration:{$adv['checked']['text-decoration']};}";
         $css .= "$selector .botsauto-checkbox{accent-color:{$adv['checkbox']['color']}!important;width:{$adv['checkbox']['size']}!important;height:{$adv['checkbox']['size']}!important;appearance:auto!important;flex:0 0 auto;}";
-        $css .= "$selector .button-primary{background:{$adv['button']['background-color']}!important;color:{$adv['button']['text-color']}!important;padding:{$adv['button']['padding']};border-radius:{$adv['button']['border-radius']};}";
+        $css .= "$selector .button-primary{background:{$adv['button']['background-color']}!important;color:{$adv['button']['text-color']}!important;padding:{$adv['button']['padding']};border-radius:{$adv['button']['border-radius']};border-color:{$adv['button']['border-color']}!important;}";
         $css .= "$selector input[type=text],${selector} input[type=email]{background:{$adv['field']['background-color']}!important;color:{$adv['field']['text-color']}!important;border-color:{$adv['field']['border-color']}!important;border-radius:{$adv['field']['border-radius']};border-style:{$adv['field']['border-style']};border-width:{$adv['field']['border-width']};width:{$adv['field']['width']};box-sizing:border-box;}";
         $css .= "$selector .botsauto-note{width:100%;margin-top:.5em;}";
         $css .= "$selector .botsauto-note textarea{width:100%;height:80px;font-size:{$adv['note']['font-size']};color:{$adv['note']['text-color']};background:{$adv['note']['background-color']};}";
         $css .= "$selector .botsauto-note-btn{background:none;border:none;color:{$style['note_icon_color']};cursor:pointer;margin-left:5px;flex:0 0 auto;}";
         $css .= "$selector .botsauto-note-btn.botsauto-done{color:{$style['done_icon_color']};}";
+        $css .= "$selector .botsauto-completed label{color:{$adv['completed']['text-color']}!important;font-size:{$adv['completed']['font-size']};font-family:{$adv['completed']['font-family']};}";
         if ( $custom ) $css .= $custom;
         return $css;
     }
@@ -887,7 +885,14 @@ document.addEventListener('DOMContentLoaded',function(){
                 $json = file_get_contents( $_FILES['adv_import']['tmp_name'] );
                 $data = json_decode( $json, true );
                 if ( json_last_error() === JSON_ERROR_NONE && is_array( $data ) ) {
-                    update_option( $this->adv_style_option, $data );
+                    if ( isset( $data['style'] ) ) {
+                        update_option( $this->style_option, $data['style'] );
+                    }
+                    if ( isset( $data['adv'] ) ) {
+                        update_option( $this->adv_style_option, $data['adv'] );
+                    } else {
+                        update_option( $this->adv_style_option, $data );
+                    }
                     echo '<div class="updated"><p>'.esc_html__( 'Import succesvol.', 'botsauto-checklist' ).'</p></div>';
                 } else {
                     echo '<div class="error"><p>'.esc_html__( 'Ongeldig importbestand.', 'botsauto-checklist' ).'</p></div>';
@@ -991,6 +996,7 @@ document.addEventListener('DOMContentLoaded',function(){
         echo '</form></div>';
 
         if ( isset($_POST['botsauto_reset_adv']) ) {
+            update_option( $this->style_option, $this->default_style() );
             update_option( $this->adv_style_option, $this->default_adv_style() );
             update_option( $this->custom_css_option, '' );
             echo '<div class="updated"><p>'.esc_html__( 'Opmaak gereset.', 'botsauto-checklist' ).'</p></div>';
@@ -1010,7 +1016,10 @@ document.addEventListener('DOMContentLoaded',function(){
         if ( ! current_user_can( 'manage_options' ) ) {
             wp_die();
         }
-        $data = get_option( $this->adv_style_option, array() );
+        $data = array(
+            'style' => get_option( $this->style_option, array() ),
+            'adv'   => get_option( $this->adv_style_option, array() ),
+        );
         header( 'Content-Type: application/json' );
         header( 'Content-Disposition: attachment; filename=botsauto-style.json' );
         echo wp_json_encode( $data );
@@ -1044,8 +1053,9 @@ document.addEventListener('DOMContentLoaded',function(){
             . '.botsauto-phase>summary::before{content:"▶";position:absolute;left:0;}'
             . '.botsauto-phase[open]>summary::before{content:"▼";}'
             . '.botsauto-checkbox{accent-color:' . esc_attr($o['primary']) . ';display:inline-block!important;width:auto!important;height:auto!important;appearance:auto!important;visibility:visible!important;}'
-            . '.botsauto-checklist .button-primary{background:' . esc_attr($o['primary']) . ';border-color:' . esc_attr($o['primary']) . ';}'
+            . '.botsauto-checklist .button-primary{background:' . esc_attr($adv['button']['background-color']) . ';color:' . esc_attr($adv['button']['text-color']) . ';padding:' . esc_attr($adv['button']['padding']) . ';border-radius:' . esc_attr($adv['button']['border-radius']) . ';border-color:' . esc_attr($adv['button']['border-color']) . ';}'
             . '.botsauto-completed{margin-top:2em;}'
+            . '.botsauto-completed label{color:' . esc_attr($adv['completed']['text-color']) . '!important;font-size:' . esc_attr($adv['completed']['font-size']) . ';font-family:' . esc_attr($adv['completed']['font-family']) . ';}'
             . '</style>';
     }
 

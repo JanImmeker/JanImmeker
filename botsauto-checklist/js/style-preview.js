@@ -64,7 +64,7 @@ jQuery(function($){
       css += w+' .botsauto-checkbox{accent-color:'+adv.checkbox.color+';width:'+adv.checkbox.size+';height:'+adv.checkbox.size+';}';
     }
     if(adv.button){
-      css += w+' .button-primary{background:'+adv.button['background-color']+';color:'+adv.button['text-color']+';padding:'+adv.button.padding+';border-radius:'+adv.button['border-radius']+';}';
+      css += w+' .button-primary{background:'+adv.button['background-color']+';color:'+adv.button['text-color']+';padding:'+adv.button.padding+';border-radius:'+adv.button['border-radius']+';border-color:'+adv.button['border-color']+';}';
     }
    if(adv.field){
       css += w+' input[type=text],'+w+' input[type=email]{background:'+adv.field['background-color']+';color:'+adv.field['text-color']+';border-color:'+adv.field['border-color']+';border-radius:'+adv.field['border-radius']+';border-style:'+adv.field['border-style']+';border-width:'+adv.field['border-width']+';width:'+adv.field.width+';box-sizing:border-box;}';
@@ -74,6 +74,9 @@ jQuery(function($){
     }
     css += w+' .botsauto-note-btn{background:none;border:none;color:'+style.note_icon_color+';cursor:pointer;margin-left:5px;flex:0 0 auto;}';
     css += w+' .botsauto-note-btn.botsauto-done{color:'+style.done_icon_color+';}';
+    if(adv.completed){
+      css += w+' .botsauto-completed label{color:'+adv.completed['text-color']+';font-size:'+adv.completed['font-size']+';font-family:'+adv.completed['font-family']+';}';
+    }
    $('#botsauto-preview-style').text(css);
 }
   $('.color-field, input[name^="botsauto_style"], select[name^="botsauto_style"], input[name^="botsauto_adv_style"], #botsauto-image, input[name="botsauto_style[image_width]"], select[name="botsauto_style[image_align]"]').on('input change', updatePreview);
