@@ -53,6 +53,10 @@ jQuery(function($){
     css += w+' .botsauto-logo-title.left,.botsauto-logo-title.right{flex-direction:row;}';
     css += w+' .botsauto-logo-title.left .botsauto-title{margin-right:1em;}';
     css += w+' .botsauto-logo-title.right .botsauto-logo{margin-right:1em;}';
+    css += w+' .botsauto-logo-title.below .botsauto-title{order:2;}';
+    css += w+' .botsauto-logo-title.below .botsauto-logo{order:1;}';
+    css += w+' .botsauto-logo-title.right .botsauto-title{order:2;}';
+    css += w+' .botsauto-logo-title.right .botsauto-logo{order:1;}';
     css += w+' .botsauto-header .botsauto-fields{max-width:500px;margin:0 auto;}';
     css += w+' .botsauto-header .botsauto-fields p{margin:0;}';
     css += w+' .botsauto-header label{color:'+style.primary+';display:block;margin-bottom:.5em;}';

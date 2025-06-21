@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://botsauto.app
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.12.9
+ * Version: 1.12.10
  * Author: Jan Immeker
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -863,6 +863,10 @@ document.addEventListener('DOMContentLoaded',function(){
         $css .= "$selector .botsauto-logo-title.left,.botsauto-logo-title.right{flex-direction:row;}";
         $css .= "$selector .botsauto-logo-title.left .botsauto-title{margin-right:1em;}";
         $css .= "$selector .botsauto-logo-title.right .botsauto-logo{margin-right:1em;}";
+        $css .= "$selector .botsauto-logo-title.below .botsauto-title{order:2;}";
+        $css .= "$selector .botsauto-logo-title.below .botsauto-logo{order:1;}";
+        $css .= "$selector .botsauto-logo-title.right .botsauto-title{order:2;}";
+        $css .= "$selector .botsauto-logo-title.right .botsauto-logo{order:1;}";
         $css .= "$selector .botsauto-header .botsauto-fields{max-width:500px;margin:0 auto;}";
         $css .= "$selector .botsauto-header .botsauto-fields p{margin:0;}";
         $css .= "$selector .botsauto-header label{color:{$style['primary']}!important;display:block;margin-bottom:.5em;}";
