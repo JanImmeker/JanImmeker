@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.12.6
+ * Version: 1.12.7
  * Author: OpenAI Codex
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -617,6 +617,13 @@ document.addEventListener('DOMContentLoaded',function(){
   var isNew=!form.querySelector('input[name=post_id]');
   form.addEventListener('submit',function(e){
     if(typeof tinymce!='undefined') tinymce.triggerSave();
+    var title=form.querySelector('input[name=entry_title]').value.trim();
+    var name=form.querySelector('input[name=name]').value.trim();
+    var email=form.querySelector('input[name=email]').value.trim();
+    var emailOk=/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
+    if(!title){alert('Vul een titel in.');e.preventDefault();return;}
+    if(!name){alert('Vul uw naam in.');e.preventDefault();return;}
+    if(!emailOk){alert('Voer een geldig e-mailadres in.');e.preventDefault();return;}
     var changed=false;var orig=botsautoOrig||{answers:{},notes:{},completed:''};
     var compNew=form.querySelector(\"input[name=completed]\").checked?'1':'';
     if(orig.completed!==compNew) changed=true;
@@ -636,6 +643,9 @@ document.addEventListener('DOMContentLoaded',function(){
         $title   = sanitize_text_field( $_POST['entry_title'] );
         $name    = sanitize_text_field( $_POST['name'] );
         $email   = sanitize_email( $_POST['email'] );
+        if ( ! is_email( $email ) ) {
+            wp_die( __( 'Ongeldig e-mailadres.', 'botsauto-checklist' ) );
+        }
         $completed = isset($_POST['completed']) ? '1' : '';
 
         $list_id       = isset( $_POST['checklist_id'] ) ? intval( $_POST['checklist_id'] ) : 0;

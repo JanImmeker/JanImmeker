@@ -62,6 +62,9 @@ msgstr ""
 msgid "Import succesvol."
 msgstr ""
 #: botsauto-checklist.php
+msgid "Ongeldig e-mailadres."
+msgstr ""
+#: botsauto-checklist.php
 msgid "Fase"
 msgstr ""
 #: botsauto-checklist.php
