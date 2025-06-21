@@ -61,7 +61,7 @@ jQuery(function($){
       css += w+' input:checked+label{color:'+adv.checked['text-color']+';text-decoration:'+adv.checked['text-decoration']+';}';
     }
     if(adv.checkbox){
-      css += w+' .botsauto-checkbox{accent-color:'+adv.checkbox.color+';width:'+adv.checkbox.size+';height:'+adv.checkbox.size+';}';
+      css += w+' .botsauto-checkbox{accent-color:'+adv.checkbox.color+';background:'+adv.checkbox['background-color']+';border-color:'+adv.checkbox['border-color']+';border-style:solid;border-width:1px;width:'+adv.checkbox.size+';height:'+adv.checkbox.size+';}';
     }
     if(adv.button){
       css += w+' .button-primary{background:'+adv.button['background-color']+';color:'+adv.button['text-color']+';padding:'+adv.button.padding+';border-radius:'+adv.button['border-radius']+';border-color:'+adv.button['border-color']+';}';

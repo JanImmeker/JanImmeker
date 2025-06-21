@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.12.7
+ * Version: 1.12.8
  * Author: OpenAI Codex
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -398,8 +398,10 @@ CHECKLIST;
                 'width'            => '100%',
             ),
             'checkbox' => array(
-                'color' => '#d14292',
-                'size'  => '20px',
+                'color'            => '#d14292',
+                'background-color' => '#ffffff',
+                'border-color'     => '#4d4d4d',
+                'size'             => '20px',
             ),
             'checked' => array(
                 'text-color'       => '#6c6c6c',
@@ -851,7 +853,9 @@ document.addEventListener('DOMContentLoaded',function(){
         $css .= "$selector .botsauto-checklist li{display:flex;flex-wrap:wrap;align-items:flex-start;margin-bottom:.5em;padding-left:1.2em;}";
         $css .= "$selector .botsauto-checklist label{color:{$adv['item']['text-color']}!important;font-size:{$adv['item']['font-size']};margin-left:.25em;flex:1;}";
         $css .= "$selector input:checked+label{color:{$adv['checked']['text-color']}!important;text-decoration:{$adv['checked']['text-decoration']};}";
-        $css .= "$selector .botsauto-checkbox{accent-color:{$adv['checkbox']['color']}!important;width:{$adv['checkbox']['size']}!important;height:{$adv['checkbox']['size']}!important;appearance:auto!important;flex:0 0 auto;}";
+        $css .= "$selector .botsauto-checkbox{accent-color:{$adv['checkbox']['color']}!important;";
+        $css .= "background:{$adv['checkbox']['background-color']}!important;border-color:{$adv['checkbox']['border-color']}!important;border-style:solid;border-width:1px;";
+        $css .= "width:{$adv['checkbox']['size']}!important;height:{$adv['checkbox']['size']}!important;appearance:auto!important;flex:0 0 auto;}";
         $css .= "$selector .button-primary{background:{$adv['button']['background-color']}!important;color:{$adv['button']['text-color']}!important;padding:{$adv['button']['padding']};border-radius:{$adv['button']['border-radius']};border-color:{$adv['button']['border-color']}!important;}";
         $css .= "$selector input[type=text],${selector} input[type=email]{background:{$adv['field']['background-color']}!important;color:{$adv['field']['text-color']}!important;border-color:{$adv['field']['border-color']}!important;border-radius:{$adv['field']['border-radius']};border-style:{$adv['field']['border-style']};border-width:{$adv['field']['border-width']};width:{$adv['field']['width']};box-sizing:border-box;}";
         $css .= "$selector .botsauto-note{width:100%;margin-top:.5em;}";
@@ -1064,7 +1068,7 @@ document.addEventListener('DOMContentLoaded',function(){
             . '.botsauto-phase>summary{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($o['primary']) . ';list-style:none;position:relative;padding-left:1.2em;padding-top:10px;padding-bottom:10px;}'
             . '.botsauto-phase>summary::before{content:"▶";position:absolute;left:0;}'
             . '.botsauto-phase[open]>summary::before{content:"▼";}'
-            . '.botsauto-checkbox{accent-color:' . esc_attr($o['primary']) . ';display:inline-block!important;width:auto!important;height:auto!important;appearance:auto!important;visibility:visible!important;}'
+            . '.botsauto-checkbox{accent-color:' . esc_attr($adv['checkbox']['color']) . ';background:' . esc_attr($adv['checkbox']['background-color']) . ';border-color:' . esc_attr($adv['checkbox']['border-color']) . ';border-style:solid;border-width:1px;display:inline-block!important;width:' . esc_attr($adv['checkbox']['size']) . '!important;height:' . esc_attr($adv['checkbox']['size']) . '!important;appearance:auto!important;visibility:visible!important;}'
             . '.botsauto-checklist .button-primary{background:' . esc_attr($adv['button']['background-color']) . ';color:' . esc_attr($adv['button']['text-color']) . ';padding:' . esc_attr($adv['button']['padding']) . ';border-radius:' . esc_attr($adv['button']['border-radius']) . ';border-color:' . esc_attr($adv['button']['border-color']) . ';}'
             . '.botsauto-completed{margin-top:2em;}'
             . '.botsauto-completed label{color:' . esc_attr($adv['completed']['text-color']) . '!important;font-size:' . esc_attr($adv['completed']['font-size']) . ';font-family:' . esc_attr($o['font']) . ';}'
