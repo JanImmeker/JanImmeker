@@ -40,7 +40,6 @@ class BOTSAUTO_Checklist {
         if ( ! get_option( $self->style_option ) ) {
             update_option( $self->style_option, $self->default_style() );
         }
-        }
 
         if ( ! get_option( $self->adv_style_option ) ) {
             update_option( $self->adv_style_option, $self->default_adv_style() );
