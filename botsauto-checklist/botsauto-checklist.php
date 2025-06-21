@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.12.8
+ * Version: 1.12.9
  * Author: OpenAI Codex
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -914,7 +914,15 @@ document.addEventListener('DOMContentLoaded',function(){
 
     public function style_page() {
         if ( isset( $_POST['botsauto_reset_adv'] ) && check_admin_referer( 'botsauto_reset_adv' ) ) {
-            update_option( $this->style_option, $this->default_style() );
+            $current = get_option( $this->style_option, array() );
+            $defaults = $this->default_style();
+            // Keep the selected logo and its size when resetting other options
+            foreach ( array( 'image', 'image_align', 'image_width' ) as $k ) {
+                if ( isset( $current[ $k ] ) ) {
+                    $defaults[ $k ] = $current[ $k ];
+                }
+            }
+            update_option( $this->style_option, $defaults );
             update_option( $this->adv_style_option, $this->default_adv_style() );
             update_option( $this->custom_css_option, '' );
             echo '<div class="updated"><p>' . esc_html__( 'Opmaak gereset.', 'botsauto-checklist' ) . '</p></div>';
