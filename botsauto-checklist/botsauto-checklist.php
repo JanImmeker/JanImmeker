@@ -3,7 +3,7 @@
  * Plugin Name: BOTSAUTO Checklist
  * Plugin URI: https://example.com
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
- * Version: 1.12.5
+ * Version: 1.12.6
  * Author: OpenAI Codex
  * Author URI: https://openai.com
  * License: GPLv2 or later
@@ -48,6 +48,9 @@ class BOTSAUTO_Checklist {
                 'image_align'=> 'right',
                 'image_width'=> '150',
                 'note_icon'  => 'fa-clipboard',
+                'note_icon_color' => '#d14292',
+                'done_icon'  => 'fa-clipboard-check',
+                'done_icon_color' => '#28a745',
             ) );
         }
 
@@ -567,8 +570,10 @@ CHECKLIST;
             }
             $cid  = 'cb_'.esc_attr( $hash );
             $note  = isset( $notes[$hash] ) ? esc_textarea( $notes[$hash] ) : '';
-            $icon  = esc_attr( $style['note_icon'] );
-            echo '<input type="checkbox" id="'.$cid.'" class="botsauto-checkbox" name="answers['.$hash.']" '.$checked.'> <label for="'.$cid.'">'.esc_html( $data['item'] ).'</label> <button type="button" class="botsauto-note-btn"><i class="fa '.$icon.'"></i></button><div class="botsauto-note" style="display:none"><textarea class="botsauto-rich" name="notes['.$hash.']">'.$note.'</textarea></div>';
+            $has  = $note !== '';
+            $icon = $has ? esc_attr( $style['done_icon'] ) : esc_attr( $style['note_icon'] );
+            $cls  = $has ? 'botsauto-note-btn botsauto-done' : 'botsauto-note-btn';
+            echo '<input type="checkbox" id="'.$cid.'" class="botsauto-checkbox" name="answers['.$hash.']" '.$checked.'> <label for="'.$cid.'">'.esc_html( $data['item'] ).'</label> <button type="button" class="'.$cls.'"><i class="fa '.$icon.'"></i></button><div class="botsauto-note" style="display:none"><textarea class="botsauto-rich" name="notes['.$hash.']">'.$note.'</textarea></div>';
             echo '</li>';
         }
         if ( $open_ul ) {
@@ -586,6 +591,7 @@ CHECKLIST;
         echo '<p><input type="submit" class="button button-primary" value="'.esc_attr($label).'" /></p>';
         echo '</form></div>';
         echo '<script>var botsautoOrig='.wp_json_encode($orig).';</script>';
+        echo '<script>var botsautoStyle='.wp_json_encode(array('note'=>$style['note_icon'],'done'=>$style['done_icon'])).';</script>';
         echo '<script>document.addEventListener("click",function(e){var b=e.target.closest(".botsauto-note-btn");if(b){e.preventDefault();var n=b.nextElementSibling;n.style.display=n.style.display==="none"?"block":"none";}});</script>';
         echo "<script>
 document.addEventListener('DOMContentLoaded',function(){
@@ -594,6 +600,12 @@ document.addEventListener('DOMContentLoaded',function(){
   }
   var form=document.querySelector('#{$wrapper} form');
   if(!form)return;
+  function updateBtn(tx){
+    var btn=tx.parentElement.previousElementSibling;
+    if(!btn)return;
+    if(tx.value.trim()!==''){btn.classList.add('botsauto-done');btn.querySelector('i').className='fa '+botsautoStyle.done;}else{btn.classList.remove('botsauto-done');btn.querySelector('i').className='fa '+botsautoStyle.note;}
+  }
+  form.querySelectorAll('.botsauto-note textarea').forEach(function(t){updateBtn(t);t.addEventListener('input',function(){updateBtn(t);});});
   var isNew=!form.querySelector('input[name=post_id]');
   form.addEventListener('submit',function(e){
     if(typeof tinymce!='undefined') tinymce.triggerSave();
@@ -798,6 +810,9 @@ document.addEventListener('DOMContentLoaded',function(){
             'image_align'=> 'right',
             'image_width'=> '150',
             'note_icon'  => 'fa-clipboard',
+            'note_icon_color' => '#d14292',
+            'done_icon'  => 'fa-clipboard-check',
+            'done_icon_color' => '#28a745',
         );
         $opt = get_option( $this->style_option, array() );
         return wp_parse_args( $opt, $defaults );
@@ -835,7 +850,8 @@ document.addEventListener('DOMContentLoaded',function(){
         $css .= "$selector input[type=text],${selector} input[type=email]{background:{$adv['field']['background-color']}!important;color:{$adv['field']['text-color']}!important;border-color:{$adv['field']['border-color']}!important;border-radius:{$adv['field']['border-radius']};border-style:{$adv['field']['border-style']};border-width:{$adv['field']['border-width']};width:{$adv['field']['width']};box-sizing:border-box;}";
         $css .= "$selector .botsauto-note{width:100%;margin-top:.5em;}";
         $css .= "$selector .botsauto-note textarea{width:100%;height:80px;font-size:{$adv['note']['font-size']};color:{$adv['note']['text-color']};background:{$adv['note']['background-color']};}";
-        $css .= "$selector .botsauto-note-btn{background:none;border:none;color:{$style['primary']};cursor:pointer;margin-left:5px;flex:0 0 auto;}";
+        $css .= "$selector .botsauto-note-btn{background:none;border:none;color:{$style['note_icon_color']};cursor:pointer;margin-left:5px;flex:0 0 auto;}";
+        $css .= "$selector .botsauto-note-btn.botsauto-done{color:{$style['done_icon_color']};}";
         if ( $custom ) $css .= $custom;
         return $css;
     }
@@ -909,9 +925,12 @@ document.addEventListener('DOMContentLoaded',function(){
              '<option value="right" '.selected($opts['image_align'],'right',false).'>Rechts</option>'.
              '</select></td></tr>';
         echo '<tr><th scope="row">'.esc_html__( 'Breedte afbeelding (px)', 'botsauto-checklist' ).'</th><td><input type="number" name="'.$this->style_option.'[image_width]" value="'.esc_attr($opts['image_width']).'" /></td></tr>';
-        echo '<tr><th scope="row">'.esc_html__( 'Notitie-icoon', 'botsauto-checklist' ).'</th><td><input type="text" name="'.$this->style_option.'[note_icon]" value="'.esc_attr($opts['note_icon']).'" /> <i class="fa '.esc_attr($opts['note_icon']).'"></i></td></tr>';
         echo '</table>';
-        echo '<h2>Elementen</h2><table class="form-table">';
+        echo '<h2>'.esc_html__( 'Iconen', 'botsauto-checklist' ).'</h2><table class="form-table">';
+        echo '<tr><th scope="row">'.esc_html__( 'Notitie-icoon', 'botsauto-checklist' ).'</th><td><input type="text" name="'.$this->style_option.'[note_icon]" value="'.esc_attr($opts['note_icon']).'" /> <input type="text" class="color-field" name="'.$this->style_option.'[note_icon_color]" value="'.esc_attr($opts['note_icon_color']).'" /> <i class="fa '.esc_attr($opts['note_icon']).'"></i></td></tr>';
+        echo '<tr><th scope="row">'.esc_html__( 'Icoon bij notitie aanwezig', 'botsauto-checklist' ).'</th><td><input type="text" name="'.$this->style_option.'[done_icon]" value="'.esc_attr($opts['done_icon']).'" /> <input type="text" class="color-field" name="'.$this->style_option.'[done_icon_color]" value="'.esc_attr($opts['done_icon_color']).'" /> <i class="fa '.esc_attr($opts['done_icon']).'"></i></td></tr>';
+        echo '</table>';
+        echo '<h2>'.esc_html__( 'Elementen', 'botsauto-checklist' ).'</h2><table class="form-table">';
         $labels = array(
             'container' => 'Container',
             'phase'     => 'Fase',

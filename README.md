@@ -59,7 +59,7 @@ Alle labels in de plugin zijn vertaalbaar. Gebruik het bestand `languages/botsau
 
 De checklist werkt nu ook op gewone Berichten. De velden **Titel**, **Naam** en **E‑mail** zijn gelijk uitgelijnd en hebben dezelfde breedte tot aan een eventuele afbeelding. Zowel deze velden als de uitklapbare fasetitel gebruiken het gekozen lettertype en de primaire kleur.
 
-Elke vraag kan nu een extra toelichting meekrijgen. Klik op het icoon naast een checklist‑item om een notitieveld te openen. Het gebruikte Font Awesome icoon is instelbaar op de pagina **Opmaak**.
+Elke vraag kan nu een extra toelichting meekrijgen. Klik op het icoon naast een checklist‑item om een notitieveld te openen. Het gebruikte Font Awesome icoon is instelbaar op de pagina **Opmaak**. Wanneer er een notitie is ingevuld, verschijnt een ander icoon. In de rubriek **Iconen** kies je zelf welke pictogrammen gebruikt worden en welke kleuren ze hebben.
 De notitievelden ondersteunen rich text en hun lettertype en kleuren stel je in onder **Geavanceerde Opmaak**.
 
 Wanneer je een bestaande checklist bijwerkt krijg je de vraag of je een nieuwe PDF wilt ontvangen. Vink je **Checklist afgerond** aan, dan wordt altijd automatisch een bijgewerkte PDF gemaild.

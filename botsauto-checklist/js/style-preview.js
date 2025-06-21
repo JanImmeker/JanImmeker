@@ -17,7 +17,11 @@ jQuery(function($){
       font: $('select[name="botsauto_style[font]"]').val(),
       image: $('#botsauto-image').val(),
       image_align: $('select[name="botsauto_style[image_align]"]').val(),
-      image_width: $('input[name="botsauto_style[image_width]"]').val()
+      image_width: $('input[name="botsauto_style[image_width]"]').val(),
+      note_icon: $('input[name="botsauto_style[note_icon]"]').val(),
+      note_icon_color: $('input[name="botsauto_style[note_icon_color]"]').val(),
+      done_icon: $('input[name="botsauto_style[done_icon]"]').val(),
+      done_icon_color: $('input[name="botsauto_style[done_icon_color]"]').val()
     };
   }
   function updatePreview(){
@@ -68,9 +72,11 @@ jQuery(function($){
     if(adv.note){
        css += w+' .botsauto-note textarea{color:'+adv.note['text-color']+';background:'+adv.note['background-color']+';font-size:'+adv.note['font-size']+';}';
     }
+    css += w+' .botsauto-note-btn{background:none;border:none;color:'+style.note_icon_color+';cursor:pointer;margin-left:5px;flex:0 0 auto;}';
+    css += w+' .botsauto-note-btn.botsauto-done{color:'+style.done_icon_color+';}';
    $('#botsauto-preview-style').text(css);
- }
-  $('.color-field, select[name^="botsauto_style"], input[name^="botsauto_adv_style"], #botsauto-image, input[name="botsauto_style[image_width]"], select[name="botsauto_style[image_align]"]').on('input change', updatePreview);
+}
+  $('.color-field, input[name^="botsauto_style"], select[name^="botsauto_style"], input[name^="botsauto_adv_style"], #botsauto-image, input[name="botsauto_style[image_width]"], select[name="botsauto_style[image_align]"]').on('input change', updatePreview);
   $('#botsauto-toggle-mobile').on('click',function(){
     $('#botsauto-preview-container').toggleClass('mobile');
   });
