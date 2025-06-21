@@ -1,10 +1,10 @@
 <?php
 /**
  * Plugin Name: BOTSAUTO Checklist
- * Plugin URI: https://example.com
+ * Plugin URI: https://botsauto.app
  * Description: Frontend checklist with admin overview, PDF email confirmation, and edit link.
  * Version: 1.12.9
- * Author: OpenAI Codex
+ * Author: Jan Immeker
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: botsauto-checklist
