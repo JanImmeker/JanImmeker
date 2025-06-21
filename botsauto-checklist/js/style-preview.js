@@ -92,5 +92,10 @@ jQuery(function($){
     });
     frame.open();
   });
+  $('#botsauto-reset-form').on('submit',function(e){
+    if(!confirm('Weet je zeker dat je de standaardinstellingen wilt herstellen?')){
+      e.preventDefault();
+    }
+  });
   updatePreview();
 });

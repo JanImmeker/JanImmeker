@@ -894,6 +894,13 @@ document.addEventListener('DOMContentLoaded',function(){
     }
 
     public function style_page() {
+        if ( isset( $_POST['botsauto_reset_adv'] ) && check_admin_referer( 'botsauto_reset_adv' ) ) {
+            update_option( $this->style_option, $this->default_style() );
+            update_option( $this->adv_style_option, $this->default_adv_style() );
+            update_option( $this->custom_css_option, '' );
+            echo '<div class="updated"><p>' . esc_html__( 'Opmaak gereset.', 'botsauto-checklist' ) . '</p></div>';
+        }
+
         if ( isset($_POST['botsauto_import_submit']) && check_admin_referer('botsauto_adv_import') ) {
             if ( ! empty( $_FILES['adv_import']['tmp_name'] ) ) {
                 $json = file_get_contents( $_FILES['adv_import']['tmp_name'] );
@@ -1007,16 +1014,11 @@ document.addEventListener('DOMContentLoaded',function(){
         echo '<form method="post" enctype="multipart/form-data"><input type="file" name="adv_import" accept="application/json" />';
         wp_nonce_field('botsauto_adv_import');
         echo '<p><input type="submit" class="button" name="botsauto_import_submit" value="'.esc_attr__( 'Importeren', 'botsauto-checklist' ).'"></p></form>';
-        echo '<form method="post" style="margin-top:1em;"><input type="hidden" name="botsauto_reset_adv" value="1" />';
+        echo '<form method="post" id="botsauto-reset-form" style="margin-top:1em;">';
+        wp_nonce_field( 'botsauto_reset_adv' );
+        echo '<input type="hidden" name="botsauto_reset_adv" value="1" />';
         submit_button( __( 'Reset naar standaard', 'botsauto-checklist' ), 'delete' );
         echo '</form></div>';
-
-        if ( isset($_POST['botsauto_reset_adv']) ) {
-            update_option( $this->style_option, $this->default_style() );
-            update_option( $this->adv_style_option, $this->default_adv_style() );
-            update_option( $this->custom_css_option, '' );
-            echo '<div class="updated"><p>'.esc_html__( 'Opmaak gereset.', 'botsauto-checklist' ).'</p></div>';
-        }
     }
 
     public function cc_page() {
