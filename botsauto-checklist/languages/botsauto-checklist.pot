@@ -1,0 +1,120 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: botsauto-checklist 1.12.3\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: \n"
+
+#: botsauto-checklist.php
+msgid "Opmaak"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Primaire kleur"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Tekstkleur"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Achtergrondkleur"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Lettertype"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Afbeelding"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Selecteer afbeelding"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Uitlijning afbeelding"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Breedte afbeelding (px)"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Voorbeeld"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Toon als mobiele gebruiker"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Aangepaste CSS"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Import / Export"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Exporteren"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Importeren"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Reset naar standaard"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Opmaak gereset."
+msgstr ""
+#: botsauto-checklist.php
+msgid "Ongeldig importbestand."
+msgstr ""
+#: botsauto-checklist.php
+msgid "Import succesvol."
+msgstr ""
+#: botsauto-checklist.php
+msgid "Ongeldig e-mailadres."
+msgstr ""
+#: botsauto-checklist.php
+msgid "Fase"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Toelichting"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Vraag"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Checklist item"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Verwijder"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Vraag toevoegen"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Item toevoegen"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Fase toevoegen"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Titel"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Naam"
+msgstr ""
+#: botsauto-checklist.php
+msgid "E-mail"
+msgstr ""
+#: botsauto-checklist.php
+msgid "De checklist is gewijzigd, nieuwe versie gebruiken"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Checklist afgerond"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Opslaan"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Checklist verzenden"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Checklist bevestiging"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Bedankt voor het invullen van de checklist. Bewaar deze link om later verder te gaan: %s"
+msgstr ""
+#: botsauto-checklist.php
+msgid "Checklist niet gevonden."
+msgstr ""
