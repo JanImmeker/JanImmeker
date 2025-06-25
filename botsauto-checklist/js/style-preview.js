@@ -92,7 +92,7 @@ jQuery(function($){
       css += w+' .botsauto-info-btn{background:'+adv.info_button['background-color']+';color:'+adv.info_button['text-color']+';padding:'+adv.info_button.padding+';border-radius:'+adv.info_button['border-radius']+';border-color:'+adv.info_button['border-color']+';border-style:solid;line-height:1;vertical-align:middle;display:inline-flex;align-items:center;justify-content:center;font-size:'+adv.info_button['font-size']+';text-align:'+adv.info_button['text-align']+';width:'+adv.info_button.width+';height:'+adv.info_button.height+';}';
     }
     if(adv.info_popup){
-      css += w+' .botsauto-info-content{background:'+adv.info_popup['background-color']+';color:'+adv.info_popup['text-color']+';padding:'+adv.info_popup.padding+';border-radius:'+adv.info_popup['border-radius']+';margin-top:.5em;}';
+      css += w+' .botsauto-info-content{display:none;background:'+adv.info_popup['background-color']+';color:'+adv.info_popup['text-color']+';padding:'+adv.info_popup.padding+';border-radius:'+adv.info_popup['border-radius']+';margin:0 0 .25em;}';
     }
    if(adv.field){
       css += w+' input[type=text],'+w+' input[type=email]{background:'+adv.field['background-color']+';color:'+adv.field['text-color']+';border-color:'+adv.field['border-color']+';border-radius:'+adv.field['border-radius']+';border-style:'+adv.field['border-style']+';border-width:'+adv.field['border-width']+';width:'+adv.field.width+';box-sizing:border-box;}';
@@ -126,4 +126,12 @@ jQuery(function($){
     }
   });
   updatePreview();
+  $('#botsauto-preview').find('details.botsauto-info').each(function(){
+    var d=$(this);
+    var content=d.parent().next('.botsauto-info-content');
+    if(content.length){
+      content.css('display', d.prop('open') ? 'block' : 'none');
+      d.on('toggle',function(){content.css('display', this.open ? 'block':'none');});
+    }
+  });
 });

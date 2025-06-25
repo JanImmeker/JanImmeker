@@ -663,16 +663,19 @@ CHECKLIST;
             if ( $data['question'] ) {
                 echo '<div class="botsauto-question-row"><span class="botsauto-question-label">'.esc_html( $data['question'] ).'</span>';
                 if ( !empty($data['info']['text']) || !empty($data['info']['url']) ) {
-                    echo ' <details class="botsauto-info"><summary class="botsauto-info-btn">'.esc_html__('Meer info','botsauto-checklist').'</summary><div class="botsauto-info-content">';
+                    echo ' <details class="botsauto-info"><summary class="botsauto-info-btn">'.esc_html__('Meer info','botsauto-checklist').'</summary></details>';
+                }
+                echo '</div>';
+                if ( !empty($data['info']['text']) || !empty($data['info']['url']) ) {
+                    echo '<div class="botsauto-info-content">';
                     if ( $data['info']['text'] ) {
                         echo '<p>'.esc_html( $data['info']['text'] ).'</p>';
                     }
                     if ( $data['info']['url'] ) {
                         echo '<p><a href="'.esc_url( $data['info']['url'] ).'" target="_blank">'.esc_html( $data['info']['url'] ).'</a></p>';
                     }
-                    echo '</div></details>';
+                    echo '</div>';
                 }
-                echo '</div>';
             }
             $cid  = 'cb_'.esc_attr( $hash );
             $note  = isset( $notes[$hash] ) ? esc_textarea( $notes[$hash] ) : '';
@@ -707,6 +710,13 @@ document.addEventListener('DOMContentLoaded',function(){
   }
   var form=document.querySelector('#{$wrapper} form');
   if(!form)return;
+  document.querySelectorAll('#{$wrapper} details.botsauto-info').forEach(function(d){
+    var content=d.parentElement.nextElementSibling;
+    if(content && content.classList.contains('botsauto-info-content')){
+      content.style.display=d.hasAttribute('open')?'block':'none';
+      d.addEventListener('toggle',function(){content.style.display=this.open?'block':'none';});
+    }
+  });
   function updateBtn(tx){
     var btn=tx.parentElement.previousElementSibling;
     if(!btn)return;
@@ -994,7 +1004,7 @@ document.addEventListener('DOMContentLoaded',function(){
         $css .= "width:{$adv['checkbox']['size']}!important;height:{$adv['checkbox']['size']}!important;appearance:auto!important;flex:0 0 auto;}";
         $css .= "$selector .button-primary{background:{$adv['button']['background-color']}!important;color:{$adv['button']['text-color']}!important;padding:{$adv['button']['padding']};border-radius:{$adv['button']['border-radius']};border-color:{$adv['button']['border-color']}!important;}";
         $css .= "$selector .botsauto-info-btn{background:{$adv['info_button']['background-color']}!important;color:{$adv['info_button']['text-color']}!important;padding:{$adv['info_button']['padding']};border-radius:{$adv['info_button']['border-radius']};border-color:{$adv['info_button']['border-color']}!important;border-style:solid;line-height:1;vertical-align:middle;display:inline-flex;align-items:center;justify-content:center;font-size:{$adv['info_button']['font-size']};text-align:{$adv['info_button']['text-align']};width:{$adv['info_button']['width']};height:{$adv['info_button']['height']};}";
-        $css .= "$selector .botsauto-info-content{background:{$adv['info_popup']['background-color']};color:{$adv['info_popup']['text-color']};padding:{$adv['info_popup']['padding']};border-radius:{$adv['info_popup']['border-radius']};margin-top:.5em;}";
+        $css .= "$selector .botsauto-info-content{display:none;background:{$adv['info_popup']['background-color']};color:{$adv['info_popup']['text-color']};padding:{$adv['info_popup']['padding']};border-radius:{$adv['info_popup']['border-radius']};margin:0 0 .25em;}";
         $css .= "$selector details.botsauto-info>summary{display:inline-block;cursor:pointer;margin-left:.5em;white-space:nowrap;}";
         $css .= "$selector details.botsauto-info>summary::-webkit-details-marker{display:none;}";
         $css .= "$selector details.botsauto-info>summary::marker{content:'';font-size:0;}";
@@ -1178,7 +1188,7 @@ document.addEventListener('DOMContentLoaded',function(){
         echo '<style id="botsauto-preview-static">'.$static_css.'</style>';
         echo '<style id="botsauto-preview-style"></style>';
         echo '<style>#botsauto-preview-container{border:1px solid #ddd;padding:10px;margin-top:1em;}#botsauto-preview-container.mobile{max-width:375px;}</style>';
-        echo '<div id="botsauto-preview-container"><div id="botsauto-preview"><form><div class="botsauto-header"><div class="botsauto-logo-title '.esc_attr($opts['title_position']).'"><div class="botsauto-title">'.esc_html($opts['checklist_title']).'</div><div class="botsauto-logo">'.($opts['image']?'<img src="'.esc_url($opts['image']).'" />':'').'</div></div><div class="botsauto-fields"><p><label>'.esc_html__( 'Titel', 'botsauto-checklist' ).': <input type="text" value="Demo"></label></p><p><label>'.esc_html__( 'Naam', 'botsauto-checklist' ).': <input type="text" value="Demo"></label></p><p><label>'.esc_html__( 'E-mail', 'botsauto-checklist' ).': <input type="email" value="demo@example.com"></label></p></div></div><div class="botsauto-checklist"><details class="botsauto-phase" open><summary>'.esc_html__('Voorbereiden: Kwalificatie & voorbereiding (KEM – Kwalificatie Expres Methode)','botsauto-checklist').'</summary><p>Kwalificatie, achtergrondinformatie en strategische voorbereiding.</p><ul style="list-style:none"><li><div class="botsauto-question-row">'.esc_html__('Kwalificatie Expres Methode toegepast?','botsauto-checklist').'</div><div class="botsauto-answer-row"><input type="checkbox" id="preview_cb" class="botsauto-checkbox"> <label for="preview_cb">'.esc_html__('Is de potentiële opdrachtgever gekwalificeerd op basis van de KEM (Kwalificatie Expres Methode)?','botsauto-checklist').'</label> <button type="button" class="botsauto-note-btn"><i class="fa '.esc_attr($opts['note_icon']).'"></i></button><div class="botsauto-note" style="display:none"><textarea class="botsauto-rich"></textarea></div></div></li></ul></details></div><p><input type="submit" class="button button-primary" value="Submit"></p></form></div></div>';
+        echo '<div id="botsauto-preview-container"><div id="botsauto-preview"><form><div class="botsauto-header"><div class="botsauto-logo-title '.esc_attr($opts['title_position']).'"><div class="botsauto-title">'.esc_html($opts['checklist_title']).'</div><div class="botsauto-logo">'.($opts['image']?'<img src="'.esc_url($opts['image']).'" />':'').'</div></div><div class="botsauto-fields"><p><label>'.esc_html__( 'Titel', 'botsauto-checklist' ).': <input type="text" value="Demo"></label></p><p><label>'.esc_html__( 'Naam', 'botsauto-checklist' ).': <input type="text" value="Demo"></label></p><p><label>'.esc_html__( 'E-mail', 'botsauto-checklist' ).': <input type="email" value="demo@example.com"></label></p></div></div><div class="botsauto-checklist"><details class="botsauto-phase" open><summary>'.esc_html__('Voorbereiden: Kwalificatie & voorbereiding (KEM – Kwalificatie Expres Methode)','botsauto-checklist').'</summary><p>Kwalificatie, achtergrondinformatie en strategische voorbereiding.</p><ul style="list-style:none"><li><div class="botsauto-question-row"><span class="botsauto-question-label">'.esc_html__('Kwalificatie Expres Methode toegepast?','botsauto-checklist').'</span> <details class="botsauto-info"><summary class="botsauto-info-btn">Meer info</summary></details></div><div class="botsauto-info-content"><p>Voorbeeld info</p></div><div class="botsauto-answer-row"><input type="checkbox" id="preview_cb" class="botsauto-checkbox"> <label for="preview_cb">'.esc_html__('Is de potentiële opdrachtgever gekwalificeerd op basis van de KEM (Kwalificatie Expres Methode)?','botsauto-checklist').'</label> <button type="button" class="botsauto-note-btn"><i class="fa '.esc_attr($opts['note_icon']).'"></i></button><div class="botsauto-note" style="display:none"><textarea class="botsauto-rich"></textarea></div></div></li></ul></details></div><p><input type="submit" class="button button-primary" value="Submit"></p></form></div></div>';
         echo '<h2>'.esc_html__( 'Import / Export', 'botsauto-checklist' ).'</h2><p><a href="'.admin_url('admin-post.php?action=botsauto_export_style').'" class="button">'.esc_html__( 'Exporteren', 'botsauto-checklist' ).'</a></p>';
         echo '<form method="post" enctype="multipart/form-data"><input type="file" name="adv_import" accept="application/json" />';
         wp_nonce_field('botsauto_adv_import');
@@ -1258,7 +1268,7 @@ document.addEventListener('DOMContentLoaded',function(){
             . '.botsauto-checkbox{accent-color:' . esc_attr($adv['checkbox']['color']) . ';background:' . esc_attr($adv['checkbox']['background-color']) . ';border-color:' . esc_attr($adv['checkbox']['border-color']) . ';border-style:solid;border-width:1px;display:inline-block!important;width:' . esc_attr($adv['checkbox']['size']) . '!important;height:' . esc_attr($adv['checkbox']['size']) . '!important;appearance:auto!important;visibility:visible!important;}'
             . '.botsauto-checklist .button-primary{background:' . esc_attr($adv['button']['background-color']) . ';color:' . esc_attr($adv['button']['text-color']) . ';padding:' . esc_attr($adv['button']['padding']) . ';border-radius:' . esc_attr($adv['button']['border-radius']) . ';border-color:' . esc_attr($adv['button']['border-color']) . ';}'
             . '.botsauto-info-btn{background:' . esc_attr($adv['info_button']['background-color']) . ';color:' . esc_attr($adv['info_button']['text-color']) . ';padding:' . esc_attr($adv['info_button']['padding']) . ';border-radius:' . esc_attr($adv['info_button']['border-radius']) . ';border-color:' . esc_attr($adv['info_button']['border-color']) . ';border-style:solid;display:inline-flex;align-items:center;justify-content:center;font-size:' . esc_attr($adv['info_button']['font-size']) . ';text-align:' . esc_attr($adv['info_button']['text-align']) . ';width:' . esc_attr($adv['info_button']['width']) . ';height:' . esc_attr($adv['info_button']['height']) . ';}'
-            . '.botsauto-info-content{background:' . esc_attr($adv['info_popup']['background-color']) . ';color:' . esc_attr($adv['info_popup']['text-color']) . ';padding:' . esc_attr($adv['info_popup']['padding']) . ';border-radius:' . esc_attr($adv['info_popup']['border-radius']) . ';margin-top:.5em;}'
+            . '.botsauto-info-content{display:none;background:' . esc_attr($adv['info_popup']['background-color']) . ';color:' . esc_attr($adv['info_popup']['text-color']) . ';padding:' . esc_attr($adv['info_popup']['padding']) . ';border-radius:' . esc_attr($adv['info_popup']['border-radius']) . ';margin:0 0 .25em;}'
             . '.botsauto-completed{margin-top:2em;}'
             . '.botsauto-completed label{color:' . esc_attr($adv['completed']['text-color']) . '!important;font-size:' . esc_attr($adv['completed']['font-size']) . ';font-family:' . esc_attr($o['font']) . ';}'
             . '</style>';
