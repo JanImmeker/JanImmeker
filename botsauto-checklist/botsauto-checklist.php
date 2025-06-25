@@ -187,6 +187,7 @@ class BOTSAUTO_Checklist {
             ),
             'supports'     => array('title'),
             'show_ui'      => true,
+            'show_in_menu' => 'botsauto-checklist',
             'capabilities' => array('create_posts' => 'do_not_allow'),
             'map_meta_cap' => true,
         ));
@@ -201,6 +202,7 @@ class BOTSAUTO_Checklist {
             ),
             'supports'     => array('title'),
             'show_ui'      => true,
+            'show_in_menu' => 'botsauto-checklist',
         ));
     }
 
@@ -509,6 +511,7 @@ CHECKLIST;
             'note_icon_color' => '#d14292',
             'done_icon'  => 'fa-clipboard-check',
             'done_icon_color' => '#006633',
+            'rotate_notice' => 'Voor de beste weergave van deze checklist, draai je toestel een kwartslag naar landschap.'
         );
     }
     private function get_checklist_items( $list_id ) {
@@ -632,6 +635,7 @@ CHECKLIST;
         $action = apply_filters( 'botsauto_form_action', $action, $list_id );
         echo '<div id="'.$wrapper.'">';
         echo '<form method="post" action="' . esc_url( $action ) . '">';
+        echo '<div class="botsauto-rotate-notice">'.esc_html($style['rotate_notice']).'<button type="button" class="botsauto-rotate-close">&times;</button></div>';
         echo '<input type="hidden" name="action" value="botsauto_save">';
         echo '<input type="hidden" name="checklist_id" value="' . intval( $list_id ) . '" />';
         if ( $post_id ) {
@@ -753,8 +757,22 @@ document.addEventListener('DOMContentLoaded',function(){
     var sendField=form.querySelector('input[name=send_pdf]');
     if(isNew){sendField.value='1';return;}
     if(compNew==='1'){sendField.value='1';return;}
-    if(changed){if(confirm('Wil je de bijgewerkte PDF per e-mail ontvangen?')){sendField.value='1';}}
+  if(changed){if(confirm('Wil je de bijgewerkte PDF per e-mail ontvangen?')){sendField.value='1';}}
   });
+  var notice=document.querySelector('#{$wrapper} .botsauto-rotate-notice');
+  if(notice){
+    var close=notice.querySelector('.botsauto-rotate-close');
+    if(close){close.addEventListener('click',function(){notice.style.display="none";notice.dataset.dismissed='1';});}
+    function check(){
+      var portrait=window.matchMedia('(orientation: portrait)').matches;
+      var mobile=window.innerWidth<=767;
+      if(mobile && portrait && !notice.dataset.dismissed) notice.style.display='block';
+      else notice.style.display='none';
+    }
+    check();
+    window.addEventListener('resize',check);
+    window.addEventListener('orientationchange',check);
+  }
 });</script>";
         return ob_get_clean();
     }
@@ -1035,14 +1053,18 @@ document.addEventListener('DOMContentLoaded',function(){
         $css .= "$selector .botsauto-note-btn{background:none;border:none;color:{$style['note_icon_color']};cursor:pointer;margin-left:auto;flex-shrink:0;}";
         $css .= "$selector .botsauto-note-btn.botsauto-done{color:{$style['done_icon_color']};}";
         $css .= "$selector .botsauto-completed label{color:{$adv['completed']['text-color']}!important;font-size:{$adv['completed']['font-size']};font-family:{$style['font']};}";
+        $css .= "$selector .botsauto-rotate-notice{display:none;position:fixed;bottom:0;left:0;right:0;background:{$style['primary']};color:#fff;padding:10px;text-align:center;z-index:999;}";
         if ( $custom ) $css .= $custom;
         return $css;
     }
 
     public function add_admin_pages() {
-        add_menu_page( 'BOTSAUTO', 'BOTSAUTO', 'manage_options', 'botsauto-settings', array( $this, 'main_settings_page' ), 'dashicons-yes', 26 );
-        add_submenu_page( 'botsauto-settings', 'Opmaak', 'Opmaak', 'manage_options', 'botsauto-style', array( $this, 'style_page' ) );
-        add_submenu_page( 'botsauto-settings', 'E-mail BCC', 'E-mail BCC', 'manage_options', 'botsauto-cc', array( $this, 'cc_page' ) );
+        add_menu_page( 'BOTSAUTO Checklist', 'BOTSAUTO Checklist', 'manage_options', 'botsauto-checklist', '', 'dashicons-yes', 26 );
+        add_submenu_page( 'botsauto-checklist', 'Checklists', 'Checklists', 'manage_options', 'edit.php?post_type='.$this->list_post_type );
+        add_submenu_page( 'botsauto-checklist', 'Inzendingen', 'Inzendingen', 'manage_options', 'edit.php?post_type='.$this->post_type );
+        add_submenu_page( 'botsauto-checklist', 'Algemene instellingen', 'Algemene instellingen', 'manage_options', 'botsauto-general', array( $this, 'main_settings_page' ) );
+        add_submenu_page( 'botsauto-checklist', 'Opmaak instellingen', 'Opmaak instellingen', 'manage_options', 'botsauto-style', array( $this, 'style_page' ) );
+        add_submenu_page( 'botsauto-checklist', 'E-mail instellingen', 'E-mail instellingen', 'manage_options', 'botsauto-email', array( $this, 'cc_page' ) );
     }
 
     public function register_settings() {
@@ -1139,6 +1161,7 @@ document.addEventListener('DOMContentLoaded',function(){
              '<option value="right" '.selected($opts['image_align'],'right',false).'>Rechts</option>'.
              '</select></td></tr>';
         echo '<tr><th scope="row">'.esc_html__( 'Breedte afbeelding (px)', 'botsauto-checklist' ).'</th><td><input type="number" name="'.$this->style_option.'[image_width]" value="'.esc_attr($opts['image_width']).'" /></td></tr>';
+        echo '<tr><th scope="row">'.esc_html__( 'Tekst roteer-notificatie', 'botsauto-checklist' ).'</th><td><textarea name="'.$this->style_option.'[rotate_notice]" rows="2" class="large-text">'.esc_textarea($opts['rotate_notice']).'</textarea></td></tr>';
         echo '</table>';
         echo '<h2>'.esc_html__( 'Iconen', 'botsauto-checklist' ).'</h2><table class="form-table">';
         echo '<tr><th scope="row">'.esc_html__( 'Notitie-icoon', 'botsauto-checklist' ).'</th><td><input type="text" name="'.$this->style_option.'[note_icon]" value="'.esc_attr($opts['note_icon']).'" /> <input type="text" class="color-field" name="'.$this->style_option.'[note_icon_color]" value="'.esc_attr($opts['note_icon_color']).'" /> <i class="fa '.esc_attr($opts['note_icon']).'"></i></td></tr>';
@@ -1218,6 +1241,7 @@ document.addEventListener('DOMContentLoaded',function(){
         echo '<style id="botsauto-preview-style"></style>';
         echo '<style>#botsauto-preview-container{border:1px solid #ddd;padding:10px;margin-top:1em;}#botsauto-preview-container.mobile{max-width:375px;}</style>';
         echo '<div id="botsauto-preview-container"><div id="botsauto-preview"><form>';
+        echo '<div class="botsauto-rotate-notice">'.esc_html($opts['rotate_notice']).'</div>';
         echo '<div class="botsauto-header"><div class="botsauto-logo-title '.esc_attr($opts['title_position']).'"><div class="botsauto-title">'.esc_html($opts['checklist_title']).'</div><div class="botsauto-logo">'.($opts['image']?'<img src="'.esc_url($opts['image']).'" />':'').'</div></div><div class="botsauto-fields"><p><label>'.esc_html__( 'Titel', 'botsauto-checklist' ).': <input type="text" value="Demo"></label></p><p><label>'.esc_html__( 'Naam', 'botsauto-checklist' ).': <input type="text" value="Demo"></label></p><p><label>'.esc_html__( 'E-mail', 'botsauto-checklist' ).': <input type="email" value="demo@example.com"></label></p></div></div>';
         echo '<div class="botsauto-checklist"><details class="botsauto-phase" open><summary class="phase-toggle"><span class="botsauto-phase-icon"><i class="fa fa-chevron-right collapsed"></i><i class="fa fa-chevron-down expanded"></i></span><span class="botsauto-phase-title">'.esc_html__('Voorbereiden: Kwalificatie & voorbereiding (KEM – Kwalificatie Expres Methode)','botsauto-checklist').'</span></summary><p>Kwalificatie, achtergrondinformatie en strategische voorbereiding.</p><ul style="list-style:none"><li><div class="botsauto-question-row"><span class="botsauto-question-label">'.esc_html__('Kwalificatie Expres Methode toegepast?','botsauto-checklist').'</span> <details class="botsauto-info"><summary class="botsauto-info-btn">Meer info</summary></details></div><div class="botsauto-info-content"><p>De Kwalificatie Expres Methode kun je vinden in de BOTSAUTO Navigatie</p><p><a href="https://botsauto.app/botsauto-sales-efficiency-tool/" target="_blank">https://botsauto.app/botsauto-sales-efficiency-tool/</a></p></div><div class="botsauto-answer-row"><input type="checkbox" id="preview_cb" class="botsauto-checkbox"> <label for="preview_cb">'.esc_html__('Is de potentiële opdrachtgever gekwalificeerd op basis van de KEM (Kwalificatie Expres Methode)?','botsauto-checklist').'</label> <button type="button" class="botsauto-note-btn"><i class="fa '.esc_attr($opts['note_icon']).'"></i></button><div class="botsauto-note" style="display:none"><textarea class="botsauto-rich"></textarea></div></div></li></ul></details></div>';
         echo '<p><input type="submit" class="button button-primary" value="Submit"></p></form></div></div>';
@@ -1236,7 +1260,7 @@ document.addEventListener('DOMContentLoaded',function(){
         $cc = get_option( $this->cc_option, '' );
         $alt = get_option( $this->alt_action_option, '' );
         $custom = get_option( $this->custom_action_option, '' );
-        echo '<div class="wrap"><h1>E-mail BCC</h1><form method="post" action="options.php">';
+        echo '<div class="wrap"><h1>E-mail instellingen</h1><form method="post" action="options.php">';
         settings_fields( 'botsauto_cc_group' );
         echo '<table class="form-table">';
         echo '<tr><th scope="row">E-mail adres</th><td><input type="email" name="'.$this->cc_option.'" value="'.esc_attr($cc).'" /></td></tr>';
@@ -1262,7 +1286,7 @@ document.addEventListener('DOMContentLoaded',function(){
     }
 
     public function main_settings_page() {
-        echo '<div class="wrap"><h1>BOTSAUTO instellingen</h1><p>Gebruik het submenu <strong>Opmaak</strong> voor alle stijlopties en <strong>E-mail BCC</strong> om een kopieadres in te stellen.</p></div>';
+        echo '<div class="wrap"><h1>Algemene instellingen</h1><p>Hier kun je algemene opties voor de BOTSAUTO Checklist plugin aanpassen.</p></div>';
     }
 
     public function output_frontend_style() {
@@ -1309,6 +1333,7 @@ document.addEventListener('DOMContentLoaded',function(){
             . '.botsauto-info-content{display:none;background:' . esc_attr($adv['info_popup']['background-color']) . ';color:' . esc_attr($adv['info_popup']['text-color']) . ';padding:' . esc_attr($adv['info_popup']['padding']) . ';border-radius:' . esc_attr($adv['info_popup']['border-radius']) . ';margin:0 0 .25em;}'
             . '.botsauto-completed{margin-top:2em;}'
             . '.botsauto-completed label{color:' . esc_attr($adv['completed']['text-color']) . '!important;font-size:' . esc_attr($adv['completed']['font-size']) . ';font-family:' . esc_attr($o['font']) . ';}'
+            . '.botsauto-rotate-notice{display:none;position:fixed;bottom:0;left:0;right:0;background:' . esc_attr($o['primary']) . ';color:#fff;padding:10px;text-align:center;z-index:999;}'
             . '</style>';
     }
 

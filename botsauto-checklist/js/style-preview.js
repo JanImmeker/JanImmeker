@@ -26,7 +26,8 @@ jQuery(function($){
       note_icon: $('input[name="botsauto_style[note_icon]"]').val(),
       note_icon_color: $('input[name="botsauto_style[note_icon_color]"]').val(),
       done_icon: $('input[name="botsauto_style[done_icon]"]').val(),
-      done_icon_color: $('input[name="botsauto_style[done_icon_color]"]').val()
+      done_icon_color: $('input[name="botsauto_style[done_icon_color]"]').val(),
+      rotate_notice: $('textarea[name="botsauto_style[rotate_notice]"]').val()
     };
   }
   function updatePreview(){
@@ -109,12 +110,13 @@ jQuery(function($){
     }
     css += w+' .botsauto-note-btn{background:none;border:none;color:'+style.note_icon_color+';cursor:pointer;margin-left:auto;flex-shrink:0;}';
     css += w+' .botsauto-note-btn.botsauto-done{color:'+style.done_icon_color+';}';
+    css += w+' .botsauto-rotate-notice{display:none;position:fixed;bottom:0;left:0;right:0;background:'+style.primary+';color:#fff;padding:10px;text-align:center;z-index:999;}';
     if(adv.completed){
       css += w+' .botsauto-completed label{color:'+adv.completed['text-color']+';font-size:'+adv.completed['font-size']+';font-family:'+adv.completed['font-family']+';}';
     }
    $('#botsauto-preview-style').text(css);
 }
-  $('.color-field, input[name^="botsauto_style"], select[name^="botsauto_style"], input[name^="botsauto_adv_style"], #botsauto-image, input[name="botsauto_style[image_width]"], select[name="botsauto_style[image_align]"], input[name="botsauto_style[checklist_title]"], select[name="botsauto_style[title_position]"]').on('input change', updatePreview);
+  $('.color-field, input[name^="botsauto_style"], select[name^="botsauto_style"], textarea[name^="botsauto_style"], input[name^="botsauto_adv_style"], #botsauto-image, input[name="botsauto_style[image_width]"], select[name="botsauto_style[image_align]"], input[name="botsauto_style[checklist_title]"], select[name="botsauto_style[title_position]"]').on('input change', updatePreview);
   $('#botsauto-toggle-mobile').on('click',function(){
     $('#botsauto-preview-container').toggleClass('mobile');
   });
@@ -146,4 +148,11 @@ jQuery(function($){
     var n=$(this).next('.botsauto-note');
     n.toggle();
   });
+  var rotate=$('#botsauto-preview .botsauto-rotate-notice');
+  function checkRotate(){
+    if($('#botsauto-preview-container').hasClass('mobile')) rotate.show();
+    else rotate.hide();
+  }
+  $('#botsauto-toggle-mobile').on('click',checkRotate);
+  checkRotate();
 });
