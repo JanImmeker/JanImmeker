@@ -111,6 +111,7 @@ class BOTSAUTO_Checklist {
         add_action( 'admin_post_botsauto_generate_pdf', array( $this, 'admin_generate_pdf' ) );
         add_action( 'admin_post_botsauto_resend_pdf', array( $this, 'admin_resend_pdf' ) );
         add_action( 'admin_menu', array( $this, 'add_admin_pages' ) );
+        add_action( 'admin_menu', array( $this, 'remove_default_submenu' ), 99 );
         add_action( 'admin_init', array( $this, 'register_settings' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_color_picker_assets' ) );
     }
@@ -1001,7 +1002,7 @@ document.addEventListener('DOMContentLoaded',function(){
     private function build_css( $style, $adv, $selector, $custom = '' ) {
         $css  = "$selector *,${selector} *::before,${selector} *::after{box-sizing:border-box;margin:0;padding:0;}";
         $css .= "$selector{color:{$style['text']};background:{$style['background']};font-size:{$adv['container']['font-size']};padding:{$adv['container']['padding']};font-family:{$style['font']};}";
-        $css .= "$selector .botsauto-phase>details>.phase-toggle{color:{$adv['phase']['text-color']}!important;background:{$adv['phase']['background-color']}!important;font-size:{$adv['phase']['font-size']};font-weight:{$adv['phase']['font-weight']};list-style:none!important;display:flex!important;align-items:center;cursor:pointer;padding:{$adv['phase']['padding']}!important;}";
+        $css .= "$selector .botsauto-phase>details>.phase-toggle{color:{$adv['phase']['text-color']}!important;background:{$adv['phase']['background-color']}!important;font-size:{$adv['phase']['font-size']};font-weight:{$adv['phase']['font-weight']};list-style:none!important;display:flex!important;align-items:center;cursor:pointer;width:100%;box-sizing:border-box;padding:{$adv['phase']['padding']}!important;}";
         $css .= "$selector .botsauto-phase>details>.phase-toggle::-webkit-details-marker{display:none!important;}";
         $css .= "$selector .botsauto-phase>details>.phase-toggle::marker{content:''!important;font-size:0!important;}";
         if ( isset($adv['phase_icon']['position']) && $adv['phase_icon']['position']=='right' ) {
@@ -1065,6 +1066,10 @@ document.addEventListener('DOMContentLoaded',function(){
         add_submenu_page( 'botsauto-checklist', 'Algemene instellingen', 'Algemene instellingen', 'manage_options', 'botsauto-general', array( $this, 'main_settings_page' ) );
         add_submenu_page( 'botsauto-checklist', 'Opmaak instellingen', 'Opmaak instellingen', 'manage_options', 'botsauto-style', array( $this, 'style_page' ) );
         add_submenu_page( 'botsauto-checklist', 'E-mail instellingen', 'E-mail instellingen', 'manage_options', 'botsauto-email', array( $this, 'cc_page' ) );
+    }
+
+    public function remove_default_submenu() {
+        remove_submenu_page( 'botsauto-checklist', 'botsauto-checklist' );
     }
 
     public function register_settings() {
