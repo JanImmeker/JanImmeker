@@ -762,7 +762,7 @@ document.addEventListener('DOMContentLoaded',function(){
   var notice=document.querySelector('#{$wrapper} .botsauto-rotate-notice');
   if(notice){
     var close=notice.querySelector('.botsauto-rotate-close');
-    if(close){close.addEventListener('click',function(){notice.style.display="none";notice.dataset.dismissed='1';});}
+    if(close){close.addEventListener('click',function(){notice.style.display='none';notice.dataset.dismissed='1';});}
     function check(){
       var portrait=window.matchMedia('(orientation: portrait)').matches;
       var mobile=window.innerWidth<=767;
