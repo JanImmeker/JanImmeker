@@ -51,7 +51,7 @@ jQuery(function($){
       css += w+' .botsauto-question-row details.botsauto-info>summary{display:inline-block;cursor:pointer;margin-left:.5em;white-space:nowrap;}';
       css += w+' .botsauto-question-row details.botsauto-info>summary::-webkit-details-marker{display:none;}';
       css += w+" .botsauto-question-row details.botsauto-info>summary::marker{content:'';font-size:0;}";
-      css += w+' .botsauto-answer-row{display:flex;align-items:center;gap:.5em;}';
+      css += w+' .botsauto-answer-row{display:flex;align-items:center;width:100%;gap:.5em;}';
     }
     css += w+' .botsauto-header{margin-bottom:1em;font-family:'+style.font+';}';
     css += w+' .botsauto-logo-title{display:flex;justify-content:center;align-items:center;margin-bottom:1em;}';
@@ -77,7 +77,7 @@ jQuery(function($){
     }
     css += w+" .botsauto-checklist li{display:flex;flex-wrap:wrap;align-items:flex-start;margin-bottom:.5em;padding-left:1.2em;}";
     if(adv.item){
-      css += w+' .botsauto-checklist label{color:'+adv.item['text-color']+';font-size:'+adv.item['font-size']+';display:inline-block;vertical-align:middle;}';
+      css += w+' .botsauto-checklist label{color:'+adv.item['text-color']+';font-size:'+adv.item['font-size']+';display:inline-block;vertical-align:middle;flex:1 1 auto;min-width:0;}';
     }
     if(adv.checked){
       css += w+' input:checked+label{color:'+adv.checked['text-color']+';text-decoration:'+adv.checked['text-decoration']+';}';
@@ -100,7 +100,7 @@ jQuery(function($){
     if(adv.note){
        css += w+' .botsauto-note textarea{color:'+adv.note['text-color']+';background:'+adv.note['background-color']+';font-size:'+adv.note['font-size']+';}';
     }
-    css += w+' .botsauto-note-btn{background:none;border:none;color:'+style.note_icon_color+';cursor:pointer;margin-left:5px;flex:0 0 auto;}';
+    css += w+' .botsauto-note-btn{background:none;border:none;color:'+style.note_icon_color+';cursor:pointer;margin-left:auto;flex-shrink:0;}';
     css += w+' .botsauto-note-btn.botsauto-done{color:'+style.done_icon_color+';}';
     if(adv.completed){
       css += w+' .botsauto-completed label{color:'+adv.completed['text-color']+';font-size:'+adv.completed['font-size']+';font-family:'+adv.completed['font-family']+';}';

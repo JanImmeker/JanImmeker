@@ -979,7 +979,7 @@ document.addEventListener('DOMContentLoaded',function(){
         $css .= "$selector .botsauto-question-row{color:{$adv['question']['text-color']}!important;font-size:{$adv['question']['font-size']};font-style:{$adv['question']['font-style']};margin:0 0 .25em;display:flex!important;align-items:center;justify-content:space-between;flex-wrap:nowrap;}";
         $css .= "$selector .botsauto-question-row .botsauto-question-label{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}";
         $css .= "$selector .botsauto-question-row details.botsauto-info{flex-shrink:0;margin-left:auto;display:inline-block;}";
-        $css .= "$selector .botsauto-answer-row{display:flex;align-items:center;gap:.5em;}";
+        $css .= "$selector .botsauto-answer-row{display:flex;align-items:center;width:100%;gap:.5em;}";
         $css .= "$selector .botsauto-header{margin-bottom:1em;font-family:{$style['font']};}";
         $css .= "$selector .botsauto-logo-title{display:flex;justify-content:center;align-items:center;margin-bottom:1em;}";
         $css .= "$selector .botsauto-logo-title.above,.botsauto-logo-title.below{flex-direction:column;}";
@@ -997,7 +997,7 @@ document.addEventListener('DOMContentLoaded',function(){
         $css .= "$selector .botsauto-logo img{max-width:{$style['image_width']}px;height:auto;}";
         $css .= "$selector .botsauto-title{color:{$adv['title']['text-color']};background:{$adv['title']['background-color']};font-size:{$adv['title']['font-size']};font-weight:{$adv['title']['font-weight']};font-style:{$adv['title']['font-style']};padding:{$adv['title']['padding']};text-align:center;}";
         $css .= "$selector .botsauto-checklist li{display:flex;flex-wrap:wrap;align-items:flex-start;margin-bottom:.5em;padding-left:1.2em;}";
-        $css .= "$selector .botsauto-checklist label{color:{$adv['item']['text-color']}!important;font-size:{$adv['item']['font-size']};margin-left:.25em;flex:1;}";
+        $css .= "$selector .botsauto-checklist label{color:{$adv['item']['text-color']}!important;font-size:{$adv['item']['font-size']};margin-left:.25em;flex:1 1 auto;min-width:0;}";
         $css .= "$selector input:checked+label{color:{$adv['checked']['text-color']}!important;text-decoration:{$adv['checked']['text-decoration']};}";
         $css .= "$selector .botsauto-checkbox{accent-color:{$adv['checkbox']['color']}!important;";
         $css .= "background:{$adv['checkbox']['background-color']}!important;border-color:{$adv['checkbox']['border-color']}!important;border-style:solid;border-width:1px;";
@@ -1012,7 +1012,7 @@ document.addEventListener('DOMContentLoaded',function(){
         $css .= "$selector .botsauto-note{width:100%;margin-top:.5em;}";
         $css .= "$selector .botsauto-note textarea{width:100%;height:80px;font-size:{$adv['note']['font-size']};color:{$adv['note']['text-color']};background:{$adv['note']['background-color']};}";
         $css .= "$selector .botsauto-note .tox-tinymce{width:100%;}";
-        $css .= "$selector .botsauto-note-btn{background:none;border:none;color:{$style['note_icon_color']};cursor:pointer;margin-left:5px;flex:0 0 auto;}";
+        $css .= "$selector .botsauto-note-btn{background:none;border:none;color:{$style['note_icon_color']};cursor:pointer;margin-left:auto;flex-shrink:0;}";
         $css .= "$selector .botsauto-note-btn.botsauto-done{color:{$style['done_icon_color']};}";
         $css .= "$selector .botsauto-completed label{color:{$adv['completed']['text-color']}!important;font-size:{$adv['completed']['font-size']};font-family:{$style['font']};}";
         if ( $custom ) $css .= $custom;
