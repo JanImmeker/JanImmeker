@@ -948,8 +948,9 @@ document.addEventListener('DOMContentLoaded',function(){
         $css .= "$selector .botsauto-phase>details>.phase-toggle::marker{content:''!important;font-size:0!important;}";
         $css .= "$selector .botsauto-phase>details>.phase-toggle::before{content:'\\25B6'!important;position:absolute;left:0;}";
         $css .= "$selector .botsauto-phase>details[open]>.phase-toggle::before{content:'\\25BC'!important;}";
-        $css .= "$selector .botsauto-question-text{color:{$adv['question']['text-color']}!important;font-size:{$adv['question']['font-size']};font-style:{$adv['question']['font-style']};margin:0 0 .2em;flex-basis:100%;display:flex;align-items:center;justify-content:space-between;}";
-        $css .= "$selector .botsauto-question-text .botsauto-question-label{flex:1;}";
+        $css .= "$selector .botsauto-question-text{color:{$adv['question']['text-color']}!important;font-size:{$adv['question']['font-size']};font-style:{$adv['question']['font-style']};margin:0 0 .2em;flex-basis:100%;display:flex;align-items:flex-start;}";
+        $css .= "$selector .botsauto-question-text .botsauto-question-label{flex:1 1 auto;min-width:0;}";
+        $css .= "$selector .botsauto-question-text details.botsauto-info{flex-shrink:0;margin-left:auto;}";
         $css .= "$selector .botsauto-header{margin-bottom:1em;font-family:{$style['font']};}";
         $css .= "$selector .botsauto-logo-title{display:flex;justify-content:center;align-items:center;margin-bottom:1em;}";
         $css .= "$selector .botsauto-logo-title.above,.botsauto-logo-title.below{flex-direction:column;}";
@@ -1223,8 +1224,9 @@ document.addEventListener('DOMContentLoaded',function(){
             . '.botsauto-phase>details>.phase-toggle{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($o['primary']) . ';list-style:none;position:relative;padding-left:1.2em;padding-top:10px;padding-bottom:10px;}'
             . '.botsauto-phase>details>.phase-toggle::before{content:"\\25B6";position:absolute;left:0;}'
             . '.botsauto-phase>details[open]>.phase-toggle::before{content:"\\25BC";}'
-            . '.botsauto-question-text{color:' . esc_attr($adv['question']['text-color']) . ';font-size:' . esc_attr($adv['question']['font-size']) . ';font-style:' . esc_attr($adv['question']['font-style']) . ';margin:0 0 .2em;display:flex;align-items:center;justify-content:space-between;flex-basis:100%;}'
-            . '.botsauto-question-text .botsauto-question-label{flex:1;}'
+            . '.botsauto-question-text{color:' . esc_attr($adv['question']['text-color']) . ';font-size:' . esc_attr($adv['question']['font-size']) . ';font-style:' . esc_attr($adv['question']['font-style']) . ';margin:0 0 .2em;display:flex;align-items:flex-start;flex-basis:100%;}'
+            . '.botsauto-question-text .botsauto-question-label{flex:1 1 auto;min-width:0;}'
+            . '.botsauto-question-text details.botsauto-info{flex-shrink:0;margin-left:auto;}'
             . '.botsauto-checkbox{accent-color:' . esc_attr($adv['checkbox']['color']) . ';background:' . esc_attr($adv['checkbox']['background-color']) . ';border-color:' . esc_attr($adv['checkbox']['border-color']) . ';border-style:solid;border-width:1px;display:inline-block!important;width:' . esc_attr($adv['checkbox']['size']) . '!important;height:' . esc_attr($adv['checkbox']['size']) . '!important;appearance:auto!important;visibility:visible!important;}'
             . '.botsauto-checklist .button-primary{background:' . esc_attr($adv['button']['background-color']) . ';color:' . esc_attr($adv['button']['text-color']) . ';padding:' . esc_attr($adv['button']['padding']) . ';border-radius:' . esc_attr($adv['button']['border-radius']) . ';border-color:' . esc_attr($adv['button']['border-color']) . ';}'
             . '.botsauto-info-btn{background:' . esc_attr($adv['info_button']['background-color']) . ';color:' . esc_attr($adv['info_button']['text-color']) . ';padding:' . esc_attr($adv['info_button']['padding']) . ';border-radius:' . esc_attr($adv['info_button']['border-radius']) . ';border-color:' . esc_attr($adv['info_button']['border-color']) . ';border-style:solid;}'
