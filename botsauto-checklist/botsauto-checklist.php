@@ -91,9 +91,7 @@ class BOTSAUTO_Checklist {
         add_action( 'init', array( $this, 'load_textdomain' ) );
         add_action( 'init', array( $this, 'register_post_types' ) );
         add_action( 'init', array( $this, 'maybe_alt_submit' ), 0 );
-        if ( defined( 'SIMPLE_WP_MEMBERSHIP_VERSION' ) || defined( 'SWPM_VERSION' ) || class_exists( 'SimpleWpMembership' ) ) {
-            add_filter( 'botsauto_use_alt_action', array( $this, 'force_alt_for_membership' ) );
-        }
+        add_action( 'plugins_loaded', array( $this, 'maybe_enable_swpm_fallback' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
         add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) );
         add_action( 'save_post', array( $this, 'save_post' ) );
@@ -822,6 +820,12 @@ document.addEventListener('DOMContentLoaded',function(){
     public function maybe_alt_submit() {
         if ( isset( $_GET['botsauto_submit'] ) && 'POST' === $_SERVER['REQUEST_METHOD'] ) {
             $this->handle_submit();
+        }
+    }
+
+    public function maybe_enable_swpm_fallback() {
+        if ( defined( 'SIMPLE_WP_MEMBERSHIP_VERSION' ) || defined( 'SWPM_VERSION' ) || class_exists( 'SimpleWpMembership' ) ) {
+            add_filter( 'botsauto_use_alt_action', array( $this, 'force_alt_for_membership' ) );
         }
     }
 
