@@ -76,6 +76,7 @@ jQuery(function($){
     css += w+' .botsauto-header label{color:'+style.primary+';display:block;margin-bottom:.5em;}';
     if(style.image){
       css += w+' .botsauto-logo{text-align:'+style.image_align+';margin-bottom:0;}';
+      css += w+' .botsauto-logo-title.above .botsauto-logo, '+w+' .botsauto-logo-title.below .botsauto-logo{width:100%;}';
       css += w+' .botsauto-logo img{max-width:'+style.image_width+'px;height:auto;}';
     } else {
       css += w+' .botsauto-logo{display:none;}';

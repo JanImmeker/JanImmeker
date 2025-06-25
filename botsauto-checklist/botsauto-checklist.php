@@ -1053,6 +1053,7 @@ document.addEventListener('DOMContentLoaded',function(){
         $css .= "$selector .botsauto-header .botsauto-fields p{margin:0;}";
         $css .= "$selector .botsauto-header label{color:{$style['primary']}!important;display:block;margin-bottom:.5em;}";
         $css .= "$selector .botsauto-logo{text-align:{$style['image_align']};margin-bottom:0;}";
+        $css .= "$selector .botsauto-logo-title.above .botsauto-logo, $selector .botsauto-logo-title.below .botsauto-logo{width:100%;}";
         $css .= "$selector .botsauto-logo img{max-width:{$style['image_width']}px;height:auto;}";
         $css .= "$selector .botsauto-title{color:{$adv['title']['text-color']};background:{$adv['title']['background-color']};font-size:{$adv['title']['font-size']};font-weight:{$adv['title']['font-weight']};font-style:{$adv['title']['font-style']};padding:{$adv['title']['padding']};text-align:center;}";
         $css .= "$selector .botsauto-checklist li{display:flex;flex-wrap:wrap;align-items:flex-start;margin-bottom:.5em;padding-left:1.2em;}";
