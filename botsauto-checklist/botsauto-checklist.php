@@ -187,7 +187,7 @@ class BOTSAUTO_Checklist {
             ),
             'supports'     => array('title'),
             'show_ui'      => true,
-            'show_in_menu' => 'botsauto-checklist',
+            'show_in_menu' => false,
             'capabilities' => array('create_posts' => 'do_not_allow'),
             'map_meta_cap' => true,
         ));
@@ -202,7 +202,7 @@ class BOTSAUTO_Checklist {
             ),
             'supports'     => array('title'),
             'show_ui'      => true,
-            'show_in_menu' => 'botsauto-checklist',
+            'show_in_menu' => false,
         ));
     }
 
@@ -1147,7 +1147,6 @@ document.addEventListener('DOMContentLoaded',function(){
             echo '<option value="'.esc_attr($val).'" '.$sel.'>'.esc_html($label).'</option>';
         }
         echo '</select></td></tr>';
-        echo '<tr><th scope="row">'.esc_html__( 'Checklist titel', 'botsauto-checklist' ).'</th><td><input type="text" name="'.$this->style_option.'[checklist_title]" value="'.esc_attr($opts['checklist_title']).'" /></td></tr>';
         echo '<tr><th scope="row">'.esc_html__( 'Positie titel', 'botsauto-checklist' ).'</th><td><select name="'.$this->style_option.'[title_position]">'
             .'<option value="above" '.selected($opts['title_position'],'above',false).'>'.esc_html__('Boven','botsauto-checklist').'</option>'
             .'<option value="below" '.selected($opts['title_position'],'below',false).'>'.esc_html__('Onder','botsauto-checklist').'</option>'
@@ -1161,7 +1160,6 @@ document.addEventListener('DOMContentLoaded',function(){
              '<option value="right" '.selected($opts['image_align'],'right',false).'>Rechts</option>'.
              '</select></td></tr>';
         echo '<tr><th scope="row">'.esc_html__( 'Breedte afbeelding (px)', 'botsauto-checklist' ).'</th><td><input type="number" name="'.$this->style_option.'[image_width]" value="'.esc_attr($opts['image_width']).'" /></td></tr>';
-        echo '<tr><th scope="row">'.esc_html__( 'Tekst roteer-notificatie', 'botsauto-checklist' ).'</th><td><textarea name="'.$this->style_option.'[rotate_notice]" rows="2" class="large-text">'.esc_textarea($opts['rotate_notice']).'</textarea></td></tr>';
         echo '</table>';
         echo '<h2>'.esc_html__( 'Iconen', 'botsauto-checklist' ).'</h2><table class="form-table">';
         echo '<tr><th scope="row">'.esc_html__( 'Notitie-icoon', 'botsauto-checklist' ).'</th><td><input type="text" name="'.$this->style_option.'[note_icon]" value="'.esc_attr($opts['note_icon']).'" /> <input type="text" class="color-field" name="'.$this->style_option.'[note_icon_color]" value="'.esc_attr($opts['note_icon_color']).'" /> <i class="fa '.esc_attr($opts['note_icon']).'"></i></td></tr>';
@@ -1258,14 +1256,10 @@ document.addEventListener('DOMContentLoaded',function(){
 
     public function cc_page() {
         $cc = get_option( $this->cc_option, '' );
-        $alt = get_option( $this->alt_action_option, '' );
-        $custom = get_option( $this->custom_action_option, '' );
         echo '<div class="wrap"><h1>E-mail instellingen</h1><form method="post" action="options.php">';
         settings_fields( 'botsauto_cc_group' );
         echo '<table class="form-table">';
         echo '<tr><th scope="row">E-mail adres</th><td><input type="email" name="'.$this->cc_option.'" value="'.esc_attr($cc).'" /></td></tr>';
-        echo '<tr><th scope="row">Alternatieve submit-URL</th><td><label><input type="checkbox" name="'.$this->alt_action_option.'" value="1" '.checked($alt,'1',false).' /> ' . esc_html__( 'Gebruik huidige pagina om checklist te verzenden', 'botsauto-checklist' ) . '</label></td></tr>';
-        echo '<tr><th scope="row">'.esc_html__( 'Aangepaste actie-URL', 'botsauto-checklist' ).'</th><td><input type="url" name="'.$this->custom_action_option.'" value="'.esc_attr($custom).'" class="regular-text" /><p class="description">'.esc_html__( 'Laat leeg voor huidige pagina', 'botsauto-checklist' ).'</p></td></tr>';
         echo '</table>';
         submit_button();
         echo '</form></div>';
@@ -1286,7 +1280,20 @@ document.addEventListener('DOMContentLoaded',function(){
     }
 
     public function main_settings_page() {
-        echo '<div class="wrap"><h1>Algemene instellingen</h1><p>Hier kun je algemene opties voor de BOTSAUTO Checklist plugin aanpassen.</p></div>';
+        $opts  = $this->get_style_options();
+        $alt   = get_option( $this->alt_action_option, '' );
+        $custom = get_option( $this->custom_action_option, '' );
+        echo '<div class="wrap"><h1>Algemene instellingen</h1><form method="post" action="options.php">';
+        settings_fields( 'botsauto_style_group' );
+        settings_fields( 'botsauto_cc_group' );
+        echo '<table class="form-table">';
+        echo '<tr><th scope="row">'.esc_html__( 'Checklist titel', 'botsauto-checklist' ).'</th><td><input type="text" name="'.$this->style_option.'[checklist_title]" value="'.esc_attr($opts['checklist_title']).'" /></td></tr>';
+        echo '<tr><th scope="row">'.esc_html__( 'Tekst roteer-notificatie', 'botsauto-checklist' ).'</th><td><textarea name="'.$this->style_option.'[rotate_notice]" rows="2" class="large-text">'.esc_textarea($opts['rotate_notice']).'</textarea></td></tr>';
+        echo '<tr><th scope="row">Alternatieve submit-URL</th><td><label><input type="checkbox" name="'.$this->alt_action_option.'" value="1" '.checked($alt,'1',false).' /> '.esc_html__( 'Gebruik huidige pagina om checklist te verzenden', 'botsauto-checklist' ).'</label></td></tr>';
+        echo '<tr><th scope="row">'.esc_html__( 'Aangepaste actie-URL', 'botsauto-checklist' ).'</th><td><input type="url" name="'.$this->custom_action_option.'" value="'.esc_attr($custom).'" class="regular-text" /><p class="description">'.esc_html__( 'Laat leeg voor huidige pagina', 'botsauto-checklist' ).'</p></td></tr>';
+        echo '</table>';
+        submit_button();
+        echo '</form></div>';
     }
 
     public function output_frontend_style() {
