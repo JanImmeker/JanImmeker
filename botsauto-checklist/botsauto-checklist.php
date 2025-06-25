@@ -434,6 +434,8 @@ CHECKLIST;
                 'padding'          => '9px 15px',
                 'border-radius'    => '8px',
                 'border-color'     => '#D14292',
+                'width'            => 'auto',
+                'height'           => 'auto',
             ),
             'info_popup' => array(
                 'text-color'       => '#00306a',
@@ -988,7 +990,7 @@ document.addEventListener('DOMContentLoaded',function(){
         $css .= "background:{$adv['checkbox']['background-color']}!important;border-color:{$adv['checkbox']['border-color']}!important;border-style:solid;border-width:1px;";
         $css .= "width:{$adv['checkbox']['size']}!important;height:{$adv['checkbox']['size']}!important;appearance:auto!important;flex:0 0 auto;}";
         $css .= "$selector .button-primary{background:{$adv['button']['background-color']}!important;color:{$adv['button']['text-color']}!important;padding:{$adv['button']['padding']};border-radius:{$adv['button']['border-radius']};border-color:{$adv['button']['border-color']}!important;}";
-        $css .= "$selector .botsauto-info-btn{background:{$adv['info_button']['background-color']}!important;color:{$adv['info_button']['text-color']}!important;padding:{$adv['info_button']['padding']};border-radius:{$adv['info_button']['border-radius']};border-color:{$adv['info_button']['border-color']}!important;border-style:solid;line-height:1;vertical-align:middle;}";
+        $css .= "$selector .botsauto-info-btn{background:{$adv['info_button']['background-color']}!important;color:{$adv['info_button']['text-color']}!important;padding:{$adv['info_button']['padding']};border-radius:{$adv['info_button']['border-radius']};border-color:{$adv['info_button']['border-color']}!important;border-style:solid;line-height:1;vertical-align:middle;display:inline-flex;align-items:center;justify-content:center;width:{$adv['info_button']['width']};height:{$adv['info_button']['height']};}";
         $css .= "$selector .botsauto-info-content{background:{$adv['info_popup']['background-color']};color:{$adv['info_popup']['text-color']};padding:{$adv['info_popup']['padding']};border-radius:{$adv['info_popup']['border-radius']};margin-top:.5em;}";
         $css .= "$selector details.botsauto-info>summary{display:inline-block;cursor:pointer;margin-left:.5em;}";
         $css .= "$selector details.botsauto-info>summary::-webkit-details-marker{display:none;}";
@@ -1137,6 +1139,7 @@ document.addEventListener('DOMContentLoaded',function(){
             'border-width'     => 'Randdikte',
             'border-color'     => 'Randkleur',
             'width'            => 'Breedte',
+            'height'           => 'Hoogte',
             'color'            => 'Kleur',
             'size'             => 'Grootte',
             'text-decoration'  => 'Tekstdecoratie'
@@ -1243,7 +1246,7 @@ document.addEventListener('DOMContentLoaded',function(){
             . '.botsauto-question-text details.botsauto-info{flex-shrink:0;margin-left:auto;}'
             . '.botsauto-checkbox{accent-color:' . esc_attr($adv['checkbox']['color']) . ';background:' . esc_attr($adv['checkbox']['background-color']) . ';border-color:' . esc_attr($adv['checkbox']['border-color']) . ';border-style:solid;border-width:1px;display:inline-block!important;width:' . esc_attr($adv['checkbox']['size']) . '!important;height:' . esc_attr($adv['checkbox']['size']) . '!important;appearance:auto!important;visibility:visible!important;}'
             . '.botsauto-checklist .button-primary{background:' . esc_attr($adv['button']['background-color']) . ';color:' . esc_attr($adv['button']['text-color']) . ';padding:' . esc_attr($adv['button']['padding']) . ';border-radius:' . esc_attr($adv['button']['border-radius']) . ';border-color:' . esc_attr($adv['button']['border-color']) . ';}'
-            . '.botsauto-info-btn{background:' . esc_attr($adv['info_button']['background-color']) . ';color:' . esc_attr($adv['info_button']['text-color']) . ';padding:' . esc_attr($adv['info_button']['padding']) . ';border-radius:' . esc_attr($adv['info_button']['border-radius']) . ';border-color:' . esc_attr($adv['info_button']['border-color']) . ';border-style:solid;}'
+            . '.botsauto-info-btn{background:' . esc_attr($adv['info_button']['background-color']) . ';color:' . esc_attr($adv['info_button']['text-color']) . ';padding:' . esc_attr($adv['info_button']['padding']) . ';border-radius:' . esc_attr($adv['info_button']['border-radius']) . ';border-color:' . esc_attr($adv['info_button']['border-color']) . ';border-style:solid;display:inline-flex;align-items:center;justify-content:center;width:' . esc_attr($adv['info_button']['width']) . ';height:' . esc_attr($adv['info_button']['height']) . ';}'
             . '.botsauto-info-content{background:' . esc_attr($adv['info_popup']['background-color']) . ';color:' . esc_attr($adv['info_popup']['text-color']) . ';padding:' . esc_attr($adv['info_popup']['padding']) . ';border-radius:' . esc_attr($adv['info_popup']['border-radius']) . ';margin-top:.5em;}'
             . '.botsauto-completed{margin-top:2em;}'
             . '.botsauto-completed label{color:' . esc_attr($adv['completed']['text-color']) . '!important;font-size:' . esc_attr($adv['completed']['font-size']) . ';font-family:' . esc_attr($o['font']) . ';}'
