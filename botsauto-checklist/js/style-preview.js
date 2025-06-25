@@ -141,4 +141,9 @@ jQuery(function($){
       d.on('toggle',function(){content.css('display', this.open ? 'block':'none');});
     }
   });
+  $('#botsauto-preview').on('click','.botsauto-note-btn',function(e){
+    e.preventDefault();
+    var n=$(this).next('.botsauto-note');
+    n.toggle();
+  });
 });
