@@ -227,7 +227,27 @@ class BOTSAUTO_Checklist {
         echo '<script type="text/template" id="botsauto-item-template"><div class="botsauto-item"><p class="item-line"><label><span>'.esc_html__( 'Checklist item', 'botsauto-checklist' ).':</span> <input type="text" class="item-field"></label> <button type="button" class="button botsauto-remove-item">'.esc_html__( 'Verwijder', 'botsauto-checklist' ).'</button></p></div></script>';
         $s = $this->get_style_options();
         $adv = $this->get_adv_style_options();
-        echo '<style>#botsauto-editor p{display:flex;align-items:center;gap:6px;margin:4px 0;flex-wrap:wrap;}#botsauto-editor label{flex:1;display:flex;align-items:center;min-width:0;color:' . esc_attr($s['primary']) . ';}#botsauto-editor label span{display:inline-block;width:140px;}#botsauto-editor input, #botsauto-editor textarea{flex:1;width:' . esc_attr($adv['field']['width']) . ';max-width:none;border-radius:' . esc_attr($adv['field']['border-radius']) . ';border-style:' . esc_attr($adv['field']['border-style']) . ';border-width:' . esc_attr($adv['field']['border-width']) . ';border-color:' . esc_attr($adv['field']['border-color']) . ';background:' . esc_attr($adv['field']['background-color']) . ';color:' . esc_attr($adv['field']['text-color']) . ';box-sizing:border-box;}#botsauto-editor .question-field{max-width:calc(100% - 220px);}#botsauto-editor .question-line{margin-left:2em;}#botsauto-editor .info-line{margin-left:2em;margin-bottom:0.5em;display:block;width:100%;}#botsauto-editor .item-line{margin-left:4em;}#botsauto-editor{background:' . esc_attr($s['background']) . ';color:' . esc_attr($s['text']) . ';font-family:' . esc_attr($s['font']) . ';}#botsauto-editor input[type=checkbox]{accent-color:' . esc_attr($s['primary']) . '!important;display:inline-block!important;width:auto!important;height:auto!important;appearance:auto!important;}#botsauto-editor .button{background:' . esc_attr($s['primary']) . ';border-color:' . esc_attr($s['primary']) . ';color:#fff;}#botsauto-editor .botsauto-phase>details>summary{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($s['primary']) . ';list-style:none;position:relative;padding-left:1.2em;}#botsauto-editor .botsauto-phase>details>summary::before{content:"▶";position:absolute;left:0;}#botsauto-editor .botsauto-phase>details[open]>summary::before{content:"▼";}</style>';
+        $css  = '#botsauto-editor p{display:flex;align-items:center;gap:6px;margin:4px 0;flex-wrap:wrap;}';
+        $css .= '#botsauto-editor label{flex:1;display:flex;align-items:center;min-width:0;color:' . esc_attr($s['primary']) . ';}';
+        $css .= '#botsauto-editor label span{display:inline-block;width:140px;}';
+        $css .= '#botsauto-editor input, #botsauto-editor textarea{flex:1;width:' . esc_attr($adv['field']['width']) . ';max-width:none;border-radius:' . esc_attr($adv['field']['border-radius']) . ';border-style:' . esc_attr($adv['field']['border-style']) . ';border-width:' . esc_attr($adv['field']['border-width']) . ';border-color:' . esc_attr($adv['field']['border-color']) . ';background:' . esc_attr($adv['field']['background-color']) . ';color:' . esc_attr($adv['field']['text-color']) . ';box-sizing:border-box;}';
+        $css .= '#botsauto-editor .question-field{max-width:calc(100% - 220px);}';
+        $css .= '#botsauto-editor .question-line{margin-left:2em;}';
+        $css .= '#botsauto-editor .info-line{margin-left:2em;margin-bottom:0.5em;display:block;width:100%;}';
+        $css .= '#botsauto-editor .item-line{margin-left:4em;}';
+        $css .= '#botsauto-editor{background:' . esc_attr($s['background']) . ';color:' . esc_attr($s['text']) . ';font-family:' . esc_attr($s['font']) . ';}';
+        $css .= '#botsauto-editor input[type=checkbox]{accent-color:' . esc_attr($s['primary']) . '!important;display:inline-block!important;width:auto!important;height:auto!important;appearance:auto!important;}';
+        $css .= '#botsauto-editor .button{background:' . esc_attr($s['primary']) . ';border-color:' . esc_attr($s['primary']) . ';color:#fff;}';
+        $css .= '#botsauto-editor .botsauto-phase>details>.phase-toggle{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($s['primary']) . ';list-style:none;display:flex;align-items:center;padding-left:0;}';
+        $css .= '#botsauto-editor .botsauto-phase>details>.phase-toggle::-webkit-details-marker{display:none;}';
+        $css .= '#botsauto-editor .botsauto-phase>details>.phase-toggle::marker{content:"";font-size:0;}';
+        if ( $adv['phase_icon']['position']==='right' ) { $css .= '#botsauto-editor .botsauto-phase>details>.phase-toggle{flex-direction:row-reverse;}'; }
+        $css .= '#botsauto-editor .botsauto-phase-icon{color:' . esc_attr($adv['phase_icon']['color']) . ';font-size:' . esc_attr($adv['phase_icon']['size']) . ';padding:' . esc_attr($adv['phase_icon']['padding']) . ';display:inline-flex;align-items:center;}';
+        $css .= '#botsauto-editor .botsauto-phase-icon .expanded{display:none;}';
+        $css .= '#botsauto-editor .botsauto-phase>details[open] .botsauto-phase-icon .collapsed{display:none;}';
+        $css .= '#botsauto-editor .botsauto-phase>details[open] .botsauto-phase-icon .expanded{display:inline;}';
+        if ( $adv['phase_icon']['animation']==='1' ) { $css .= '#botsauto-editor .botsauto-phase-icon{transition:transform .2s;}#botsauto-editor .botsauto-phase[open] .botsauto-phase-icon{transform:rotate(90deg);}'; }
+        echo '<style>'.$css.'</style>';
     }
 
     public function meta_box_shortcode( $post ) {
