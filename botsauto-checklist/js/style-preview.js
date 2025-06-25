@@ -41,7 +41,7 @@ jQuery(function($){
       css += w+'{color:'+style.text+';background:'+style.background+';font-size:'+adv.container['font-size']+';padding:'+adv.container.padding+';font-family:'+style.font+';}';
     }
     if(adv.phase){
-      css += w+' .botsauto-phase>details>.phase-toggle{color:'+adv.phase['text-color']+';background:'+adv.phase['background-color']+';font-size:'+adv.phase['font-size']+';font-weight:'+adv.phase['font-weight']+';list-style:none;display:flex;align-items:center;cursor:pointer;padding-top:10px;padding-bottom:10px;}';
+      css += w+' .botsauto-phase>details>.phase-toggle{color:'+adv.phase['text-color']+';background:'+adv.phase['background-color']+';font-size:'+adv.phase['font-size']+';font-weight:'+adv.phase['font-weight']+';list-style:none;display:flex;align-items:center;cursor:pointer;padding:'+adv.phase['padding']+';}';
       css += w+' .botsauto-phase>details>.phase-toggle::-webkit-details-marker{display:none;}';
       css += w+" .botsauto-phase>details>.phase-toggle::marker{content:"";font-size:0;}";
       if(adv.phase_icon && adv.phase_icon.position==='right'){ css += w+' .botsauto-phase>details>.phase-toggle{flex-direction:row-reverse;}'; }
