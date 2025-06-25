@@ -36,6 +36,8 @@ Is dit het geval, schakel dan de optie **Alternatieve submit-URL** in onder *E-m
 Zorg dat deze URL het queryargument `botsauto_submit=1` bevat; de plugin onderschept dat verzoek en slaat de inzending ook zonder toegang tot `/wp-admin/` op.
 Via de filter `botsauto_form_action` kun je dit verder aanpassen.
 
+Wanneer de plugin **Simple WordPress Membership** actief is, schakelt de checklist deze alternatieve route automatisch in voor bezoekers die niet zijn ingelogd. Hierdoor kan het formulier altijd worden verzonden, ook als deze plugin het dashboard blokkeert. Indien nodig kun je een eigen URL opgeven waar de checklist naartoe moet posten.
+
 Wanneer de beheerder de checklist wijzigt terwijl een gebruiker al een ingevulde versie heeft, ziet de gebruiker bij het openen een melding met de keuze om de nieuwe checklist te gebruiken. De antwoorden blijven gekoppeld aan de oorspronkelijke vragen zodat er geen vinkjes verspringen.
 
 Voor het versturen van e‑mail gebruikt de plugin de standaard `wp_mail` functie. De afzender wordt expliciet gezet op het beheerdersadres van de site zodat SMTP-plugins de mail correct afleveren.
