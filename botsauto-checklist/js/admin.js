@@ -4,8 +4,7 @@ jQuery(function($){
   function updateSummaries(){
     $('#botsauto-editor .botsauto-phase').each(function(){
       var t = $(this).find('.phase-field').first().val() || 'Fase';
-      $(this).children('details').children('summary.phase-toggle').first().text(t);
-      // nothing else
+      $(this).find('summary.phase-toggle .botsauto-phase-title').text(t);
     });
   }
 

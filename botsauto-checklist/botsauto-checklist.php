@@ -219,7 +219,7 @@ class BOTSAUTO_Checklist {
         echo '<div id="botsauto-editor"></div>';
         echo '<p><button type="button" class="button" id="botsauto-add-phase">'.esc_html__( 'Fase toevoegen', 'botsauto-checklist' ).'</button></p>';
         echo '<input type="hidden" name="botsauto_lines_nonce" value="'.wp_create_nonce('botsauto_lines').'" />';
-        echo '<script type="text/template" id="botsauto-phase-template"><div class="botsauto-phase"><details open><summary class="phase-toggle"></summary><p class="phase-line"><label><span>'.esc_html__( 'Fase', 'botsauto-checklist' ).':</span> <input type="text" class="phase-field"></label> <button type="button" class="button botsauto-remove-phase">'.esc_html__( 'Verwijder', 'botsauto-checklist' ).'</button></p><p class="desc-line"><label><span>'.esc_html__( 'Toelichting', 'botsauto-checklist' ).':</span> <input type="text" class="desc-field"></label></p><div class="botsauto-questions"></div><p><button type="button" class="button botsauto-add-question">'.esc_html__( 'Vraag toevoegen', 'botsauto-checklist' ).'</button></p></details></div></script>';
+        echo '<script type="text/template" id="botsauto-phase-template"><div class="botsauto-phase"><details open><summary class="phase-toggle"><span class="botsauto-phase-icon"><i class="fa fa-chevron-right collapsed"></i><i class="fa fa-chevron-down expanded"></i></span><span class="botsauto-phase-title"></span></summary><p class="phase-line"><label><span>'.esc_html__( 'Fase', 'botsauto-checklist' ).':</span> <input type="text" class="phase-field"></label> <button type="button" class="button botsauto-remove-phase">'.esc_html__( 'Verwijder', 'botsauto-checklist' ).'</button></p><p class="desc-line"><label><span>'.esc_html__( 'Toelichting', 'botsauto-checklist' ).':</span> <input type="text" class="desc-field"></label></p><div class="botsauto-questions"></div><p><button type="button" class="button botsauto-add-question">'.esc_html__( 'Vraag toevoegen', 'botsauto-checklist' ).'</button></p></details></div></script>';
         echo '<script type="text/template" id="botsauto-question-template"><div class="botsauto-question" ><div class="question-line"><label><span>'.esc_html__( 'Vraag', 'botsauto-checklist' ).':</span> <input type="text" class="question-field"></label> <button type="button" class="button botsauto-remove-question">'.esc_html__( 'Verwijder', 'botsauto-checklist' ).'</button></div><p class="info-line"><label><span>Tekst:</span> <textarea class="info-text" rows="2" placeholder="Indien ingevuld zal dit getoond worden aan de gebruiker van deze checklist"></textarea></label></p><p class="info-line"><label><span>URL:</span> <input type="text" class="info-url" placeholder="Indien ingevuld zal dit getoond worden aan de gebruiker van deze checklist"></label></p><div class="botsauto-items"></div><p><button type="button" class="button botsauto-add-item">'.esc_html__( 'Item toevoegen', 'botsauto-checklist' ).'</button></p></div></script>';
         echo '<script type="text/template" id="botsauto-item-template"><div class="botsauto-item"><p class="item-line"><label><span>'.esc_html__( 'Checklist item', 'botsauto-checklist' ).':</span> <input type="text" class="item-field"></label> <button type="button" class="button botsauto-remove-item">'.esc_html__( 'Verwijder', 'botsauto-checklist' ).'</button></p></div></script>';
         $s = $this->get_style_options();
@@ -411,6 +411,15 @@ CHECKLIST;
                 'background-color' => '',
                 'font-size'        => '22px',
                 'font-weight'      => 'bold',
+            ),
+            'phase_icon' => array(
+                'collapsed-class' => 'fa-chevron-right',
+                'expanded-class'  => 'fa-chevron-down',
+                'color'           => '#d14292',
+                'size'            => '22px',
+                'padding'         => '0 0.5em 0 0',
+                'position'        => 'left',
+                'animation'       => '1',
             ),
             'question' => array(
                 'text-color' => '#4d4d4d',
@@ -649,7 +658,9 @@ CHECKLIST;
                     echo '</ul></details>';
                 }
                 if ( $data['phase'] ) {
-                    echo '<details class="botsauto-phase"><summary class="phase-toggle">'.esc_html( $data['phase'] ).'</summary>';
+                    $iconC = esc_attr( $adv['phase_icon']['collapsed-class'] );
+                    $iconE = esc_attr( $adv['phase_icon']['expanded-class'] );
+                    echo '<details class="botsauto-phase"><summary class="phase-toggle"><span class="botsauto-phase-icon"><i class="fa '.$iconC.' collapsed"></i><i class="fa '.$iconE.' expanded"></i></span><span class="botsauto-phase-title">'.esc_html( $data['phase'] ).'</span></summary>';
                 }
                 if ( $data['desc'] ) {
                     echo '<p>'.esc_html( $data['desc'] ).'</p>';
@@ -971,11 +982,15 @@ document.addEventListener('DOMContentLoaded',function(){
     private function build_css( $style, $adv, $selector, $custom = '' ) {
         $css  = "$selector *,${selector} *::before,${selector} *::after{box-sizing:border-box;margin:0;padding:0;}";
         $css .= "$selector{color:{$style['text']};background:{$style['background']};font-size:{$adv['container']['font-size']};padding:{$adv['container']['padding']};font-family:{$style['font']};}";
-        $css .= "$selector .botsauto-phase>details>.phase-toggle{color:{$adv['phase']['text-color']}!important;background:{$adv['phase']['background-color']}!important;font-size:{$adv['phase']['font-size']};font-weight:{$adv['phase']['font-weight']};list-style:none!important;position:relative;padding-left:1.2em;padding-top:10px;padding-bottom:10px;display:block!important;}";
+        $css .= "$selector .botsauto-phase>details>.phase-toggle{color:{$adv['phase']['text-color']}!important;background:{$adv['phase']['background-color']}!important;font-size:{$adv['phase']['font-size']};font-weight:{$adv['phase']['font-weight']};list-style:none!important;display:flex!important;align-items:center;cursor:pointer;padding-top:10px;padding-bottom:10px;}";
         $css .= "$selector .botsauto-phase>details>.phase-toggle::-webkit-details-marker{display:none!important;}";
         $css .= "$selector .botsauto-phase>details>.phase-toggle::marker{content:''!important;font-size:0!important;}";
-        $css .= "$selector .botsauto-phase>details>.phase-toggle::before{content:'\\25B6'!important;position:absolute;left:0;}";
-        $css .= "$selector .botsauto-phase>details[open]>.phase-toggle::before{content:'\\25BC'!important;}";
+        if ( isset($adv['phase_icon']['position']) && $adv['phase_icon']['position']=='right' ) { $css .= \"$selector .botsauto-phase>details>.phase-toggle{flex-direction:row-reverse;}\"; }
+        $css .= "$selector .botsauto-phase-icon{color:{$adv['phase_icon']['color']};font-size:{$adv['phase_icon']['size']};padding:{$adv['phase_icon']['padding']};display:inline-flex;align-items:center;}";
+        $css .= "$selector .botsauto-phase-icon .expanded{display:none;}";
+        $css .= "$selector .botsauto-phase[open] .botsauto-phase-icon .collapsed{display:none;}";
+        $css .= "$selector .botsauto-phase[open] .botsauto-phase-icon .expanded{display:inline;}";
+        if ( isset($adv['phase_icon']['animation']) && $adv['phase_icon']['animation']=='1' ) { $css .= \"$selector .botsauto-phase-icon{transition:transform .2s;} $selector .botsauto-phase[open] .botsauto-phase-icon{transform:rotate(90deg);}\"; }
         $css .= "$selector .botsauto-question-row{color:{$adv['question']['text-color']}!important;font-size:{$adv['question']['font-size']};font-style:{$adv['question']['font-style']};margin:0 0 .25em;display:flex!important;align-items:center;justify-content:space-between;flex-wrap:nowrap;}";
         $css .= "$selector .botsauto-question-row .botsauto-question-label{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}";
         $css .= "$selector .botsauto-question-row details.botsauto-info{flex-shrink:0;margin-left:auto;display:inline-block;}";
@@ -1138,7 +1153,8 @@ document.addEventListener('DOMContentLoaded',function(){
             'completed' => 'Checklist afgerond',
             'title'     => 'Titel',
             'info_button' => 'Meer info knop',
-            'info_popup'  => 'Meer info venster'
+            'info_popup'  => 'Meer info venster',
+            'phase_icon'  => 'Fase icoon'
         );
         $field_labels = array(
             'text-color'       => 'Tekstkleur',
@@ -1156,7 +1172,11 @@ document.addEventListener('DOMContentLoaded',function(){
             'text-align'       => 'Uitlijning',
             'color'            => 'Kleur',
             'size'             => 'Grootte',
-            'text-decoration'  => 'Tekstdecoratie'
+            'text-decoration'  => 'Tekstdecoratie',
+            'collapsed-class'  => 'Icon ingeklapt',
+            'expanded-class'   => 'Icon uitgeklapt',
+            'position'         => 'Positie',
+            'animation'        => 'Animatie'
         );
         foreach ( $this->default_adv_style() as $key => $vals ) {
             echo '<tr><th colspan="2"><h2>'.esc_html( $labels[$key] ).'</h2></th></tr>';
@@ -1169,6 +1189,10 @@ document.addEventListener('DOMContentLoaded',function(){
                 echo '<tr><th scope="row">'.esc_html( $label ).'</th><td>';
                 if( $field === 'text-align' ) {
                     echo '<select name="'.$name.'"><option value="left"'.selected($val,'left',false).'>Links</option><option value="center"'.selected($val,'center',false).'>Midden</option><option value="right"'.selected($val,'right',false).'>Rechts</option></select>';
+                } elseif( $field === 'position' ) {
+                    echo '<select name="'.$name.'"><option value="left"'.selected($val,'left',false).'>Links</option><option value="right"'.selected($val,'right',false).'>Rechts</option></select>';
+                } elseif( $field === 'animation' ) {
+                    echo '<label><input type="checkbox" name="'.$name.'" value="1" '.checked($val,'1',false).' /> '.esc_html__( 'Activeer', 'botsauto-checklist' ).'</label>';
                 } else {
                     echo '<input type="'.$type.'" class="'.$class.'" name="'.$name.'" value="'.esc_attr($val).'" />';
                 }
@@ -1258,9 +1282,15 @@ document.addEventListener('DOMContentLoaded',function(){
             . '.botsauto-header input[type=text],.botsauto-header input[type=email]{width:' . esc_attr($adv['field']['width']) . ';box-sizing:border-box;border-radius:' . esc_attr($adv['field']['border-radius']) . ';border-style:' . esc_attr($adv['field']['border-style']) . ';border-width:' . esc_attr($adv['field']['border-width']) . ';border-color:' . esc_attr($adv['field']['border-color']) . ';background:' . esc_attr($adv['field']['background-color']) . ';color:' . esc_attr($adv['field']['text-color']) . ';}'
             . '.botsauto-checklist label{color:' . esc_attr($o['primary']) . ';display:inline-block;vertical-align:middle;}'
             . '.botsauto-checklist strong{color:' . esc_attr($o['primary']) . ';}'
-            . '.botsauto-phase>details>.phase-toggle{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($o['primary']) . ';list-style:none;position:relative;padding-left:1.2em;padding-top:10px;padding-bottom:10px;}'
-            . '.botsauto-phase>details>.phase-toggle::before{content:"\\25B6";position:absolute;left:0;}'
-            . '.botsauto-phase>details[open]>.phase-toggle::before{content:"\\25BC";}'
+            . '.botsauto-phase>details>.phase-toggle{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($o['primary']) . ';list-style:none;display:flex;align-items:center;padding-top:10px;padding-bottom:10px;}'
+            . '.botsauto-phase>details>.phase-toggle::-webkit-details-marker{display:none;}'
+            . '.botsauto-phase>details>.phase-toggle::marker{content:"";font-size:0;}'
+            . ($adv['phase_icon']['position']==='right' ? '.botsauto-phase>details>.phase-toggle{flex-direction:row-reverse;}' : '')
+            . '.botsauto-phase-icon{color:' . esc_attr($adv['phase_icon']['color']) . ';font-size:' . esc_attr($adv['phase_icon']['size']) . ';padding:' . esc_attr($adv['phase_icon']['padding']) . ';display:inline-flex;align-items:center;}'
+            . '.botsauto-phase-icon .expanded{display:none;}'
+            . '.botsauto-phase[open] .botsauto-phase-icon .collapsed{display:none;}'
+            . '.botsauto-phase[open] .botsauto-phase-icon .expanded{display:inline;}'
+            . ($adv['phase_icon']['animation']==='1' ? '.botsauto-phase-icon{transition:transform .2s;}.botsauto-phase[open] .botsauto-phase-icon{transform:rotate(90deg);}' : '')
             . '.botsauto-question-row{color:' . esc_attr($adv['question']['text-color']) . ';font-size:' . esc_attr($adv['question']['font-size']) . ';font-style:' . esc_attr($adv['question']['font-style']) . ';margin:0 0 .25em;display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap;}'
             . '.botsauto-question-row .botsauto-question-label{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}'
             . '.botsauto-question-row details.botsauto-info{flex-shrink:0;margin-left:auto;}'
