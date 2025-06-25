@@ -661,7 +661,7 @@ CHECKLIST;
             $checked = isset( $values[ $hash ] ) ? 'checked' : '';
             echo '<li>';
             if ( $data['question'] ) {
-            echo '<p class="botsauto-question-text"><span class="botsauto-question-label">'.esc_html( $data['question'] ).'</span>';
+                echo '<div class="botsauto-question-row"><span class="botsauto-question-label">'.esc_html( $data['question'] ).'</span>';
                 if ( !empty($data['info']['text']) || !empty($data['info']['url']) ) {
                     echo ' <details class="botsauto-info"><summary class="botsauto-info-btn">'.esc_html__('Meer info','botsauto-checklist').'</summary><div class="botsauto-info-content">';
                     if ( $data['info']['text'] ) {
@@ -672,14 +672,14 @@ CHECKLIST;
                     }
                     echo '</div></details>';
                 }
-                echo '</p>';
+                echo '</div>';
             }
             $cid  = 'cb_'.esc_attr( $hash );
             $note  = isset( $notes[$hash] ) ? esc_textarea( $notes[$hash] ) : '';
             $has  = $note !== '';
             $icon = $has ? esc_attr( $style['done_icon'] ) : esc_attr( $style['note_icon'] );
             $cls  = $has ? 'botsauto-note-btn botsauto-done' : 'botsauto-note-btn';
-            echo '<input type="checkbox" id="'.$cid.'" class="botsauto-checkbox" name="answers['.$hash.']" '.$checked.'> <label for="'.$cid.'">'.esc_html( $data['item'] ).'</label> <button type="button" class="'.$cls.'"><i class="fa '.$icon.'"></i></button><div class="botsauto-note" style="display:none"><textarea class="botsauto-rich" name="notes['.$hash.']">'.$note.'</textarea></div>';
+            echo '<div class="botsauto-answer-row"><input type="checkbox" id="'.$cid.'" class="botsauto-checkbox" name="answers['.$hash.']" '.$checked.'> <label for="'.$cid.'">'.esc_html( $data['item'] ).'</label> <button type="button" class="'.$cls.'"><i class="fa '.$icon.'"></i></button><div class="botsauto-note" style="display:none"><textarea class="botsauto-rich" name="notes['.$hash.']">'.$note.'</textarea></div></div>';
             echo '</li>';
         }
         if ( $open_ul ) {
@@ -966,9 +966,10 @@ document.addEventListener('DOMContentLoaded',function(){
         $css .= "$selector .botsauto-phase>details>.phase-toggle::marker{content:''!important;font-size:0!important;}";
         $css .= "$selector .botsauto-phase>details>.phase-toggle::before{content:'\\25B6'!important;position:absolute;left:0;}";
         $css .= "$selector .botsauto-phase>details[open]>.phase-toggle::before{content:'\\25BC'!important;}";
-        $css .= "$selector .botsauto-question-text{color:{$adv['question']['text-color']}!important;font-size:{$adv['question']['font-size']};font-style:{$adv['question']['font-style']};margin:0 0 .2em;flex:1 1 100%;display:flex!important;align-items:center;justify-content:space-between;flex-wrap:nowrap;}";
-        $css .= "$selector .botsauto-question-text .botsauto-question-label{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}";
-        $css .= "$selector .botsauto-question-text details.botsauto-info{flex-shrink:0;margin-left:auto;display:inline-block;}";
+        $css .= "$selector .botsauto-question-row{color:{$adv['question']['text-color']}!important;font-size:{$adv['question']['font-size']};font-style:{$adv['question']['font-style']};margin:0 0 .25em;display:flex!important;align-items:center;justify-content:space-between;flex-wrap:nowrap;}";
+        $css .= "$selector .botsauto-question-row .botsauto-question-label{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}";
+        $css .= "$selector .botsauto-question-row details.botsauto-info{flex-shrink:0;margin-left:auto;display:inline-block;}";
+        $css .= "$selector .botsauto-answer-row{display:flex;align-items:center;gap:.5em;}";
         $css .= "$selector .botsauto-header{margin-bottom:1em;font-family:{$style['font']};}";
         $css .= "$selector .botsauto-logo-title{display:flex;justify-content:center;align-items:center;margin-bottom:1em;}";
         $css .= "$selector .botsauto-logo-title.above,.botsauto-logo-title.below{flex-direction:column;}";
@@ -1177,7 +1178,7 @@ document.addEventListener('DOMContentLoaded',function(){
         echo '<style id="botsauto-preview-static">'.$static_css.'</style>';
         echo '<style id="botsauto-preview-style"></style>';
         echo '<style>#botsauto-preview-container{border:1px solid #ddd;padding:10px;margin-top:1em;}#botsauto-preview-container.mobile{max-width:375px;}</style>';
-        echo '<div id="botsauto-preview-container"><div id="botsauto-preview"><form><div class="botsauto-header"><div class="botsauto-logo-title '.esc_attr($opts['title_position']).'"><div class="botsauto-title">'.esc_html($opts['checklist_title']).'</div><div class="botsauto-logo">'.($opts['image']?'<img src="'.esc_url($opts['image']).'" />':'').'</div></div><div class="botsauto-fields"><p><label>'.esc_html__( 'Titel', 'botsauto-checklist' ).': <input type="text" value="Demo"></label></p><p><label>'.esc_html__( 'Naam', 'botsauto-checklist' ).': <input type="text" value="Demo"></label></p><p><label>'.esc_html__( 'E-mail', 'botsauto-checklist' ).': <input type="email" value="demo@example.com"></label></p></div></div><div class="botsauto-checklist"><details class="botsauto-phase" open><summary>'.esc_html__('Voorbereiden: Kwalificatie & voorbereiding (KEM – Kwalificatie Expres Methode)','botsauto-checklist').'</summary><p>Kwalificatie, achtergrondinformatie en strategische voorbereiding.</p><ul style="list-style:none"><li><p class="botsauto-question-text">'.esc_html__('Kwalificatie Expres Methode toegepast?','botsauto-checklist').'</p><input type="checkbox" id="preview_cb" class="botsauto-checkbox"> <label for="preview_cb">'.esc_html__('Is de potentiële opdrachtgever gekwalificeerd op basis van de KEM (Kwalificatie Expres Methode)?','botsauto-checklist').'</label> <button type="button" class="botsauto-note-btn"><i class="fa '.esc_attr($opts['note_icon']).'"></i></button><div class="botsauto-note" style="display:none"><textarea class="botsauto-rich"></textarea></div></li></ul></details></div><p><input type="submit" class="button button-primary" value="Submit"></p></form></div></div>';
+        echo '<div id="botsauto-preview-container"><div id="botsauto-preview"><form><div class="botsauto-header"><div class="botsauto-logo-title '.esc_attr($opts['title_position']).'"><div class="botsauto-title">'.esc_html($opts['checklist_title']).'</div><div class="botsauto-logo">'.($opts['image']?'<img src="'.esc_url($opts['image']).'" />':'').'</div></div><div class="botsauto-fields"><p><label>'.esc_html__( 'Titel', 'botsauto-checklist' ).': <input type="text" value="Demo"></label></p><p><label>'.esc_html__( 'Naam', 'botsauto-checklist' ).': <input type="text" value="Demo"></label></p><p><label>'.esc_html__( 'E-mail', 'botsauto-checklist' ).': <input type="email" value="demo@example.com"></label></p></div></div><div class="botsauto-checklist"><details class="botsauto-phase" open><summary>'.esc_html__('Voorbereiden: Kwalificatie & voorbereiding (KEM – Kwalificatie Expres Methode)','botsauto-checklist').'</summary><p>Kwalificatie, achtergrondinformatie en strategische voorbereiding.</p><ul style="list-style:none"><li><div class="botsauto-question-row">'.esc_html__('Kwalificatie Expres Methode toegepast?','botsauto-checklist').'</div><div class="botsauto-answer-row"><input type="checkbox" id="preview_cb" class="botsauto-checkbox"> <label for="preview_cb">'.esc_html__('Is de potentiële opdrachtgever gekwalificeerd op basis van de KEM (Kwalificatie Expres Methode)?','botsauto-checklist').'</label> <button type="button" class="botsauto-note-btn"><i class="fa '.esc_attr($opts['note_icon']).'"></i></button><div class="botsauto-note" style="display:none"><textarea class="botsauto-rich"></textarea></div></div></li></ul></details></div><p><input type="submit" class="button button-primary" value="Submit"></p></form></div></div>';
         echo '<h2>'.esc_html__( 'Import / Export', 'botsauto-checklist' ).'</h2><p><a href="'.admin_url('admin-post.php?action=botsauto_export_style').'" class="button">'.esc_html__( 'Exporteren', 'botsauto-checklist' ).'</a></p>';
         echo '<form method="post" enctype="multipart/form-data"><input type="file" name="adv_import" accept="application/json" />';
         wp_nonce_field('botsauto_adv_import');
@@ -1250,9 +1251,10 @@ document.addEventListener('DOMContentLoaded',function(){
             . '.botsauto-phase>details>.phase-toggle{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($o['primary']) . ';list-style:none;position:relative;padding-left:1.2em;padding-top:10px;padding-bottom:10px;}'
             . '.botsauto-phase>details>.phase-toggle::before{content:"\\25B6";position:absolute;left:0;}'
             . '.botsauto-phase>details[open]>.phase-toggle::before{content:"\\25BC";}'
-            . '.botsauto-question-text{color:' . esc_attr($adv['question']['text-color']) . ';font-size:' . esc_attr($adv['question']['font-size']) . ';font-style:' . esc_attr($adv['question']['font-style']) . ';margin:0 0 .2em;display:flex;align-items:center;flex-basis:100%;}'
-            . '.botsauto-question-text .botsauto-question-label{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}'
-            . '.botsauto-question-text details.botsauto-info{flex-shrink:0;margin-left:auto;}'
+            . '.botsauto-question-row{color:' . esc_attr($adv['question']['text-color']) . ';font-size:' . esc_attr($adv['question']['font-size']) . ';font-style:' . esc_attr($adv['question']['font-style']) . ';margin:0 0 .25em;display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap;}'
+            . '.botsauto-question-row .botsauto-question-label{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}'
+            . '.botsauto-question-row details.botsauto-info{flex-shrink:0;margin-left:auto;}'
+            . '.botsauto-answer-row{display:flex;align-items:center;gap:.5em;}'
             . '.botsauto-checkbox{accent-color:' . esc_attr($adv['checkbox']['color']) . ';background:' . esc_attr($adv['checkbox']['background-color']) . ';border-color:' . esc_attr($adv['checkbox']['border-color']) . ';border-style:solid;border-width:1px;display:inline-block!important;width:' . esc_attr($adv['checkbox']['size']) . '!important;height:' . esc_attr($adv['checkbox']['size']) . '!important;appearance:auto!important;visibility:visible!important;}'
             . '.botsauto-checklist .button-primary{background:' . esc_attr($adv['button']['background-color']) . ';color:' . esc_attr($adv['button']['text-color']) . ';padding:' . esc_attr($adv['button']['padding']) . ';border-radius:' . esc_attr($adv['button']['border-radius']) . ';border-color:' . esc_attr($adv['button']['border-color']) . ';}'
             . '.botsauto-info-btn{background:' . esc_attr($adv['info_button']['background-color']) . ';color:' . esc_attr($adv['info_button']['text-color']) . ';padding:' . esc_attr($adv['info_button']['padding']) . ';border-radius:' . esc_attr($adv['info_button']['border-radius']) . ';border-color:' . esc_attr($adv['info_button']['border-color']) . ';border-style:solid;display:inline-flex;align-items:center;justify-content:center;font-size:' . esc_attr($adv['info_button']['font-size']) . ';text-align:' . esc_attr($adv['info_button']['text-align']) . ';width:' . esc_attr($adv['info_button']['width']) . ';height:' . esc_attr($adv['info_button']['height']) . ';}'
