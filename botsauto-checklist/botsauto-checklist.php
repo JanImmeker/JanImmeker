@@ -644,7 +644,7 @@ CHECKLIST;
                     echo '</ul></details>';
                 }
                 if ( $data['phase'] ) {
-                    echo '<details class="botsauto-phase"><summary>'.esc_html( $data['phase'] ).'</summary>';
+                    echo '<details class="botsauto-phase"><summary class="phase-toggle">'.esc_html( $data['phase'] ).'</summary>';
                 }
                 if ( $data['desc'] ) {
                     echo '<p>'.esc_html( $data['desc'] ).'</p>';
