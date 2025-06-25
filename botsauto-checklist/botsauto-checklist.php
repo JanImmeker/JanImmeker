@@ -985,12 +985,16 @@ document.addEventListener('DOMContentLoaded',function(){
         $css .= "$selector .botsauto-phase>details>.phase-toggle{color:{$adv['phase']['text-color']}!important;background:{$adv['phase']['background-color']}!important;font-size:{$adv['phase']['font-size']};font-weight:{$adv['phase']['font-weight']};list-style:none!important;display:flex!important;align-items:center;cursor:pointer;padding-top:10px;padding-bottom:10px;}";
         $css .= "$selector .botsauto-phase>details>.phase-toggle::-webkit-details-marker{display:none!important;}";
         $css .= "$selector .botsauto-phase>details>.phase-toggle::marker{content:''!important;font-size:0!important;}";
-        if ( isset($adv['phase_icon']['position']) && $adv['phase_icon']['position']=='right' ) { $css .= \"$selector .botsauto-phase>details>.phase-toggle{flex-direction:row-reverse;}\"; }
+        if ( isset($adv['phase_icon']['position']) && $adv['phase_icon']['position']=='right' ) {
+            $css .= "$selector .botsauto-phase>details>.phase-toggle{flex-direction:row-reverse;}";
+        }
         $css .= "$selector .botsauto-phase-icon{color:{$adv['phase_icon']['color']};font-size:{$adv['phase_icon']['size']};padding:{$adv['phase_icon']['padding']};display:inline-flex;align-items:center;}";
         $css .= "$selector .botsauto-phase-icon .expanded{display:none;}";
         $css .= "$selector .botsauto-phase[open] .botsauto-phase-icon .collapsed{display:none;}";
         $css .= "$selector .botsauto-phase[open] .botsauto-phase-icon .expanded{display:inline;}";
-        if ( isset($adv['phase_icon']['animation']) && $adv['phase_icon']['animation']=='1' ) { $css .= \"$selector .botsauto-phase-icon{transition:transform .2s;} $selector .botsauto-phase[open] .botsauto-phase-icon{transform:rotate(90deg);}\"; }
+        if ( isset($adv['phase_icon']['animation']) && $adv['phase_icon']['animation']=='1' ) {
+            $css .= "$selector .botsauto-phase-icon{transition:transform .2s;} $selector .botsauto-phase[open] .botsauto-phase-icon{transform:rotate(90deg);}";
+        }
         $css .= "$selector .botsauto-question-row{color:{$adv['question']['text-color']}!important;font-size:{$adv['question']['font-size']};font-style:{$adv['question']['font-style']};margin:0 0 .25em;display:flex!important;align-items:center;justify-content:space-between;flex-wrap:nowrap;}";
         $css .= "$selector .botsauto-question-row .botsauto-question-label{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}";
         $css .= "$selector .botsauto-question-row details.botsauto-info{flex-shrink:0;margin-left:auto;display:inline-block;}";
