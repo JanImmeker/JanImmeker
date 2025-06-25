@@ -983,7 +983,7 @@ document.addEventListener('DOMContentLoaded',function(){
     private function build_css( $style, $adv, $selector, $custom = '' ) {
         $css  = "$selector *,${selector} *::before,${selector} *::after{box-sizing:border-box;margin:0;padding:0;}";
         $css .= "$selector{color:{$style['text']};background:{$style['background']};font-size:{$adv['container']['font-size']};padding:{$adv['container']['padding']};font-family:{$style['font']};}";
-        $css .= "$selector .botsauto-phase>details>.phase-toggle{color:{$adv['phase']['text-color']}!important;background:{$adv['phase']['background-color']}!important;font-size:{$adv['phase']['font-size']};font-weight:{$adv['phase']['font-weight']};list-style:none!important;display:flex!important;align-items:center;cursor:pointer;padding:{$adv['phase']['padding']};}";
+        $css .= "$selector .botsauto-phase>details>.phase-toggle{color:{$adv['phase']['text-color']}!important;background:{$adv['phase']['background-color']}!important;font-size:{$adv['phase']['font-size']};font-weight:{$adv['phase']['font-weight']};list-style:none!important;display:flex!important;align-items:center;cursor:pointer;padding:{$adv['phase']['padding']}!important;}";
         $css .= "$selector .botsauto-phase>details>.phase-toggle::-webkit-details-marker{display:none!important;}";
         $css .= "$selector .botsauto-phase>details>.phase-toggle::marker{content:''!important;font-size:0!important;}";
         if ( isset($adv['phase_icon']['position']) && $adv['phase_icon']['position']=='right' ) {
@@ -1287,7 +1287,7 @@ document.addEventListener('DOMContentLoaded',function(){
             . '.botsauto-header input[type=text],.botsauto-header input[type=email]{width:' . esc_attr($adv['field']['width']) . ';box-sizing:border-box;border-radius:' . esc_attr($adv['field']['border-radius']) . ';border-style:' . esc_attr($adv['field']['border-style']) . ';border-width:' . esc_attr($adv['field']['border-width']) . ';border-color:' . esc_attr($adv['field']['border-color']) . ';background:' . esc_attr($adv['field']['background-color']) . ';color:' . esc_attr($adv['field']['text-color']) . ';}'
             . '.botsauto-checklist label{color:' . esc_attr($o['primary']) . ';display:inline-block;vertical-align:middle;}'
             . '.botsauto-checklist strong{color:' . esc_attr($o['primary']) . ';}'
-            . '.botsauto-phase>details>.phase-toggle{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($o['primary']) . ';list-style:none;display:flex;align-items:center;padding:' . esc_attr($adv['phase']['padding']) . ';}'
+            . '.botsauto-phase>details>.phase-toggle{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($o['primary']) . ';list-style:none;display:flex;align-items:center;padding:' . esc_attr($adv['phase']['padding']) . '!important;}'
             . '.botsauto-phase>details>.phase-toggle::-webkit-details-marker{display:none;}'
             . '.botsauto-phase>details>.phase-toggle::marker{content:"";font-size:0;}'
             . ($adv['phase_icon']['position']==='right' ? '.botsauto-phase>details>.phase-toggle{flex-direction:row-reverse;}' : '')
