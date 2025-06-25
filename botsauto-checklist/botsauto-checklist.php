@@ -943,11 +943,11 @@ document.addEventListener('DOMContentLoaded',function(){
     private function build_css( $style, $adv, $selector, $custom = '' ) {
         $css  = "$selector *,${selector} *::before,${selector} *::after{box-sizing:border-box;margin:0;padding:0;}";
         $css .= "$selector{color:{$style['text']};background:{$style['background']};font-size:{$adv['container']['font-size']};padding:{$adv['container']['padding']};font-family:{$style['font']};}";
-        $css .= "$selector .botsauto-phase>details>.phase-toggle{color:{$adv['phase']['text-color']}!important;background:{$adv['phase']['background-color']}!important;font-size:{$adv['phase']['font-size']};font-weight:{$adv['phase']['font-weight']};list-style:none!important;position:relative;padding-left:1.2em;padding-top:10px;padding-bottom:10px;}";
-        $css .= "$selector .botsauto-phase>details>.phase-toggle::-webkit-details-marker{display:none;}";
-        $css .= "$selector .botsauto-phase>details>.phase-toggle::marker{content:'';font-size:0;}";
-        $css .= "$selector .botsauto-phase>details>.phase-toggle::before{content:'\\25B6';position:absolute;left:0;}";
-        $css .= "$selector .botsauto-phase>details[open]>.phase-toggle::before{content:'\\25BC';}";
+        $css .= "$selector .botsauto-phase>details>.phase-toggle{color:{$adv['phase']['text-color']}!important;background:{$adv['phase']['background-color']}!important;font-size:{$adv['phase']['font-size']};font-weight:{$adv['phase']['font-weight']};list-style:none!important;position:relative;padding-left:1.2em;padding-top:10px;padding-bottom:10px;display:block!important;}";
+        $css .= "$selector .botsauto-phase>details>.phase-toggle::-webkit-details-marker{display:none!important;}";
+        $css .= "$selector .botsauto-phase>details>.phase-toggle::marker{content:''!important;font-size:0!important;}";
+        $css .= "$selector .botsauto-phase>details>.phase-toggle::before{content:'\\25B6'!important;position:absolute;left:0;}";
+        $css .= "$selector .botsauto-phase>details[open]>.phase-toggle::before{content:'\\25BC'!important;}";
         $css .= "$selector .botsauto-question-text{color:{$adv['question']['text-color']}!important;font-size:{$adv['question']['font-size']};font-style:{$adv['question']['font-style']};margin:0 0 .2em;flex-basis:100%;display:flex;align-items:center;justify-content:space-between;}";
         $css .= "$selector .botsauto-question-text .botsauto-question-label{flex:1;}";
         $css .= "$selector .botsauto-header{margin-bottom:1em;font-family:{$style['font']};}";
