@@ -962,9 +962,9 @@ document.addEventListener('DOMContentLoaded',function(){
         $css .= "$selector .botsauto-phase>details>.phase-toggle::marker{content:''!important;font-size:0!important;}";
         $css .= "$selector .botsauto-phase>details>.phase-toggle::before{content:'\\25B6'!important;position:absolute;left:0;}";
         $css .= "$selector .botsauto-phase>details[open]>.phase-toggle::before{content:'\\25BC'!important;}";
-        $css .= "$selector .botsauto-question-text{color:{$adv['question']['text-color']}!important;font-size:{$adv['question']['font-size']};font-style:{$adv['question']['font-style']};margin:0 0 .2em;flex-basis:100%;display:flex;align-items:center;}";
+        $css .= "$selector .botsauto-question-text{color:{$adv['question']['text-color']}!important;font-size:{$adv['question']['font-size']};font-style:{$adv['question']['font-style']};margin:0 0 .2em;flex-basis:100%;display:flex!important;align-items:center;justify-content:space-between;}";
         $css .= "$selector .botsauto-question-text .botsauto-question-label{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}";
-        $css .= "$selector .botsauto-question-text details.botsauto-info{flex-shrink:0;margin-left:auto;}";
+        $css .= "$selector .botsauto-question-text details.botsauto-info{flex-shrink:0;margin-left:auto;display:inline-block;}";
         $css .= "$selector .botsauto-header{margin-bottom:1em;font-family:{$style['font']};}";
         $css .= "$selector .botsauto-logo-title{display:flex;justify-content:center;align-items:center;margin-bottom:1em;}";
         $css .= "$selector .botsauto-logo-title.above,.botsauto-logo-title.below{flex-direction:column;}";

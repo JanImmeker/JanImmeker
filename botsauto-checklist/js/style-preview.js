@@ -45,7 +45,9 @@ jQuery(function($){
       css += w+' .botsauto-phase[open]>details>.phase-toggle::before{content:"▼";}';
     }
     if(adv.question){
-      css += w+' .botsauto-question-text{color:'+adv.question['text-color']+';font-size:'+adv.question['font-size']+';font-style:'+adv.question['font-style']+';margin:0 0 .2em;flex-basis:100%;}';
+      css += w+' .botsauto-question-text{color:'+adv.question['text-color']+';font-size:'+adv.question['font-size']+';font-style:'+adv.question['font-style']+';margin:0 0 .2em;flex-basis:100%;display:flex!important;align-items:center;justify-content:space-between;}';
+      css += w+' .botsauto-question-text .botsauto-question-label{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}';
+      css += w+' .botsauto-question-text details.botsauto-info{flex-shrink:0;margin-left:auto;display:inline-block;}';
     }
     css += w+' .botsauto-header{margin-bottom:1em;font-family:'+style.font+';}';
     css += w+' .botsauto-logo-title{display:flex;justify-content:center;align-items:center;margin-bottom:1em;}';
