@@ -656,7 +656,7 @@ CHECKLIST;
             $checked = isset( $values[ $hash ] ) ? 'checked' : '';
             echo '<li>';
             if ( $data['question'] ) {
-                echo '<p class="botsauto-question-text">'.esc_html( $data['question'] );
+            echo '<p class="botsauto-question-text"><span class="botsauto-question-label">'.esc_html( $data['question'] ).'</span>';
                 if ( !empty($data['info']['text']) || !empty($data['info']['url']) ) {
                     echo ' <details class="botsauto-info"><summary class="botsauto-info-btn">'.esc_html__('Meer info','botsauto-checklist').'</summary><div class="botsauto-info-content">';
                     if ( $data['info']['text'] ) {
@@ -946,9 +946,10 @@ document.addEventListener('DOMContentLoaded',function(){
         $css .= "$selector .botsauto-phase>details>.phase-toggle{color:{$adv['phase']['text-color']}!important;background:{$adv['phase']['background-color']}!important;font-size:{$adv['phase']['font-size']};font-weight:{$adv['phase']['font-weight']};list-style:none!important;position:relative;padding-left:1.2em;padding-top:10px;padding-bottom:10px;}";
         $css .= "$selector .botsauto-phase>details>.phase-toggle::-webkit-details-marker{display:none;}";
         $css .= "$selector .botsauto-phase>details>.phase-toggle::marker{content:'';font-size:0;}";
-        $css .= "$selector .botsauto-phase>details>.phase-toggle::before{content:'▶';position:absolute;left:0;}";
-        $css .= "$selector .botsauto-phase[open]>details>.phase-toggle::before{content:'▼';}";
-        $css .= "$selector .botsauto-question-text{color:{$adv['question']['text-color']}!important;font-size:{$adv['question']['font-size']};font-style:{$adv['question']['font-style']};margin:0 0 .2em;flex-basis:100%;}";
+        $css .= "$selector .botsauto-phase>details>.phase-toggle::before{content:'\\25B6';position:absolute;left:0;}";
+        $css .= "$selector .botsauto-phase>details[open]>.phase-toggle::before{content:'\\25BC';}";
+        $css .= "$selector .botsauto-question-text{color:{$adv['question']['text-color']}!important;font-size:{$adv['question']['font-size']};font-style:{$adv['question']['font-style']};margin:0 0 .2em;flex-basis:100%;display:flex;align-items:center;justify-content:space-between;}";
+        $css .= "$selector .botsauto-question-text .botsauto-question-label{flex:1;}";
         $css .= "$selector .botsauto-header{margin-bottom:1em;font-family:{$style['font']};}";
         $css .= "$selector .botsauto-logo-title{display:flex;justify-content:center;align-items:center;margin-bottom:1em;}";
         $css .= "$selector .botsauto-logo-title.above,.botsauto-logo-title.below{flex-direction:column;}";
@@ -1220,8 +1221,10 @@ document.addEventListener('DOMContentLoaded',function(){
             . '.botsauto-checklist label{color:' . esc_attr($o['primary']) . ';display:inline-block;vertical-align:middle;}'
             . '.botsauto-checklist strong{color:' . esc_attr($o['primary']) . ';}'
             . '.botsauto-phase>details>.phase-toggle{font-weight:bold;cursor:pointer;margin:0;color:' . esc_attr($o['primary']) . ';list-style:none;position:relative;padding-left:1.2em;padding-top:10px;padding-bottom:10px;}'
-            . '.botsauto-phase>details>.phase-toggle::before{content:"▶";position:absolute;left:0;}'
-            . '.botsauto-phase[open]>details>.phase-toggle::before{content:"▼";}'
+            . '.botsauto-phase>details>.phase-toggle::before{content:"\\25B6";position:absolute;left:0;}'
+            . '.botsauto-phase>details[open]>.phase-toggle::before{content:"\\25BC";}'
+            . '.botsauto-question-text{color:' . esc_attr($adv['question']['text-color']) . ';font-size:' . esc_attr($adv['question']['font-size']) . ';font-style:' . esc_attr($adv['question']['font-style']) . ';margin:0 0 .2em;display:flex;align-items:center;justify-content:space-between;flex-basis:100%;}'
+            . '.botsauto-question-text .botsauto-question-label{flex:1;}'
             . '.botsauto-checkbox{accent-color:' . esc_attr($adv['checkbox']['color']) . ';background:' . esc_attr($adv['checkbox']['background-color']) . ';border-color:' . esc_attr($adv['checkbox']['border-color']) . ';border-style:solid;border-width:1px;display:inline-block!important;width:' . esc_attr($adv['checkbox']['size']) . '!important;height:' . esc_attr($adv['checkbox']['size']) . '!important;appearance:auto!important;visibility:visible!important;}'
             . '.botsauto-checklist .button-primary{background:' . esc_attr($adv['button']['background-color']) . ';color:' . esc_attr($adv['button']['text-color']) . ';padding:' . esc_attr($adv['button']['padding']) . ';border-radius:' . esc_attr($adv['button']['border-radius']) . ';border-color:' . esc_attr($adv['button']['border-color']) . ';}'
             . '.botsauto-info-btn{background:' . esc_attr($adv['info_button']['background-color']) . ';color:' . esc_attr($adv['info_button']['text-color']) . ';padding:' . esc_attr($adv['info_button']['padding']) . ';border-radius:' . esc_attr($adv['info_button']['border-radius']) . ';border-color:' . esc_attr($adv['info_button']['border-color']) . ';border-style:solid;}'
